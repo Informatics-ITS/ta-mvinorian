@@ -7,11 +7,13 @@ import { decrypt, encrypt } from '@/lib/encryption';
 
 type WsContextType = {
   sendMessage: (message: WsMessageType) => void;
+  closeSocket: () => void;
   lastMessage: WsMessageType | null;
 };
 
 const WsContext = React.createContext<WsContextType>({
   sendMessage: () => {},
+  closeSocket: () => {},
   lastMessage: null,
 });
 
@@ -41,6 +43,13 @@ export const WsProvider = ({ wsUrl, children }: WsProviderProps) => {
     });
   };
 
+  const closeSocket = () => {
+    if (socket) {
+      socket.close();
+      setSocket(null);
+    }
+  };
+
   React.useEffect(() => {
     const ws = new WebSocket(wsUrl);
     setSocket(ws);
@@ -48,10 +57,12 @@ export const WsProvider = ({ wsUrl, children }: WsProviderProps) => {
     ws.onmessage = (event) => {
       const message = JSON.parse(event.data) as WsMessageType;
       const { state, data } = message;
-      decrypt(data).then((decryptedData) => {
-        const decryptedMessage: WsMessageType = { state, data: decryptedData };
-        setMessage(decryptedMessage);
-      });
+      if (state === 'players') setMessage(message);
+      else
+        decrypt(data).then((decryptedData) => {
+          const decryptedMessage: WsMessageType = { state, data: decryptedData };
+          setMessage(decryptedMessage);
+        });
     };
 
     return () => {
@@ -59,5 +70,5 @@ export const WsProvider = ({ wsUrl, children }: WsProviderProps) => {
     };
   }, [wsUrl]);
 
-  return <WsContext.Provider value={{ sendMessage, lastMessage: message }}>{children}</WsContext.Provider>;
+  return <WsContext.Provider value={{ sendMessage, closeSocket, lastMessage: message }}>{children}</WsContext.Provider>;
 };

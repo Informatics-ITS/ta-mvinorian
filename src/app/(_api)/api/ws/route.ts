@@ -80,26 +80,18 @@ export function SOCKET(client: WebSocket, request: IncomingMessage) {
   const userId = query.user as string | null;
   if (!userId) return client.close(4000, 'no user id provided');
 
-  clients[userId] = client;
-  if (!games[code]) {
-    const role = Math.random() < 0.5 ? 'attacker' : 'defender';
+  const role = query.role as string | null;
+  if (!role) return client.close(4000, 'no role provided');
+  if (role !== 'attacker' && role !== 'defender') return client.close(4000, 'invalid role provided');
 
-    games[code] = {
-      players: {
-        attacker: role === 'attacker' ? userId : null,
-        defender: role === 'defender' ? userId : null,
-      },
-      state: {},
-    };
-  } else {
-    if (!games[code].players.attacker) {
-      games[code].players.attacker = userId;
-    } else if (!games[code].players.defender) {
-      games[code].players.defender = userId;
-    } else {
-      return client.close(4000, 'game already full');
-    }
-  }
+  clients[userId] = client;
+  games[code] = {
+    players: {
+      attacker: role === 'attacker' ? userId : (games[code]?.players.attacker ?? null),
+      defender: role === 'defender' ? userId : (games[code]?.players.defender ?? null),
+    },
+    state: {},
+  };
 
   broadcast(code, 'players');
   client.on('message', (bytes) => handleMessage(bytes, code));

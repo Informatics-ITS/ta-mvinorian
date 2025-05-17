@@ -30,10 +30,10 @@ export const useWsState = <TData>(stateName: string, defaultData: TData) => {
   return [localState, setState] as const;
 };
 
-export const useWsPlayes = () => {
+export const useWsPlayers = () => {
   const { lastMessage } = useWsContext();
 
-  const [players, setPlayers] = React.useState<WsPlayersType>();
+  const [players, setPlayers] = React.useState<WsPlayersType>({ attacker: null, defender: null });
 
   React.useEffect(() => {
     const { state, data } = lastMessage ?? {};
