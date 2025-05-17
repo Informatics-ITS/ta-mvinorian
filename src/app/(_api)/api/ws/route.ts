@@ -37,6 +37,9 @@ const broadcast = (code: string, state: string) => {
 
   const messageJson = JSON.stringify(message);
 
+  // eslint-disable-next-line no-console
+  console.log('broadcast', game);
+
   if (attacker) clients[attacker].send(messageJson);
   if (defender) clients[defender].send(messageJson);
 };
@@ -90,7 +93,7 @@ export function SOCKET(client: WebSocket, request: IncomingMessage) {
       attacker: role === 'attacker' ? userId : (games[code]?.players.attacker ?? null),
       defender: role === 'defender' ? userId : (games[code]?.players.defender ?? null),
     },
-    state: {},
+    state: games[code]?.state ?? {},
   };
 
   broadcast(code, 'players');

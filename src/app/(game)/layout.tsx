@@ -14,9 +14,9 @@ import {
 } from '@/component/ui/dropdown-menu';
 import { useAuthStore } from '@/hook/use-auth-store';
 
-export default withAuth(LobbyLayout);
+export default withAuth(GameLayout);
 
-export function LobbyLayout({
+export function GameLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;

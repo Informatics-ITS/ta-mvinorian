@@ -12,6 +12,5 @@ export async function GET(request: NextRequest) {
   const res = await withAsyncAuthUser(val.data?.token, (user) => getMeService(user.id));
   if (!res.success) return createResponseJson(400, { success: false, message: res.message, data: res.data });
 
-  const { id: _, ...user } = res.data ?? {};
-  return createResponseJson(200, { success: true, message: res.message, data: user });
+  return createResponseJson(200, { success: true, message: res.message, data: res.data });
 }

@@ -5,16 +5,26 @@ import React from 'react';
 import { WsMessageType } from '@/app/(_api)/api/ws/route';
 import { decrypt, encrypt } from '@/lib/encryption';
 
+export enum WsReadyState {
+  UNINITIALIZED = -1,
+  CONNECTING = 0,
+  OPEN = 1,
+  CLOSING = 2,
+  CLOSED = 3,
+}
+
 type WsContextType = {
   sendMessage: (message: WsMessageType) => void;
   closeSocket: () => void;
   lastMessage: WsMessageType | null;
+  readyState: WsReadyState;
 };
 
 const WsContext = React.createContext<WsContextType>({
   sendMessage: () => {},
   closeSocket: () => {},
   lastMessage: null,
+  readyState: WsReadyState.CONNECTING,
 });
 
 export const useWsContext = () => {
@@ -33,6 +43,7 @@ export interface WsProviderProps {
 export const WsProvider = ({ wsUrl, children }: WsProviderProps) => {
   const [socket, setSocket] = React.useState<WebSocket | null>(null);
   const [message, setMessage] = React.useState<WsMessageType | null>(null);
+  const [readyState, setReadyState] = React.useState<WsReadyState | null>(null);
 
   const sendMessage = (message: WsMessageType) => {
     if (!socket) return;
@@ -70,5 +81,18 @@ export const WsProvider = ({ wsUrl, children }: WsProviderProps) => {
     };
   }, [wsUrl]);
 
-  return <WsContext.Provider value={{ sendMessage, closeSocket, lastMessage: message }}>{children}</WsContext.Provider>;
+  React.useEffect(() => {
+    if (!socket) return;
+    if (!socket.readyState) return;
+
+    setReadyState(socket.readyState);
+  }, [socket]);
+
+  return (
+    <WsContext.Provider
+      value={{ sendMessage, closeSocket, lastMessage: message, readyState: readyState ?? WsReadyState.UNINITIALIZED }}
+    >
+      {children}
+    </WsContext.Provider>
+  );
 };

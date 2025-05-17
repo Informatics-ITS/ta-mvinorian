@@ -2,7 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 import { LoaderCircleIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
-import { LobbyLayout } from '@/app/lobby/layout';
+import { GameLayout } from '@/app/(game)/layout';
 import { api } from '@/lib/api';
 
 import { Button } from '../ui/button';
@@ -29,7 +29,7 @@ export const GameWaitingJoin = ({ code, onLeaveGame }: GameWaitingJoinProps) => 
   });
 
   return (
-    <LobbyLayout>
+    <GameLayout>
       <Card className='w-full max-w-md'>
         <CardTitle>
           <CardHeader className='text-center'>
@@ -47,6 +47,6 @@ export const GameWaitingJoin = ({ code, onLeaveGame }: GameWaitingJoinProps) => 
           </CardContent>
         </CardTitle>
       </Card>
-    </LobbyLayout>
+    </GameLayout>
   );
 };

@@ -7,16 +7,24 @@ export const useWsState = <TData>(stateName: string, defaultData: TData) => {
   const [localState, setLocalState] = React.useState<TData>(defaultData);
   const { sendMessage, lastMessage } = useWsContext();
 
-  const setState = (data: TData) => {
-    setLocalState(data);
+  const setState = React.useCallback(
+    (data: TData) => {
+      setLocalState(data);
 
-    const message: WsMessageType = {
-      state: stateName,
-      data: JSON.stringify(data),
-    };
+      const message: WsMessageType = {
+        state: stateName,
+        data: JSON.stringify(data),
+      };
 
-    sendMessage(message);
-  };
+      sendMessage(message);
+    },
+    [stateName, sendMessage],
+  );
+
+  React.useEffect(() => {
+    setState(defaultData);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   React.useEffect(() => {
     const { state, data } = lastMessage ?? {};
