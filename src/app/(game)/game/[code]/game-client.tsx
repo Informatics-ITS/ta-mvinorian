@@ -15,14 +15,14 @@ export interface GameClientProps {
 
 const GameClient = ({ code }: GameClientProps) => {
   const { closeSocket } = useWsContext();
-  const { phase, role, topology, deck, setDeck } = useGameEngineContext();
+  const { phase } = useGameEngineContext();
 
   return (
     <React.Fragment>
       {phase === WAITING_JOIN_PHASE && <GameWaitingJoin code={code} onLeaveGame={() => closeSocket()} />}
       {phase === GAME_PHASE && (
-        <GameBoard topology={topology} role={role}>
-          <GameDeck deck={deck} setDeck={setDeck} role={role} />
+        <GameBoard>
+          <GameDeck />
         </GameBoard>
       )}
     </React.Fragment>

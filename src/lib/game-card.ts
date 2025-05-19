@@ -16,10 +16,6 @@ export type GameDeckCardType = {
   selected: boolean;
 };
 
-export type GameDeckCardDetailType = GameCardType & {
-  selected: boolean;
-};
-
 export type GameDeckType = {
   attacker: GameDeckCardType[];
   defender: GameDeckCardType[];
@@ -41,12 +37,8 @@ export const generateGameDeck = (attackerCount: number, defenderCount: number): 
   };
 };
 
-export const getGameDeckDetails = (deck: GameDeckType, role: GameCardType['role']): GameDeckCardDetailType[] => {
-  const cards = role === 'attacker' ? deck.attacker : deck.defender;
-  return cards
-    .map((card) => {
-      const cardDetail = GAME_CARDS.find((c) => c.id === card.id);
-      return cardDetail ? { ...cardDetail, selected: card.selected } : null;
-    })
-    .filter(Boolean) as GameDeckCardDetailType[];
+export const getGameCardById = (id: string): GameCardType | undefined => {
+  const card = GAME_CARDS.find((card) => card.id === id);
+
+  return card;
 };

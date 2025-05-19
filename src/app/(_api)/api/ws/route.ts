@@ -44,6 +44,28 @@ const broadcast = (code: string, state: string) => {
   if (defender) clients[defender].send(messageJson);
 };
 
+const handleConnect = (client: WebSocket, code: string, userId: string, role: string) => {
+  clients[userId] = client;
+
+  if (!games[code]) {
+    games[code] = {
+      players: {
+        attacker: null,
+        defender: null,
+      },
+      state: {},
+    };
+  }
+
+  if (role === 'attacker') games[code].players.attacker = userId;
+  else if (role === 'defender') games[code].players.defender = userId;
+
+  broadcast(code, 'players');
+  Object.keys(games[code].state).forEach((state) => {
+    broadcast(code, state);
+  });
+};
+
 const handleMessage = (bytes: WebSocket.RawData, code: string) => {
   if (!games[code]) return;
 
@@ -54,23 +76,26 @@ const handleMessage = (bytes: WebSocket.RawData, code: string) => {
   broadcast(code, message.state);
 };
 
-const handleClose = (code: string) => {
+const handleClose = (client: WebSocket, code: string) => {
   if (!games[code]) return;
 
   const attacker = games[code].players.attacker;
   const defender = games[code].players.defender;
 
-  if (attacker) {
+  if (attacker && clients[attacker] === client) {
     delete clients[attacker];
     games[code].players.attacker = null;
   }
 
-  if (defender) {
+  if (defender && clients[defender] === client) {
     delete clients[defender];
     games[code].players.defender = null;
   }
 
-  if (!games[code].players.attacker && !games[code].players.defender) delete games[code];
+  if (!games[code].players.attacker && !games[code].players.defender) {
+    delete games[code];
+    return;
+  }
 
   broadcast(code, 'players');
 };
@@ -87,16 +112,7 @@ export function SOCKET(client: WebSocket, request: IncomingMessage) {
   if (!role) return client.close(4000, 'no role provided');
   if (role !== 'attacker' && role !== 'defender') return client.close(4000, 'invalid role provided');
 
-  clients[userId] = client;
-  games[code] = {
-    players: {
-      attacker: role === 'attacker' ? userId : (games[code]?.players.attacker ?? null),
-      defender: role === 'defender' ? userId : (games[code]?.players.defender ?? null),
-    },
-    state: games[code]?.state ?? {},
-  };
-
-  broadcast(code, 'players');
+  handleConnect(client, code, userId, role);
   client.on('message', (bytes) => handleMessage(bytes, code));
-  client.on('close', () => handleClose(code));
+  client.on('close', () => handleClose(client, code));
 }
