@@ -2,15 +2,23 @@
 
 import React from 'react';
 
+import { WsMessageType } from '@/app/(_api)/api/ws/route';
 import { useAuthStore } from '@/hook/use-auth-store';
 import { useWsPlayers, useWsState } from '@/hook/use-ws-state';
 import { GameDeckType, generateGameDeck } from '@/lib/game-card';
 import { generateTopology, TopologyType } from '@/lib/topology';
 
-export const WAITING_JOIN_PHASE = 'waiting-join';
-export const GAME_PHASE = 'game';
-export const GAME_END_PHASE = 'game-end';
-const MAX_ROUNDS = 10;
+import { useWsContext } from './ws-provider';
+
+export enum GamePhase {
+  WaitingJoin = 'waiting-join',
+  Play = 'play',
+  End = 'end',
+}
+
+export enum GameConstant {
+  MaxRounds = 10,
+}
 
 export type GameEngineType = {
   phase: string;
@@ -19,15 +27,17 @@ export type GameEngineType = {
   deck: GameDeckType | null;
   setDeck: (deck: GameDeckType) => void;
   topology: TopologyType | null;
+  stolenTokens: number;
 };
 
 const GameEngineContext = React.createContext<GameEngineType>({
-  phase: WAITING_JOIN_PHASE,
+  phase: GamePhase.WaitingJoin,
   round: 1,
   role: null,
   deck: null,
   setDeck: () => {},
   topology: null,
+  stolenTokens: 0,
 });
 
 export const useGameEngineContext = () => {
@@ -45,11 +55,13 @@ export interface GameEngineProviderProps {
 export const GameEngineProvider = ({ children }: GameEngineProviderProps) => {
   const players = useWsPlayers();
   const { user } = useAuthStore();
+  const { sendMessage } = useWsContext();
 
-  const [phase, setPhase] = useWsState<string>('phase', WAITING_JOIN_PHASE);
+  const [phase, setPhase] = useWsState<string>('phase', GamePhase.WaitingJoin);
   const [round, setRound] = useWsState<number>('round', 1);
   const [deck, setDeck] = useWsState<GameDeckType | null>('deck', null);
   const [topology, setTopology] = useWsState<TopologyType | null>('topology', null);
+  const [stolenTokens, setStolenTokens] = useWsState<number>('stolen-tokens', 0);
 
   const roleRef = React.useRef<GameEngineType['role']>(null);
   const role = React.useMemo(() => {
@@ -66,28 +78,39 @@ export const GameEngineProvider = ({ children }: GameEngineProviderProps) => {
     deck,
     setDeck,
     topology,
+    stolenTokens,
   };
 
   const startGame = React.useCallback(() => {
-    setPhase(GAME_PHASE);
+    setPhase(GamePhase.Play);
     setRound(1);
     setTopology(generateTopology());
     setDeck(generateGameDeck(5, 5));
+    setStolenTokens(0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   React.useEffect(() => {
     switch (phase) {
-      case WAITING_JOIN_PHASE:
+      case GamePhase.WaitingJoin:
         if (players.attacker && players.defender) startGame();
         break;
-      case 'game':
-        if (round > MAX_ROUNDS) setPhase('game-end');
+      case GamePhase.Play:
+        if (round > GameConstant.MaxRounds) setPhase(GamePhase.End);
         break;
       default:
         break;
     }
   }, [players, phase, setPhase, round, startGame]);
+
+  React.useEffect(() => {
+    const message: WsMessageType = {
+      state: 'refresh',
+      data: 'refresh',
+    };
+    sendMessage(message);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return <GameEngineContext.Provider value={gameEngine}>{children}</GameEngineContext.Provider>;
 };

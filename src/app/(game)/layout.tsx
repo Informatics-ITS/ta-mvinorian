@@ -26,7 +26,7 @@ export function GameLayout({
   return (
     <div className='relative flex h-svh w-full items-center justify-center overflow-hidden'>
       {user && (
-        <div className='bg-background-100 absolute top-0 left-0 z-50 flex w-full items-center justify-between border-b border-gray-400 px-8 py-2 text-gray-900'>
+        <div className='bg-background-100 absolute top-0 left-0 z-50 flex w-full items-center justify-between border-b border-gray-400 px-4 py-2 text-gray-900'>
           <div className='flex items-center gap-2'>
             <p>Node Clash</p>
           </div>

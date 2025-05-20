@@ -5,7 +5,7 @@ import { getGameCardById } from '@/lib/game-card';
 import { cn } from '@/lib/utils';
 import { useGameEngineContext } from '@/provider/game-engine-provider';
 
-import { GameCard } from './game-card';
+import { GameCard } from './card';
 
 export interface GameDeckProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -17,17 +17,8 @@ export const GameDeck = React.forwardRef<HTMLDivElement, GameDeckProps>(({ class
     const newDeck = {
       ...deck,
       [role]: deck[role].map((card) =>
-        card.id === cardId ? { ...card, selected: true } : { ...card, selected: false },
+        card.id === cardId ? { ...card, selected: !card.selected } : { ...card, selected: false },
       ),
-    };
-    setDeck(newDeck);
-  };
-
-  const handleBlur = (cardId: string) => {
-    if (!deck || !role) return;
-    const newDeck = {
-      ...deck,
-      [role]: deck[role].map((card) => (card.id === cardId ? { ...card, selected: false } : card)),
     };
     setDeck(newDeck);
   };
@@ -56,7 +47,6 @@ export const GameDeck = React.forwardRef<HTMLDivElement, GameDeckProps>(({ class
             animate={card.selected ? 'animate' : 'initial'}
             whileHover='animate'
             onClick={() => handleClick(card.id)}
-            onBlur={() => handleBlur(card.id)}
             className='flex shrink-0 justify-center focus-visible:outline-none'
           >
             <GameCard card={getGameCardById(card.id)!} />

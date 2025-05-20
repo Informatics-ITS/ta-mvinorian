@@ -7,11 +7,11 @@ import { TopologyNodeType } from '@/lib/topology';
 import { cn } from '@/lib/utils';
 import { useGameEngineContext } from '@/provider/game-engine-provider';
 
-import { GameNode } from './game-node';
+import { GameNode } from './node';
 
 export interface GameBoardProps extends React.HTMLAttributes<HTMLDivElement> {}
 
-export const GameBoard = React.forwardRef<HTMLDivElement, GameBoardProps>(({ children, className, ...props }, ref) => {
+export const GameBoard = React.forwardRef<HTMLDivElement, GameBoardProps>(({ className, ...props }, ref) => {
   const { topology, role } = useGameEngineContext();
 
   const zoomRef = React.useRef<d3.ZoomBehavior<SVGSVGElement, unknown> | null>(null);
@@ -174,7 +174,6 @@ export const GameBoard = React.forwardRef<HTMLDivElement, GameBoardProps>(({ chi
           })}
         </svg>
       )}
-      {children}
     </div>
   );
 });

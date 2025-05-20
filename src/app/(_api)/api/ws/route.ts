@@ -70,9 +70,16 @@ const handleMessage = (bytes: WebSocket.RawData, code: string) => {
   if (!games[code]) return;
 
   const message = JSON.parse(bytes.toString()) as WsMessageType;
-  const game = games[code];
 
-  game.state[message.state] = message.data;
+  if (message.state === 'refresh') {
+    broadcast(code, 'players');
+    Object.keys(games[code].state).forEach((state) => {
+      broadcast(code, state);
+    });
+    return;
+  }
+
+  games[code].state[message.state] = message.data;
   broadcast(code, message.state);
 };
 
