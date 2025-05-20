@@ -17,11 +17,14 @@ export const GameSide = React.forwardRef<HTMLDivElement, GameSideProps>(({ class
   const sideRef = React.useRef<HTMLDivElement>(null);
   const { height } = useElementDimensions(sideRef);
 
-  const { round, role, deck, stolenTokens } = useGameEngineContext();
+  const { round, role, deck, stolenTokens, usedCard } = useGameEngineContext();
   const [selectedCard, setSelectedCard] = React.useState<GameCardType | null>(null);
 
+  const roleUsedCard = role ? usedCard[role] : null;
+  const roleUsedCardDetail = roleUsedCard ? getGameCardById(roleUsedCard) : null;
+
   React.useEffect(() => {
-    if (!deck || !role) return;
+    if (!role) return;
     const selected = deck[role].find((card) => card.selected);
 
     if (!selected) setSelectedCard(null);
@@ -64,7 +67,7 @@ export const GameSide = React.forwardRef<HTMLDivElement, GameSideProps>(({ class
 
       <div ref={sideRef} className='relative flex flex-1 overflow-clip'>
         <ScrollArea className='absolute z-20 w-full px-4' style={{ height: `${height}px` }}>
-          <Accordion type='multiple' defaultValue={['tutorial']}>
+          <Accordion type='multiple' defaultValue={['tutorial', 'selected-card', 'selected-node']}>
             <AccordionItem value='tutorial'>
               <AccordionTrigger>How to Play?</AccordionTrigger>
               <AccordionContent className='mt-4 space-y-4'>
@@ -86,11 +89,20 @@ export const GameSide = React.forwardRef<HTMLDivElement, GameSideProps>(({ class
             </AccordionItem>
 
             <AccordionItem value='selected-card'>
-              <AccordionTrigger>Selected Card</AccordionTrigger>
+              <AccordionTrigger>{roleUsedCard ? 'Used Card' : 'Selected Card'}</AccordionTrigger>
               <AccordionContent className='mt-4 space-y-4'>
                 <div className='bg-background-200 flex h-96 w-full items-center justify-center rounded-xs border border-gray-400 px-4'>
                   <AnimatePresence mode='wait'>
-                    {selectedCard ? (
+                    {roleUsedCardDetail ? (
+                      <motion.div
+                        key={roleUsedCardDetail.id}
+                        initial={{ opacity: 0, scale: 0.75 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.75 }}
+                      >
+                        <GameCard card={roleUsedCardDetail} className='scale-110' />
+                      </motion.div>
+                    ) : selectedCard ? (
                       <motion.div
                         key={selectedCard.id}
                         initial={{ opacity: 0, scale: 0.75 }}
@@ -112,14 +124,16 @@ export const GameSide = React.forwardRef<HTMLDivElement, GameSideProps>(({ class
                   </AnimatePresence>
                 </div>
                 <AnimatePresence>
-                  {selectedCard && (
+                  {(roleUsedCardDetail ?? selectedCard) && (
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
                       className='bg-background-200 w-full space-y-2 rounded-xs border border-gray-400 p-4'
                     >
-                      <p className='text-heading-18 text-gray-1000'>What is {selectedCard.name}?</p>
+                      <p className='text-heading-18 text-gray-1000'>
+                        What is {roleUsedCardDetail ? roleUsedCardDetail.name : selectedCard && selectedCard.name}?
+                      </p>
                       <p className='text-copy-14 text-gray-800'>
                         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a diam lectus. Sed sit amet ipsum
                         mauris.

@@ -1,12 +1,13 @@
 import { LucideIcon } from 'lucide-react';
 
 import { GAME_CARDS } from '@/constant/game-card';
+import { GameRoleType } from '@/provider/game-engine-provider';
 
 export type GameCardType = {
   id: string;
   name: string;
   desc: string;
-  role: 'attacker' | 'defender';
+  role: GameRoleType;
   type: 'stealth' | 'attack' | 'disrupt' | 'block' | 'detect' | 'recover';
   icon: LucideIcon;
 };
@@ -21,7 +22,12 @@ export type GameDeckType = {
   defender: GameDeckCardType[];
 };
 
-export const getRandomGameCards = (role: GameCardType['role'], count: number) => {
+export const defaultGameDeckType: GameDeckType = {
+  attacker: [],
+  defender: [],
+};
+
+export const getRandomGameCards = (role: GameRoleType, count: number) => {
   const cards = GAME_CARDS.filter((card) => card.role === role);
   const randomCards = cards.sort(() => Math.random() - 0.5).slice(0, count);
   return randomCards;

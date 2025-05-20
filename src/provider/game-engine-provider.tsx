@@ -5,10 +5,12 @@ import React from 'react';
 import { WsMessageType } from '@/app/(_api)/api/ws/route';
 import { useAuthStore } from '@/hook/use-auth-store';
 import { useWsPlayers, useWsState } from '@/hook/use-ws-state';
-import { GameDeckType, generateGameDeck } from '@/lib/game-card';
+import { defaultGameDeckType, GameCardType, GameDeckType, generateGameDeck, getRandomGameCards } from '@/lib/game-card';
 import { generateTopology, TopologyType } from '@/lib/topology';
 
 import { useWsContext } from './ws-provider';
+
+export type GameRoleType = 'attacker' | 'defender';
 
 export enum GamePhase {
   WaitingJoin = 'waiting-join',
@@ -16,28 +18,52 @@ export enum GamePhase {
   End = 'end',
 }
 
+export enum GameRoundPhase {
+  CardSelect = 'card-select',
+  NodeSelect = 'node-select',
+  RoundEnd = 'round-end',
+}
+
+type GameRoundPhaseType = Record<GameRoleType, GameRoundPhase>;
+const defaultGameRoundPhaseType: GameRoundPhaseType = {
+  attacker: GameRoundPhase.CardSelect,
+  defender: GameRoundPhase.CardSelect,
+};
+
+type GameUsedCardType = Record<GameRoleType, string | null>;
+const defaultGameUsedCardType: GameUsedCardType = {
+  attacker: null,
+  defender: null,
+};
+
 export enum GameConstant {
   MaxRounds = 10,
 }
 
 export type GameEngineType = {
-  phase: string;
+  phase: GamePhase;
   round: number;
-  role: 'attacker' | 'defender' | null;
-  deck: GameDeckType | null;
-  setDeck: (deck: GameDeckType) => void;
+  roundPhase: GameRoundPhaseType;
+  role: GameRoleType | null;
+  deck: GameDeckType;
   topology: TopologyType | null;
   stolenTokens: number;
+  usedCard: GameUsedCardType;
+  setDeck: (deck: GameDeckType) => void;
+  setUsedCard: (cardId: string) => void;
 };
 
 const GameEngineContext = React.createContext<GameEngineType>({
   phase: GamePhase.WaitingJoin,
   round: 1,
+  roundPhase: defaultGameRoundPhaseType,
   role: null,
-  deck: null,
-  setDeck: () => {},
+  deck: defaultGameDeckType,
   topology: null,
   stolenTokens: 0,
+  usedCard: defaultGameUsedCardType,
+  setDeck: () => {},
+  setUsedCard: () => {},
 });
 
 export const useGameEngineContext = () => {
@@ -57,13 +83,18 @@ export const GameEngineProvider = ({ children }: GameEngineProviderProps) => {
   const { user } = useAuthStore();
   const { sendMessage } = useWsContext();
 
-  const [phase, setPhase] = useWsState<string>('phase', GamePhase.WaitingJoin);
-  const [round, setRound] = useWsState<number>('round', 1);
-  const [deck, setDeck] = useWsState<GameDeckType | null>('deck', null);
-  const [topology, setTopology] = useWsState<TopologyType | null>('topology', null);
-  const [stolenTokens, setStolenTokens] = useWsState<number>('stolen-tokens', 0);
+  const [phase, setPhase] = useWsState<GameEngineType['phase']>('phase', GamePhase.WaitingJoin);
+  const [round, setRound] = useWsState<GameEngineType['round']>('round', 1);
+  const [deck, setDeck] = useWsState<GameEngineType['deck']>('deck', defaultGameDeckType);
+  const [topology, setTopology] = useWsState<GameEngineType['topology']>('topology', null);
+  const [stolenTokens, setStolenTokens] = useWsState<GameEngineType['stolenTokens']>('stolen-tokens', 0);
+  const [usedCard, setUsedCard] = useWsState<GameEngineType['usedCard']>('usedCard', defaultGameUsedCardType);
+  const [roundPhase, setRoundPhase] = useWsState<GameEngineType['roundPhase']>(
+    'round-phase',
+    defaultGameRoundPhaseType,
+  );
 
-  const roleRef = React.useRef<GameEngineType['role']>(null);
+  const roleRef = React.useRef<GameRoleType>(null);
   const role = React.useMemo(() => {
     if (roleRef.current !== null) return roleRef.current;
     if (!user) return;
@@ -71,14 +102,37 @@ export const GameEngineProvider = ({ children }: GameEngineProviderProps) => {
     if (user.id === players.defender) return 'defender';
   }, [players, user]);
 
+  const setUsedCardClient = (cardId: string) => {
+    if (!role) return;
+    const newUsedCard = {
+      ...usedCard,
+      [role]: cardId,
+    };
+    setUsedCard(newUsedCard);
+
+    let newCard: GameCardType;
+    do {
+      newCard = getRandomGameCards(role, 1)[0];
+    } while (deck[role].some((card) => card.id === newCard.id));
+    const newRoleDeck = [...deck[role].filter((card) => card.id !== cardId), { id: newCard.id, selected: false }];
+    const newDeck = {
+      ...deck,
+      [role]: newRoleDeck,
+    };
+    setDeck(newDeck);
+  };
+
   const gameEngine: GameEngineType = {
     phase,
+    roundPhase,
     round,
     role: role ?? null,
     deck,
-    setDeck,
     topology,
     stolenTokens,
+    usedCard,
+    setDeck,
+    setUsedCard: setUsedCardClient,
   };
 
   const startGame = React.useCallback(() => {
@@ -87,6 +141,8 @@ export const GameEngineProvider = ({ children }: GameEngineProviderProps) => {
     setTopology(generateTopology());
     setDeck(generateGameDeck(5, 5));
     setStolenTokens(0);
+    setRoundPhase(defaultGameRoundPhaseType);
+    setUsedCard(defaultGameUsedCardType);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

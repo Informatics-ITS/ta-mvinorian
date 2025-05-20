@@ -1,3 +1,4 @@
+import { AnimatePresence } from 'motion/react';
 import * as motion from 'motion/react-client';
 import React from 'react';
 
@@ -11,10 +12,12 @@ import { GameCard } from './card';
 export interface GameDeckProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export const GameDeck = React.forwardRef<HTMLDivElement, GameDeckProps>(({ className, ...props }, ref) => {
-  const { role, deck, setDeck } = useGameEngineContext();
+  const { role, deck, usedCard, setDeck, setUsedCard } = useGameEngineContext();
+
+  const roleUsedCard = role ? usedCard[role] : null;
 
   const handleClick = (cardId: string) => {
-    if (!deck || !role) return;
+    if (!role) return;
     const newDeck = {
       ...deck,
       [role]: deck[role].map((card) =>
@@ -22,6 +25,13 @@ export const GameDeck = React.forwardRef<HTMLDivElement, GameDeckProps>(({ class
       ),
     };
     setDeck(newDeck);
+  };
+
+  const handleUseCard = (cardId: string) => {
+    handleClick(cardId);
+    setTimeout(() => {
+      setUsedCard(cardId);
+    }, 150);
   };
 
   const cardAnimation = {
@@ -33,44 +43,67 @@ export const GameDeck = React.forwardRef<HTMLDivElement, GameDeckProps>(({ class
     <div
       ref={ref}
       className={cn(
-        'bg-background-100 absolute bottom-0 left-0 z-10 flex w-full translate-y-[108px] justify-center gap-4 border-t border-gray-400 p-4',
+        'bg-background-100 absolute bottom-0 left-0 z-10 flex w-full translate-y-[108px] justify-center border-t border-gray-400 p-4',
         className,
       )}
       {...props}
     >
-      {deck &&
-        role &&
-        deck[role].map((card) => (
-          <motion.div
-            key={card.id}
-            variants={cardAnimation}
-            initial='initial'
-            animate={card.selected ? 'animate' : 'initial'}
-            whileHover='animate'
-            className='flex shrink-0 justify-center focus-visible:outline-none'
-          >
-            <GameCard card={getGameCardById(card.id)!} onClick={() => handleClick(card.id)} className='relative' />
-            {card.selected && (
-              <div className='absolute z-20 flex h-72 w-52 shrink-0 flex-col items-center overflow-clip rounded-xl transition-all duration-300'>
-                <Button
-                  size='lg'
-                  variant='ghost'
-                  className='!text-label-20 hover:bg-background-100 hover:border-background-100 relative z-20 mt-[72px] border border-gray-400 text-gray-100'
-                >
-                  Use Card
-                </Button>
-                <div
-                  className='bg-gray-1000 absolute right-0 left-0 h-full w-full opacity-40'
-                  onClick={() => handleClick(card.id)}
-                ></div>
-              </div>
-            )}
-          </motion.div>
-        ))}
-
-      <div className='absolute top-0 right-0 flex h-full items-end pr-4 pb-[108px]'>
-        <Button className='mb-4'>End Turn</Button>
-      </div>
+      {roleUsedCard && (
+        <div className='absolute top-0 left-0 z-20 flex h-full w-full -translate-y-px items-center justify-center pb-[108px]'>
+          <div className='bg-gray-1000 absolute top-0 left-0 h-full w-full opacity-40'></div>
+          <p className='text-heading-32 bg-background-100 relative rounded-xs border border-gray-400 px-4 py-0.5'>
+            Choose node for used card to continue
+          </p>
+        </div>
+      )}
+      <AnimatePresence initial={false} mode='popLayout'>
+        {deck &&
+          role &&
+          deck[role].map((card) => (
+            <motion.div
+              key={card.id}
+              initial={{ opacity: 0, y: 300 }}
+              animate={{ opacity: 1, y: 0, transition: { delay: 0.3 } }}
+              exit={{ opacity: 0, y: -300, transition: { duration: 0.3 } }}
+              layout
+              className='mx-2 flex shrink-0 justify-center'
+            >
+              <motion.div
+                variants={cardAnimation}
+                initial='initial'
+                animate={card.selected ? 'animate' : 'initial'}
+                whileHover={card.selected ? undefined : 'animate'}
+                className='flex shrink-0 justify-center focus-visible:outline-none'
+                transition={{ duration: 0.2 }}
+              >
+                <GameCard card={getGameCardById(card.id)!} onClick={() => handleClick(card.id)} className='relative' />
+                <AnimatePresence>
+                  {card.selected && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className='absolute z-20 flex h-72 w-52 shrink-0 flex-col items-center overflow-clip rounded-xl'
+                    >
+                      <Button
+                        size='lg'
+                        variant='ghost'
+                        onClick={() => handleUseCard(card.id)}
+                        className='!text-label-20 hover:bg-background-100 hover:border-background-100 relative z-20 mt-[72px] border border-gray-400 text-gray-100'
+                      >
+                        Use Card
+                      </Button>
+                      <div
+                        className='bg-gray-1000 absolute right-0 left-0 h-full w-full opacity-40'
+                        onClick={() => handleClick(card.id)}
+                      ></div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            </motion.div>
+          ))}
+      </AnimatePresence>
     </div>
   );
 });

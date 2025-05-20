@@ -11,7 +11,7 @@ export interface GamePlayProps extends React.HTMLAttributes<HTMLDivElement> {}
 export const GamePlay = React.forwardRef<HTMLDivElement, GamePlayProps>(({ className, ...props }, ref) => {
   return (
     <div ref={ref} className={cn('flex h-full w-full overflow-clip', className)} {...props}>
-      <GameSide />
+      <GameSide className='z-30' />
       <div className='relative h-full flex-1'>
         <GameBoard />
         <GameDeck />

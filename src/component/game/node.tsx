@@ -2,6 +2,7 @@ import React from 'react';
 
 import { TopologyNodeType } from '@/lib/topology';
 import { cn } from '@/lib/utils';
+import { GameRoleType } from '@/provider/game-engine-provider';
 
 export const nodeAttribute: {
   [k in TopologyNodeType['security']]: {
@@ -41,7 +42,7 @@ export const nodeAttribute: {
 
 export interface GameNodeProps extends React.HTMLAttributes<HTMLDivElement> {
   node: TopologyNodeType;
-  role: 'attacker' | 'defender';
+  role: GameRoleType;
 }
 
 export const GameNode = React.forwardRef<HTMLDivElement, GameNodeProps>(({ node, role, className, ...props }, ref) => {
