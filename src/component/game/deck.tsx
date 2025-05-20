@@ -5,6 +5,7 @@ import { getGameCardById } from '@/lib/game-card';
 import { cn } from '@/lib/utils';
 import { useGameEngineContext } from '@/provider/game-engine-provider';
 
+import { Button } from '../ui/button';
 import { GameCard } from './card';
 
 export interface GameDeckProps extends React.HTMLAttributes<HTMLDivElement> {}
@@ -40,18 +41,36 @@ export const GameDeck = React.forwardRef<HTMLDivElement, GameDeckProps>(({ class
       {deck &&
         role &&
         deck[role].map((card) => (
-          <motion.button
+          <motion.div
             key={card.id}
             variants={cardAnimation}
             initial='initial'
             animate={card.selected ? 'animate' : 'initial'}
             whileHover='animate'
-            onClick={() => handleClick(card.id)}
             className='flex shrink-0 justify-center focus-visible:outline-none'
           >
-            <GameCard card={getGameCardById(card.id)!} />
-          </motion.button>
+            <GameCard card={getGameCardById(card.id)!} onClick={() => handleClick(card.id)} className='relative' />
+            {card.selected && (
+              <div className='absolute z-20 flex h-72 w-52 shrink-0 flex-col items-center overflow-clip rounded-xl transition-all duration-300'>
+                <Button
+                  size='lg'
+                  variant='ghost'
+                  className='!text-label-20 hover:bg-background-100 hover:border-background-100 relative z-20 mt-[72px] border border-gray-400 text-gray-100'
+                >
+                  Use Card
+                </Button>
+                <div
+                  className='bg-gray-1000 absolute right-0 left-0 h-full w-full opacity-40'
+                  onClick={() => handleClick(card.id)}
+                ></div>
+              </div>
+            )}
+          </motion.div>
         ))}
+
+      <div className='absolute top-0 right-0 flex h-full items-end pr-4 pb-[108px]'>
+        <Button className='mb-4'>End Turn</Button>
+      </div>
     </div>
   );
 });

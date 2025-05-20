@@ -76,7 +76,7 @@ export const GameCard = React.forwardRef<HTMLDivElement, GameCardProps>(({ card,
   return (
     <div
       ref={ref}
-      className={cn('bg-background-100 shadow-card h-72 w-52 shrink-0 rounded-xl p-1.5', className)}
+      className={cn('bg-background-100 shadow-card h-72 w-52 shrink-0 rounded-xl p-1.5 select-none', className)}
       {...props}
     >
       <div className={cn('h-full w-full space-y-3 rounded-lg p-2', cardAttribute[card.type].bg)}>
