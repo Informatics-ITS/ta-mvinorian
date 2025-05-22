@@ -37,9 +37,6 @@ const broadcast = (code: string, state: string) => {
 
   const messageJson = JSON.stringify(message);
 
-  // eslint-disable-next-line no-console
-  console.log('broadcast', game);
-
   if (attacker) clients[attacker].send(messageJson);
   if (defender) clients[defender].send(messageJson);
 };

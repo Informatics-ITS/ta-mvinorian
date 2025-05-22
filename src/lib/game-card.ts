@@ -10,6 +10,7 @@ export type GameCardType = {
   role: GameRoleType;
   type: 'stealth' | 'attack' | 'disrupt' | 'block' | 'detect' | 'recover';
   icon: LucideIcon;
+  applicableToNodes?: string[];
 };
 
 export type GameDeckCardType = {

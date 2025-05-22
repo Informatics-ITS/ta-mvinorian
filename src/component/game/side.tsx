@@ -4,7 +4,7 @@ import React from 'react';
 import { useElementDimensions } from '@/hook/use-element-dimensions';
 import { GameCardType, getGameCardById } from '@/lib/game-card';
 import { cn } from '@/lib/utils';
-import { GameConstant, useGameEngineContext } from '@/provider/game-engine-provider';
+import { GameConstant, GameRoundPhase, useGameEngineContext } from '@/provider/game-engine-provider';
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
 import { ScrollArea } from '../ui/scroll-area';
@@ -17,11 +17,10 @@ export const GameSide = React.forwardRef<HTMLDivElement, GameSideProps>(({ class
   const sideRef = React.useRef<HTMLDivElement>(null);
   const { height } = useElementDimensions(sideRef);
 
-  const { round, role, deck, stolenTokens, usedCard } = useGameEngineContext();
+  const { round, role, deck, stolenTokens, roundPhase, history, clickNextRound } = useGameEngineContext();
   const [selectedCard, setSelectedCard] = React.useState<GameCardType | null>(null);
 
-  const roleUsedCard = role ? usedCard[role] : null;
-  const roleUsedCardDetail = roleUsedCard ? getGameCardById(roleUsedCard) : null;
+  const roleRoundPhase = roundPhase[role!];
 
   React.useEffect(() => {
     if (!role) return;
@@ -35,11 +34,54 @@ export const GameSide = React.forwardRef<HTMLDivElement, GameSideProps>(({ class
     <div
       ref={ref}
       className={cn(
-        'bg-background-100 flex h-full w-80 flex-col gap-4 overflow-hidden border-r border-gray-400 pt-16 pb-4',
+        'bg-background-100 flex h-full max-h-full w-80 flex-col gap-4 overflow-hidden border-r border-gray-400 pt-16 pb-4',
         className,
       )}
       {...props}
     >
+      <div className='mx-4 flex gap-4'>
+        <p className='text-heading-18 flex flex-1 animate-pulse justify-center gap-1.5 rounded-xs border-2 border-green-400 bg-green-100 p-2 font-medium text-green-900'>
+          <AnimatePresence>
+            {roleRoundPhase === GameRoundPhase.CardSelect && (
+              <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                Choose card to use
+              </motion.span>
+            )}
+            {roleRoundPhase === GameRoundPhase.NodeSelect && (
+              <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                Choose node for used card to continue
+              </motion.span>
+            )}
+            {roleRoundPhase === GameRoundPhase.ActionEnd && (
+              <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                Waiting for other player to finish
+              </motion.span>
+            )}
+            {roleRoundPhase === GameRoundPhase.RoundResult && (
+              <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                Showing result
+              </motion.span>
+            )}
+            {roleRoundPhase === GameRoundPhase.RoundEnd && (
+              <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                Waiting for other player to end round
+              </motion.span>
+            )}
+          </AnimatePresence>
+        </p>
+
+        <AnimatePresence>
+          {roleRoundPhase === GameRoundPhase.RoundResult && (
+            <motion.button
+              onClick={() => clickNextRound()}
+              className='text-heading-18 bg-background-100 hover:bg-background-200 line-clamp-1 flex items-center justify-center border-2 border-gray-400 px-4 font-medium text-gray-900'
+            >
+              Next round
+            </motion.button>
+          )}
+        </AnimatePresence>
+      </div>
+
       <div className='space-y-4 px-4'>
         <div className='flex gap-4'>
           <p
@@ -67,7 +109,7 @@ export const GameSide = React.forwardRef<HTMLDivElement, GameSideProps>(({ class
 
       <div ref={sideRef} className='relative flex flex-1 overflow-clip'>
         <ScrollArea className='absolute z-20 w-full px-4' style={{ height: `${height}px` }}>
-          <Accordion type='multiple' defaultValue={['tutorial', 'selected-card', 'selected-node']}>
+          <Accordion type='multiple'>
             <AccordionItem value='tutorial'>
               <AccordionTrigger>How to Play?</AccordionTrigger>
               <AccordionContent className='mt-4 space-y-4'>
@@ -89,20 +131,11 @@ export const GameSide = React.forwardRef<HTMLDivElement, GameSideProps>(({ class
             </AccordionItem>
 
             <AccordionItem value='selected-card'>
-              <AccordionTrigger>{roleUsedCard ? 'Used Card' : 'Selected Card'}</AccordionTrigger>
+              <AccordionTrigger>Selected Card</AccordionTrigger>
               <AccordionContent className='mt-4 space-y-4'>
                 <div className='bg-background-200 flex h-96 w-full items-center justify-center rounded-xs border border-gray-400 px-4'>
                   <AnimatePresence mode='wait'>
-                    {roleUsedCardDetail ? (
-                      <motion.div
-                        key={roleUsedCardDetail.id}
-                        initial={{ opacity: 0, scale: 0.75 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.75 }}
-                      >
-                        <GameCard card={roleUsedCardDetail} className='scale-110' />
-                      </motion.div>
-                    ) : selectedCard ? (
+                    {selectedCard ? (
                       <motion.div
                         key={selectedCard.id}
                         initial={{ opacity: 0, scale: 0.75 }}
@@ -123,24 +156,15 @@ export const GameSide = React.forwardRef<HTMLDivElement, GameSideProps>(({ class
                     )}
                   </AnimatePresence>
                 </div>
-                <AnimatePresence>
-                  {(roleUsedCardDetail ?? selectedCard) && (
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      className='bg-background-200 w-full space-y-2 rounded-xs border border-gray-400 p-4'
-                    >
-                      <p className='text-heading-18 text-gray-1000'>
-                        What is {roleUsedCardDetail ? roleUsedCardDetail.name : selectedCard && selectedCard.name}?
-                      </p>
-                      <p className='text-copy-14 text-gray-800'>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a diam lectus. Sed sit amet ipsum
-                        mauris.
-                      </p>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                {selectedCard && (
+                  <div className='bg-background-200 w-full space-y-2 rounded-xs border border-gray-400 p-4'>
+                    <p className='text-heading-18 text-gray-1000'>What is {selectedCard.name}?</p>
+                    <p className='text-copy-14 text-gray-800'>
+                      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a diam lectus. Sed sit amet ipsum
+                      mauris.
+                    </p>
+                  </div>
+                )}
               </AccordionContent>
             </AccordionItem>
 
@@ -181,51 +205,37 @@ export const GameSide = React.forwardRef<HTMLDivElement, GameSideProps>(({ class
                 )}
               </AccordionContent>
             </AccordionItem>
+
+            {Object.keys(history).map((key, index) => {
+              if (!role) return null;
+
+              const roleUsedCard = history[key].usedCard[role];
+              if (!roleUsedCard) return null;
+
+              const usedCard = getGameCardById(roleUsedCard);
+              return (
+                <AccordionItem key={index} value={`history-${key}`}>
+                  <AccordionTrigger>Round {key} Action</AccordionTrigger>
+                  <AccordionContent className='mt-4 space-y-4'>
+                    <div className='bg-background-200 flex h-96 w-full items-center justify-center rounded-xs border border-gray-400 px-4'>
+                      <AnimatePresence mode='wait'>
+                        {usedCard && (
+                          <motion.div
+                            key={usedCard.id}
+                            initial={{ opacity: 0, scale: 0.75 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.75 }}
+                          >
+                            <GameCard card={usedCard} className='scale-110' />
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              );
+            })}
           </Accordion>
-
-          {/* <p className='text-label-18 border-y border-gray-400 px-2 py-4 text-gray-900'>Selected Card</p>
-          <div className='mt-4 space-y-4'>
-            {selectedCard ? (
-              <React.Fragment>
-                <div className='bg-background-200 flex h-96 w-full items-center justify-center rounded-xs border border-gray-400 px-4'>
-                  <GameCard card={selectedCard} className='scale-110' />
-                </div>
-                <div className='bg-background-200 w-full space-y-2 rounded-xs border border-gray-400 p-4'>
-                  <p className='text-heading-18 text-gray-1000'>What is {selectedCard.name}?</p>
-                  <p className='text-copy-14 text-gray-800'>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a diam lectus. Sed sit amet ipsum
-                    mauris.
-                  </p>
-                </div>
-              </React.Fragment>
-            ) : (
-              <p className='bg-background-200 flex h-96 w-full items-center justify-center rounded-xs border border-gray-400 px-4 font-normal text-gray-900'>
-                Select card to see the description
-              </p>
-            )}
-          </div>
-
-          <p className='text-label-18 mt-4 border-y border-gray-400 px-2 py-4 text-gray-900'>Selected Node</p>
-          <div className='mt-4 space-y-4'>
-            {selectedCard ? (
-              <React.Fragment>
-                <div className='bg-background-200 flex h-96 w-full items-center justify-center rounded-xs border border-gray-400 px-4'>
-                  <GameCard card={selectedCard} className='scale-110' />
-                </div>
-                <div className='bg-background-200 w-full space-y-2 rounded-xs border border-gray-400 p-4'>
-                  <p className='text-heading-18 text-gray-1000'>What is {selectedCard.name}?</p>
-                  <p className='text-copy-14 text-gray-800'>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a diam lectus. Sed sit amet ipsum
-                    mauris.
-                  </p>
-                </div>
-              </React.Fragment>
-            ) : (
-              <p className='bg-background-200 flex h-96 w-full items-center justify-center rounded-xs border border-gray-400 px-4 font-normal text-gray-900'>
-                Select card to see the description
-              </p>
-            )}
-          </div> */}
         </ScrollArea>
       </div>
     </div>

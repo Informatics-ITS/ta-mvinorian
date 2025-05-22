@@ -15,6 +15,10 @@ export const TOPOLOGY: TopologyType = {
       defenses: [],
       x: 290,
       y: 370,
+      selected: {
+        attacker: false,
+        defender: false,
+      },
     },
     {
       id: 'NH001',
@@ -27,6 +31,10 @@ export const TOPOLOGY: TopologyType = {
       defenses: [],
       x: 0,
       y: 370,
+      selected: {
+        attacker: false,
+        defender: false,
+      },
     },
     {
       id: 'NM001',
@@ -39,6 +47,10 @@ export const TOPOLOGY: TopologyType = {
       defenses: [],
       x: 0,
       y: 0,
+      selected: {
+        attacker: false,
+        defender: false,
+      },
     },
     {
       id: 'NM003',
@@ -51,6 +63,10 @@ export const TOPOLOGY: TopologyType = {
       defenses: [],
       x: 290,
       y: 0,
+      selected: {
+        attacker: false,
+        defender: false,
+      },
     },
     {
       id: 'NL002',
@@ -63,6 +79,10 @@ export const TOPOLOGY: TopologyType = {
       defenses: [],
       x: 580,
       y: 370,
+      selected: {
+        attacker: false,
+        defender: false,
+      },
     },
     {
       id: 'NM002',
@@ -75,6 +95,10 @@ export const TOPOLOGY: TopologyType = {
       defenses: [],
       x: 290,
       y: 740,
+      selected: {
+        attacker: false,
+        defender: false,
+      },
     },
     {
       id: 'NL001',
@@ -87,6 +111,10 @@ export const TOPOLOGY: TopologyType = {
       defenses: [],
       x: 580,
       y: 740,
+      selected: {
+        attacker: false,
+        defender: false,
+      },
     },
   ],
   links: [

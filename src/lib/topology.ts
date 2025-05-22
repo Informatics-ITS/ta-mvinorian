@@ -5,14 +5,18 @@ import { TOPOLOGY } from '@/constant/topology';
 export type TopologyNodeType = {
   id: string;
   name: string;
-  icon: LucideIcon;
   token: number;
-  stolenToken: number;
   security: 'low' | 'medium' | 'high';
+  icon: LucideIcon;
+  stolenToken: number;
   revealed: boolean;
   defenses: string[];
   x: number;
   y: number;
+  selected: {
+    attacker: boolean;
+    defender: boolean;
+  };
 };
 
 export type TopologyLinkType = {
@@ -25,6 +29,10 @@ export type TopologyType = {
   links: TopologyLinkType[];
 };
 
-export const generateTopology = () => {
-  return TOPOLOGY;
+export const defaultTopology: TopologyType = TOPOLOGY;
+
+export const getTopologyNodeById = (id: string): TopologyNodeType | undefined => {
+  const node = TOPOLOGY.nodes.find((node) => node.id === id);
+
+  return node;
 };

@@ -4,7 +4,7 @@ import React from 'react';
 
 import { getGameCardById } from '@/lib/game-card';
 import { cn } from '@/lib/utils';
-import { useGameEngineContext } from '@/provider/game-engine-provider';
+import { GameRoundPhase, useGameEngineContext } from '@/provider/game-engine-provider';
 
 import { Button } from '../ui/button';
 import { GameCard } from './card';
@@ -12,25 +12,14 @@ import { GameCard } from './card';
 export interface GameDeckProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export const GameDeck = React.forwardRef<HTMLDivElement, GameDeckProps>(({ className, ...props }, ref) => {
-  const { role, deck, usedCard, setDeck, setUsedCard } = useGameEngineContext();
+  const { role, deck, roundPhase, clickCard, clickUseCard } = useGameEngineContext();
 
-  const roleUsedCard = role ? usedCard[role] : null;
-
-  const handleClick = (cardId: string) => {
-    if (!role) return;
-    const newDeck = {
-      ...deck,
-      [role]: deck[role].map((card) =>
-        card.id === cardId ? { ...card, selected: !card.selected } : { ...card, selected: false },
-      ),
-    };
-    setDeck(newDeck);
-  };
+  const roleRoundPhase = roundPhase[role!];
 
   const handleUseCard = (cardId: string) => {
-    handleClick(cardId);
+    clickCard(cardId);
     setTimeout(() => {
-      setUsedCard(cardId);
+      clickUseCard(cardId);
     }, 150);
   };
 
@@ -48,14 +37,15 @@ export const GameDeck = React.forwardRef<HTMLDivElement, GameDeckProps>(({ class
       )}
       {...props}
     >
-      {roleUsedCard && (
+      {/* {roleRoundPhase !== GameRoundPhase.CardSelect && (
         <div className='absolute top-0 left-0 z-20 flex h-full w-full -translate-y-px items-center justify-center pb-[108px]'>
           <div className='bg-gray-1000 absolute top-0 left-0 h-full w-full opacity-40'></div>
           <p className='text-heading-32 bg-background-100 relative rounded-xs border border-gray-400 px-4 py-0.5'>
-            Choose node for used card to continue
+            {roleRoundPhase === GameRoundPhase.NodeSelect && 'Choose node for used card to continue'}
+            {roleRoundPhase === GameRoundPhase.RoundEnd && 'Waiting for other player to finish'}
           </p>
         </div>
-      )}
+      )} */}
       <AnimatePresence initial={false} mode='popLayout'>
         {deck &&
           role &&
@@ -72,13 +62,12 @@ export const GameDeck = React.forwardRef<HTMLDivElement, GameDeckProps>(({ class
                 variants={cardAnimation}
                 initial='initial'
                 animate={card.selected ? 'animate' : 'initial'}
-                whileHover={card.selected ? undefined : 'animate'}
+                whileHover='animate'
                 className='flex shrink-0 justify-center focus-visible:outline-none'
-                transition={{ duration: 0.2 }}
               >
-                <GameCard card={getGameCardById(card.id)!} onClick={() => handleClick(card.id)} className='relative' />
+                <GameCard card={getGameCardById(card.id)!} onClick={() => clickCard(card.id)} className='relative' />
                 <AnimatePresence>
-                  {card.selected && (
+                  {card.selected && roleRoundPhase === GameRoundPhase.CardSelect && (
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
@@ -95,7 +84,7 @@ export const GameDeck = React.forwardRef<HTMLDivElement, GameDeckProps>(({ class
                       </Button>
                       <div
                         className='bg-gray-1000 absolute right-0 left-0 h-full w-full opacity-40'
-                        onClick={() => handleClick(card.id)}
+                        onClick={() => clickCard(card.id)}
                       ></div>
                     </motion.div>
                   )}
