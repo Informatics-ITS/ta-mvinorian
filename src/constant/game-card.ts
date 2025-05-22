@@ -40,6 +40,7 @@ export const GAME_CARDS: GameCardType[] = [
     role: 'attacker',
     type: 'stealth',
     icon: NetworkIcon,
+    applicableToNodes: ['NM001', 'NM002', 'NL001', 'NL002'],
   },
   {
     id: 'CAS02',
@@ -48,6 +49,7 @@ export const GAME_CARDS: GameCardType[] = [
     role: 'attacker',
     type: 'stealth',
     icon: BrainIcon,
+    applicableToNodes: ['NM001', 'NM002', 'NL001', 'NL002'],
   },
   {
     id: 'CAS03',
@@ -56,6 +58,7 @@ export const GAME_CARDS: GameCardType[] = [
     role: 'attacker',
     type: 'stealth',
     icon: EthernetPortIcon,
+    applicableToNodes: ['NM001', 'NM002', 'NL001', 'NL002'],
   },
   {
     id: 'CAS04',
@@ -64,6 +67,7 @@ export const GAME_CARDS: GameCardType[] = [
     role: 'attacker',
     type: 'stealth',
     icon: GlobeLockIcon,
+    applicableToNodes: ['NM001', 'NM002', 'NL001', 'NL002'],
   },
   {
     id: 'CAS05',
@@ -72,6 +76,7 @@ export const GAME_CARDS: GameCardType[] = [
     role: 'attacker',
     type: 'stealth',
     icon: WorkflowIcon,
+    applicableToNodes: ['NM001', 'NM002', 'NL001', 'NL002'],
   },
   {
     id: 'CAA01',
@@ -80,6 +85,7 @@ export const GAME_CARDS: GameCardType[] = [
     role: 'attacker',
     type: 'attack',
     icon: SquareChartGanttIcon,
+    applicableToNodes: ['NM001', 'NM002', 'NL001', 'NL002'],
   },
   {
     id: 'CAA02',
@@ -88,6 +94,7 @@ export const GAME_CARDS: GameCardType[] = [
     role: 'attacker',
     type: 'attack',
     icon: FishIcon,
+    applicableToNodes: ['NM001', 'NM002', 'NL001', 'NL002'],
   },
   {
     id: 'CAA03',
@@ -96,6 +103,7 @@ export const GAME_CARDS: GameCardType[] = [
     role: 'attacker',
     type: 'attack',
     icon: CircleIcon,
+    applicableToNodes: ['NM001', 'NM002', 'NL001', 'NL002'],
   },
   {
     id: 'CAA04',
@@ -104,6 +112,7 @@ export const GAME_CARDS: GameCardType[] = [
     role: 'attacker',
     type: 'attack',
     icon: BugIcon,
+    applicableToNodes: ['NM001', 'NM002', 'NL001', 'NL002'],
   },
   {
     id: 'CAA05',
@@ -112,6 +121,7 @@ export const GAME_CARDS: GameCardType[] = [
     role: 'attacker',
     type: 'attack',
     icon: VenetianMaskIcon,
+    applicableToNodes: ['NM001', 'NM002', 'NL001', 'NL002'],
   },
   {
     id: 'CAD01',
@@ -120,6 +130,7 @@ export const GAME_CARDS: GameCardType[] = [
     role: 'attacker',
     type: 'disrupt',
     icon: RocketIcon,
+    applicableToNodes: ['NM001', 'NM002', 'NL001', 'NL002'],
   },
   {
     id: 'CAD02',
@@ -128,6 +139,7 @@ export const GAME_CARDS: GameCardType[] = [
     role: 'attacker',
     type: 'disrupt',
     icon: EraserIcon,
+    applicableToNodes: ['NM001', 'NM002', 'NL001', 'NL002'],
   },
   {
     id: 'CAD03',
@@ -136,6 +148,7 @@ export const GAME_CARDS: GameCardType[] = [
     role: 'attacker',
     type: 'disrupt',
     icon: DoorOpenIcon,
+    applicableToNodes: ['NM001', 'NM002', 'NL001', 'NL002'],
   },
   {
     id: 'CAD04',
@@ -144,6 +157,7 @@ export const GAME_CARDS: GameCardType[] = [
     role: 'attacker',
     type: 'disrupt',
     icon: ShieldUserIcon,
+    applicableToNodes: ['NM001', 'NM002', 'NL001', 'NL002'],
   },
   {
     id: 'CAD05',
@@ -152,6 +166,7 @@ export const GAME_CARDS: GameCardType[] = [
     role: 'attacker',
     type: 'disrupt',
     icon: CookieIcon,
+    applicableToNodes: ['NM001', 'NM002', 'NL001', 'NL002'],
   },
   {
     id: 'CDB01',

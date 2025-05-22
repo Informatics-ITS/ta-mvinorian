@@ -44,7 +44,9 @@ export const generateGameDeck = (attackerCount: number, defenderCount: number): 
   };
 };
 
-export const getGameCardById = (id: string): GameCardType | undefined => {
+export const getGameCardById = (id?: string): GameCardType | undefined => {
+  if (!id) return undefined;
+
   const card = GAME_CARDS.find((card) => card.id === id);
 
   return card;

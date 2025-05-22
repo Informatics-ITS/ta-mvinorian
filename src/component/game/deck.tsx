@@ -1,5 +1,4 @@
-import { AnimatePresence } from 'motion/react';
-import * as motion from 'motion/react-client';
+import { AnimatePresence, motion } from 'motion/react';
 import React from 'react';
 
 import { getGameCardById } from '@/lib/game-card';
@@ -37,15 +36,6 @@ export const GameDeck = React.forwardRef<HTMLDivElement, GameDeckProps>(({ class
       )}
       {...props}
     >
-      {/* {roleRoundPhase !== GameRoundPhase.CardSelect && (
-        <div className='absolute top-0 left-0 z-20 flex h-full w-full -translate-y-px items-center justify-center pb-[108px]'>
-          <div className='bg-gray-1000 absolute top-0 left-0 h-full w-full opacity-40'></div>
-          <p className='text-heading-32 bg-background-100 relative rounded-xs border border-gray-400 px-4 py-0.5'>
-            {roleRoundPhase === GameRoundPhase.NodeSelect && 'Choose node for used card to continue'}
-            {roleRoundPhase === GameRoundPhase.RoundEnd && 'Waiting for other player to finish'}
-          </p>
-        </div>
-      )} */}
       <AnimatePresence initial={false} mode='popLayout'>
         {deck &&
           role &&

@@ -1,18 +1,20 @@
 import * as d3 from 'd3';
+import { AnimatePresence, motion, Variants } from 'motion/react';
 import React from 'react';
 
 import { useElementDimensions } from '@/hook/use-element-dimensions';
 import { useForwardedRef } from '@/hook/use-forwarded-ref';
-import { TopologyNodeType } from '@/lib/topology';
+import { getTopologyNodeById } from '@/lib/topology';
 import { cn } from '@/lib/utils';
 import { useGameEngineContext } from '@/provider/game-engine-provider';
 
+import { Button } from '../ui/button';
 import { GameNode } from './node';
 
 export interface GameBoardProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export const GameBoard = React.forwardRef<HTMLDivElement, GameBoardProps>(({ className, ...props }, ref) => {
-  const { topology, role } = useGameEngineContext();
+  const { topology, role, isNodeUsable, clickNode, clickUseNode } = useGameEngineContext();
 
   const zoomRef = React.useRef<d3.ZoomBehavior<SVGSVGElement, unknown> | null>(null);
   const zoomStateRef = React.useRef<d3.ZoomTransform | null>(null);
@@ -133,15 +135,45 @@ export const GameBoard = React.forwardRef<HTMLDivElement, GameBoardProps>(({ cla
     }
   }, [topology, grid, scaleX, scaleY]);
 
+  const nodeAnimation: Variants = {
+    initial: {
+      border: '8px solid #cce6ff',
+      opacity: 0,
+      borderRadius: '1.5rem',
+    },
+    pulse: {
+      border: '8px solid #cce6ff',
+      opacity: [1, 0.2, 1],
+      transition: { duration: 2, repeat: Infinity, ease: 'linear' },
+    },
+    hover: {
+      border: '8px solid #ebebeb',
+      opacity: 1,
+      transition: { duration: 0.2 },
+    },
+    active: {
+      border: '8px solid #c9c9c9',
+      opacity: 1,
+      transition: { duration: 0.2 },
+    },
+  };
+
+  const handleUseNode = (nodeId: string) => {
+    clickNode(nodeId);
+    setTimeout(() => {
+      clickUseNode(nodeId);
+    }, 150);
+  };
+
   return (
     <div ref={innerRef} className={cn('bg-background-200 relative h-full w-full overflow-clip', className)} {...props}>
-      {topology && (
+      {topology && role && (
         <svg ref={svgRef} width={width} height={height} className='h-full w-full'>
           <g id='grid' className='grid'></g>
 
           {topology.links.map((link) => {
-            const sourceNode = getNodeById(link.source, topology.nodes);
-            const targetNode = getNodeById(link.target, topology.nodes);
+            const sourceNode = getTopologyNodeById(link.source);
+            const targetNode = getTopologyNodeById(link.target);
 
             if (!sourceNode || !targetNode) return null;
 
@@ -157,7 +189,10 @@ export const GameBoard = React.forwardRef<HTMLDivElement, GameBoardProps>(({ cla
             );
           })}
 
-          {topology.nodes.map((node) => {
+          {topology.nodes.map((item) => {
+            const node = getTopologyNodeById(item.id);
+            if (!node) return null;
+
             return (
               <foreignObject
                 id={node.id}
@@ -168,7 +203,38 @@ export const GameBoard = React.forwardRef<HTMLDivElement, GameBoardProps>(({ cla
                 y={node.y + height / 8}
                 className={cn('node flex items-center justify-center overflow-visible', node.id)}
               >
-                <GameNode node={node} role={role!} />
+                <GameNode node={item} nodeDetail={node} role={role!} className='relative z-0' />
+                <AnimatePresence>
+                  {item.selected[role] && isNodeUsable(node.id) && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className='absolute top-0 left-0 z-10 flex h-72 w-52 shrink-0 flex-col items-center overflow-clip rounded-xl'
+                    >
+                      <Button
+                        size='lg'
+                        variant='ghost'
+                        onClick={() => handleUseNode(node.id)}
+                        className='!text-label-20 hover:bg-background-100 hover:border-background-100 relative z-20 mt-[72px] border border-gray-400 text-gray-100'
+                      >
+                        Use Node
+                      </Button>
+                      <div
+                        className='bg-gray-1000 absolute right-0 left-0 h-full w-full opacity-40'
+                        onClick={() => clickNode(node.id)}
+                      ></div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+                <motion.div
+                  variants={nodeAnimation}
+                  initial='initial'
+                  animate={item.selected[role] ? 'active' : isNodeUsable(node.id) ? 'pulse' : 'initial'}
+                  whileHover={!item.selected[role] ? 'hover' : isNodeUsable(node.id) ? 'pulse' : 'active'}
+                  onClick={() => clickNode(node.id)}
+                  className='absolute -top-5 -right-5 -bottom-5 -left-5 z-0 rounded-3xl'
+                ></motion.div>
               </foreignObject>
             );
           })}
@@ -177,7 +243,3 @@ export const GameBoard = React.forwardRef<HTMLDivElement, GameBoardProps>(({ cla
     </div>
   );
 });
-
-function getNodeById(id: string, nodes: TopologyNodeType[]) {
-  return nodes.find((node) => node.id === id);
-}

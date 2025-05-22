@@ -8,17 +8,19 @@ export const useWsState = <TData>(stateName: string, defaultData: TData) => {
   const { sendMessage, onMessage, removeMessageListener } = useWsContext();
 
   const setState = React.useCallback(
-    (data: TData) => {
-      setLocalState(data);
+    (data: TData | ((prevState: TData) => TData)) => {
+      const newData = typeof data === 'function' ? (data as (prevState: TData) => TData)(localState) : data;
+
+      setLocalState(newData);
 
       const message: WsMessageType = {
         state: stateName,
-        data: JSON.stringify(data),
+        data: JSON.stringify(newData),
       };
 
       sendMessage(message);
     },
-    [stateName, sendMessage],
+    [stateName, sendMessage, localState],
   );
 
   React.useEffect(() => {

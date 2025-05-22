@@ -1,11 +1,11 @@
 import React from 'react';
 
-import { TopologyNodeType } from '@/lib/topology';
+import { TopologyNodeDetailType, TopologyNodeType } from '@/lib/topology';
 import { cn } from '@/lib/utils';
 import { GameRoleType } from '@/provider/game-engine-provider';
 
 export const nodeAttribute: {
-  [k in TopologyNodeType['security']]: {
+  [k in TopologyNodeDetailType['security']]: {
     bg: string;
     icon: React.ReactNode;
     text: string;
@@ -41,113 +41,118 @@ export const nodeAttribute: {
 };
 
 export interface GameNodeProps extends React.HTMLAttributes<HTMLDivElement> {
+  nodeDetail: TopologyNodeDetailType;
   node: TopologyNodeType;
   role: GameRoleType;
 }
 
-export const GameNode = React.forwardRef<HTMLDivElement, GameNodeProps>(({ node, role, className, ...props }, ref) => {
-  const NodeIcon = node.icon;
-  return (
-    <div
-      ref={ref}
-      className={cn('bg-background-100 shadow-card h-72 w-52 shrink-0 rounded-xl p-1.5', className)}
-      {...props}
-    >
-      <div className={cn('h-full w-full space-y-3 rounded-lg p-2', nodeAttribute[node.security].bg)}>
-        <div className='relative flex h-36 w-full items-center justify-center overflow-clip rounded-md'>
-          <div
-            className={cn(
-              'absolute -top-1 -left-0.5 rounded-md p-2',
-              nodeAttribute[node.security].bg,
-              nodeAttribute[node.security].text,
-            )}
-          >
-            {nodeAttribute[node.security].icon}
-          </div>
-
-          <NodeIcon className={cn('z-10 h-24 w-24', nodeAttribute[node.security].strong)} strokeWidth={1.25} />
-
-          {((role === 'attacker' && node.revealed === true) || role === 'defender') && (
-            <div className='absolute top-1.5 right-1.5 z-10 space-y-1.5'>
-              {Array.from({ length: node.token - node.stolenToken }, (_, i) => (
-                <_ActiveDataToken key={i} />
-              ))}
-              {Array.from({ length: node.stolenToken }, (_, i) => (
-                <_StolenDataToken key={i} />
-              ))}
+export const GameNode = React.forwardRef<HTMLDivElement, GameNodeProps>(
+  ({ node, nodeDetail, role, className, ...props }, ref) => {
+    const NodeIcon = nodeDetail.icon;
+    return (
+      <div
+        ref={ref}
+        className={cn('bg-background-100 shadow-card h-72 w-52 shrink-0 rounded-xl p-1.5', className)}
+        {...props}
+      >
+        <div className={cn('h-full w-full space-y-3 rounded-lg p-2', nodeAttribute[nodeDetail.security].bg)}>
+          <div className='relative flex h-36 w-full items-center justify-center overflow-clip rounded-md'>
+            <div
+              className={cn(
+                'absolute -top-1 -left-0.5 rounded-md p-2',
+                nodeAttribute[nodeDetail.security].bg,
+                nodeAttribute[nodeDetail.security].text,
+              )}
+            >
+              {nodeAttribute[nodeDetail.security].icon}
             </div>
-          )}
 
-          <svg
-            className='absolute top-0 left-0 z-0 h-full w-full object-fill'
-            fill='none'
-            xmlns='http://www.w3.org/2000/svg'
-          >
-            <g filter='url(#filter0_i_2025_34)'>
-              <path
-                fillRule='evenodd'
-                clipRule='evenodd'
-                d='M6 36C2.68629 36 0 38.6863 0 42V142C0 145.314 2.68629 148 6 148H176C179.314 148 182 145.314 182 142V6C182 2.68629 179.314 0 176 0H42C38.6863 0 36 2.68629 36 6V30C36 33.3137 33.3137 36 30 36H6Z'
-                fill='white'
-              />
-            </g>
-            <defs>
-              <filter
-                id='filter0_i_2025_34'
-                x='0'
-                y='0'
-                width='182'
-                height='148'
-                filterUnits='userSpaceOnUse'
-                colorInterpolationFilters='sRGB'
-              >
-                <feFlood floodOpacity='0' result='BackgroundImageFix' />
-                <feBlend mode='normal' in='SourceGraphic' in2='BackgroundImageFix' result='shape' />
-                <feColorMatrix
-                  in='SourceAlpha'
-                  type='matrix'
-                  values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0'
-                  result='hardAlpha'
+            <NodeIcon className={cn('z-10 h-24 w-24', nodeAttribute[nodeDetail.security].strong)} strokeWidth={1.25} />
+
+            {((role === 'attacker' && node.revealed === true) || role === 'defender') && (
+              <div className='absolute top-1.5 right-1.5 z-10 space-y-1.5'>
+                {Array.from({ length: nodeDetail.token - node.stolenToken }, (_, i) => (
+                  <_ActiveDataToken key={i} />
+                ))}
+                {Array.from({ length: node.stolenToken }, (_, i) => (
+                  <_StolenDataToken key={i} />
+                ))}
+              </div>
+            )}
+
+            <svg
+              className='absolute top-0 left-0 z-0 h-full w-full object-fill'
+              fill='none'
+              xmlns='http://www.w3.org/2000/svg'
+            >
+              <g filter='url(#filter0_i_2025_34)'>
+                <path
+                  fillRule='evenodd'
+                  clipRule='evenodd'
+                  d='M6 36C2.68629 36 0 38.6863 0 42V142C0 145.314 2.68629 148 6 148H176C179.314 148 182 145.314 182 142V6C182 2.68629 179.314 0 176 0H42C38.6863 0 36 2.68629 36 6V30C36 33.3137 33.3137 36 30 36H6Z'
+                  fill='white'
                 />
-                <feOffset />
-                <feGaussianBlur stdDeviation='2' />
-                <feComposite in2='hardAlpha' operator='arithmetic' k2='-1' k3='1' />
-                <feColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0' />
-                <feBlend mode='normal' in2='shape' result='effect1_innerShadow_2025_34' />
-              </filter>
-            </defs>
-          </svg>
-        </div>
-        <div className='space-y-4 px-1 text-left'>
-          <p className={cn('!text-label-16 font-semibold', nodeAttribute[node.security].text)}>{node.name}</p>
-          <div className='grid grid-cols-3 gap-3'>
-            <div
-              className={cn(
-                'aspect-square w-full rounded-md border-2 border-dashed',
-                nodeAttribute[node.security].accent,
-                nodeAttribute[node.security].stroke,
-              )}
-            ></div>
-            <div
-              className={cn(
-                'aspect-square w-full rounded-md border-2 border-dashed',
-                nodeAttribute[node.security].accent,
-                nodeAttribute[node.security].stroke,
-              )}
-            ></div>
-            <div
-              className={cn(
-                'aspect-square w-full rounded-md border-2 border-dashed',
-                nodeAttribute[node.security].accent,
-                nodeAttribute[node.security].stroke,
-              )}
-            ></div>
+              </g>
+              <defs>
+                <filter
+                  id='filter0_i_2025_34'
+                  x='0'
+                  y='0'
+                  width='182'
+                  height='148'
+                  filterUnits='userSpaceOnUse'
+                  colorInterpolationFilters='sRGB'
+                >
+                  <feFlood floodOpacity='0' result='BackgroundImageFix' />
+                  <feBlend mode='normal' in='SourceGraphic' in2='BackgroundImageFix' result='shape' />
+                  <feColorMatrix
+                    in='SourceAlpha'
+                    type='matrix'
+                    values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0'
+                    result='hardAlpha'
+                  />
+                  <feOffset />
+                  <feGaussianBlur stdDeviation='2' />
+                  <feComposite in2='hardAlpha' operator='arithmetic' k2='-1' k3='1' />
+                  <feColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0' />
+                  <feBlend mode='normal' in2='shape' result='effect1_innerShadow_2025_34' />
+                </filter>
+              </defs>
+            </svg>
+          </div>
+          <div className='space-y-4 px-1 text-left'>
+            <p className={cn('!text-label-16 font-semibold', nodeAttribute[nodeDetail.security].text)}>
+              {nodeDetail.name}
+            </p>
+            <div className='grid grid-cols-3 gap-3'>
+              <div
+                className={cn(
+                  'aspect-square w-full rounded-md border-2 border-dashed',
+                  nodeAttribute[nodeDetail.security].accent,
+                  nodeAttribute[nodeDetail.security].stroke,
+                )}
+              ></div>
+              <div
+                className={cn(
+                  'aspect-square w-full rounded-md border-2 border-dashed',
+                  nodeAttribute[nodeDetail.security].accent,
+                  nodeAttribute[nodeDetail.security].stroke,
+                )}
+              ></div>
+              <div
+                className={cn(
+                  'aspect-square w-full rounded-md border-2 border-dashed',
+                  nodeAttribute[nodeDetail.security].accent,
+                  nodeAttribute[nodeDetail.security].stroke,
+                )}
+              ></div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  );
-});
+    );
+  },
+);
 
 export { _ActiveDataToken as ActiveDataToken };
 

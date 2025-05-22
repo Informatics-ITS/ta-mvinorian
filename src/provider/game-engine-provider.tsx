@@ -12,7 +12,7 @@ import {
   getGameCardById,
   getRandomGameCards,
 } from '@/lib/game-card';
-import { defaultTopology, TopologyType } from '@/lib/topology';
+import { defaultTopology, getTopologyNodeById, TopologyNodeType, TopologyType } from '@/lib/topology';
 
 import { useWsContext } from './ws-provider';
 
@@ -42,7 +42,7 @@ type GameHistoryType = Record<
   string,
   {
     usedCard: Record<GameRoleType, string | null>;
-    usedNode?: Record<GameRoleType, string | null>;
+    usedNode?: Record<GameRoleType, TopologyNodeType | null>;
   }
 >;
 
@@ -63,7 +63,9 @@ export type GameEngineType = {
   clickCard: (cardId: string) => void;
   clickNode: (nodeId: string) => void;
   clickUseCard: (cardId: string) => void;
+  clickUseNode: (nodeId: string) => void;
   clickNextRound: () => void;
+  isNodeUsable: (nodeId: string) => boolean;
 };
 
 const GameEngineContext = React.createContext<GameEngineType>({
@@ -78,7 +80,9 @@ const GameEngineContext = React.createContext<GameEngineType>({
   clickCard: () => {},
   clickNode: () => {},
   clickUseCard: () => {},
+  clickUseNode: () => {},
   clickNextRound: () => {},
+  isNodeUsable: () => false,
 });
 
 export const useGameEngineContext = () => {
@@ -120,32 +124,41 @@ export const GameEngineProvider = ({ children }: GameEngineProviderProps) => {
   //* ===== Player Actions =====
   const clickCard = (cardId: string) => {
     if (!role) return;
-    const newDeck = {
-      ...deck,
-      [role]: deck[role].map((card) =>
+
+    setDeck((prevDeck) => ({
+      ...prevDeck,
+      [role]: prevDeck[role].map((card) =>
         card.id === cardId ? { ...card, selected: !card.selected } : { ...card, selected: false },
       ),
-    };
-    setDeck(newDeck);
+    }));
   };
 
   const clickNode = (nodeId: string) => {
-    if (!role || !topology) return;
-    const newTopology = {
-      ...topology,
-      nodes: topology?.nodes.map((node) =>
-        node.id === nodeId
-          ? {
-              ...node,
-              selected: {
-                ...node.selected,
-                [role]: !node.selected[role],
+    if (!role) return;
+
+    setTopology((prevTopology) => {
+      if (!prevTopology) return prevTopology;
+      return {
+        ...prevTopology,
+        nodes: prevTopology.nodes.map((node) =>
+          node.id === nodeId
+            ? {
+                ...node,
+                selected: {
+                  ...node.selected,
+                  [role]: !node.selected[role],
+                },
+              }
+            : {
+                ...node,
+                selected: {
+                  ...node.selected,
+                  [role]: false,
+                },
               },
-            }
-          : node,
-      ),
-    };
-    setTopology(newTopology);
+        ),
+      };
+    });
   };
 
   const clickUseCard = (cardId: string) => {
@@ -158,83 +171,102 @@ export const GameEngineProvider = ({ children }: GameEngineProviderProps) => {
     } while (deck[role].some((card) => card.id === newCard.id));
 
     //? Remove used card from deck
-    const newRoleDeck = [...deck[role].filter((card) => card.id !== cardId), { id: newCard.id, selected: false }];
-    const newDeck = {
-      ...deck,
-      [role]: newRoleDeck,
-    };
-    setDeck(newDeck);
+    setDeck((prevDeck) => ({
+      ...prevDeck,
+      [role]: [...prevDeck[role].filter((card) => card.id !== cardId), { id: newCard.id, selected: false }],
+    }));
 
     //? Update history
-    const newHistory = {
-      ...history,
+    setHistory((prevHistory) => ({
+      ...prevHistory,
       [round]: {
         usedCard: {
-          ...history[round]?.usedCard,
+          ...prevHistory[round]?.usedCard,
           [role]: cardId,
         },
         usedNode: {
-          ...history[round]?.usedNode,
+          ...prevHistory[round]?.usedNode,
           [role]: null,
         },
       },
-    };
-    setHistory(newHistory);
+    }));
 
     //? Update round phase
     const card = getGameCardById(cardId);
     if (card && card.applicableToNodes) {
-      const newRoundPhase = {
-        ...roundPhase,
+      setRoundPhase((prevRoundPhase) => ({
+        ...prevRoundPhase,
         [role]: GameRoundPhase.NodeSelect,
-      };
-      setRoundPhase(newRoundPhase);
+      }));
     } else {
-      const newRoundPhase = {
-        ...roundPhase,
+      setRoundPhase((prevRoundPhase) => ({
+        ...prevRoundPhase,
         [role]: GameRoundPhase.ActionEnd,
-      };
-      setRoundPhase(newRoundPhase);
+      }));
     }
+  };
+
+  const clickUseNode = (nodeId: string) => {
+    if (!role || roundPhase[role] !== GameRoundPhase.NodeSelect) return;
+    if (!topology) return;
+    const usedNode = topology.nodes.find((node) => node.id === nodeId);
+
+    //? Update history
+    setHistory((prevHistory) => ({
+      ...prevHistory,
+      [round]: {
+        ...prevHistory[round],
+        usedNode: {
+          ...prevHistory[round]?.usedNode,
+          [role]: usedNode,
+        },
+      },
+    }));
+
+    //? Update round phase
+    setRoundPhase((prevRoundPhase) => ({
+      ...prevRoundPhase,
+      [role]: GameRoundPhase.ActionEnd,
+    }));
   };
 
   const clickNextRound = () => {
     if (!role) return;
-    const newRoundPhase = {
-      ...roundPhase,
+    setRoundPhase((prevRoundPhase) => ({
+      ...prevRoundPhase,
       [role]: GameRoundPhase.RoundEnd,
-    };
-    setRoundPhase(newRoundPhase);
+    }));
   };
 
   //* ===== Game Engine Logic =====
-  // const isCardApplicableToNode = (cardId: string, nodeId: string) => {
-  //   const card = getGameCardById(cardId);
+  const isCardApplicableToNode = (cardId: string, nodeId: string) => {
+    const card = getGameCardById(cardId);
 
-  //   if (!card) return false;
-  //   if (card.applicableToNodes) return card.applicableToNodes.includes(nodeId);
+    if (!card) return false;
+    if (card.applicableToNodes) return card.applicableToNodes.includes(nodeId);
 
-  //   return true;
-  // };
+    return true;
+  };
 
-  // const isNodeSelectable = (nodeId: string) => {
-  //   if (!role || roundPhase[role] !== GameRoundPhase.NodeSelect) return false;
+  const isNodeUsable = (nodeId: string) => {
+    if (!role || roundPhase[role] !== GameRoundPhase.NodeSelect) return false;
+    if (!topology) return false;
 
-  //   const node = getTopologyNodeById(nodeId);
-  //   if (!node) return false;
+    const node = getTopologyNodeById(nodeId);
+    if (!node) return false;
 
-  //   const usedCard = history[round]?.usedCard;
+    const usedCard = history[round]?.usedCard;
+    if (!usedCard) return false;
 
-  //   return isCardApplicableToNode(usedCard, nodeId);
-  // };
+    return isCardApplicableToNode(usedCard[role] ?? '', nodeId);
+  };
 
   const runCardEffects = () => {
     if (!role) return;
-    const newRoundPhase = {
-      ...roundPhase,
+    setRoundPhase((prevRoundPhase) => ({
+      ...prevRoundPhase,
       [role]: GameRoundPhase.RoundResult,
-    };
-    setRoundPhase(newRoundPhase);
+    }));
   };
 
   const resetRoundPhase = () => {
@@ -244,12 +276,11 @@ export const GameEngineProvider = ({ children }: GameEngineProviderProps) => {
 
   const checkRoundEnd = React.useCallback(() => {
     if (roundPhase.attacker === GameRoundPhase.ActionEnd && roundPhase.defender === GameRoundPhase.ActionEnd) {
-      const newRoundPhase = {
-        ...roundPhase,
+      setRoundPhase((prevRoundState) => ({
+        ...prevRoundState,
         attacker: GameRoundPhase.RoundResult,
         defender: GameRoundPhase.RoundResult,
-      };
-      setRoundPhase(newRoundPhase);
+      }));
     }
 
     if (roundPhase.attacker !== GameRoundPhase.RoundEnd || roundPhase.defender !== GameRoundPhase.RoundEnd) return;
@@ -305,7 +336,9 @@ export const GameEngineProvider = ({ children }: GameEngineProviderProps) => {
     clickCard,
     clickNode,
     clickUseCard,
+    clickUseNode,
     clickNextRound,
+    isNodeUsable,
   };
 
   return <GameEngineContext.Provider value={gameEngine}>{children}</GameEngineContext.Provider>;

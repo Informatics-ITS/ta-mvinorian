@@ -3,13 +3,14 @@ import React from 'react';
 
 import { useElementDimensions } from '@/hook/use-element-dimensions';
 import { GameCardType, getGameCardById } from '@/lib/game-card';
+import { getTopologyNodeById, TopologyNodeDetailType, TopologyNodeType } from '@/lib/topology';
 import { cn } from '@/lib/utils';
 import { GameConstant, GameRoundPhase, useGameEngineContext } from '@/provider/game-engine-provider';
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
 import { ScrollArea } from '../ui/scroll-area';
 import { GameCard } from './card';
-import { ActiveDataToken } from './node';
+import { ActiveDataToken, GameNode } from './node';
 
 export interface GameSideProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -17,8 +18,10 @@ export const GameSide = React.forwardRef<HTMLDivElement, GameSideProps>(({ class
   const sideRef = React.useRef<HTMLDivElement>(null);
   const { height } = useElementDimensions(sideRef);
 
-  const { round, role, deck, stolenTokens, roundPhase, history, clickNextRound } = useGameEngineContext();
+  const { round, role, deck, topology, stolenTokens, roundPhase, history, clickNextRound } = useGameEngineContext();
   const [selectedCard, setSelectedCard] = React.useState<GameCardType | null>(null);
+  const [selectedNode, setSelectedNode] = React.useState<TopologyNodeType | null>(null);
+  const [selectedNodeDetail, setSelectedNodeDetail] = React.useState<TopologyNodeDetailType | null>(null);
 
   const roleRoundPhase = roundPhase[role!];
 
@@ -29,6 +32,17 @@ export const GameSide = React.forwardRef<HTMLDivElement, GameSideProps>(({ class
     if (!selected) setSelectedCard(null);
     else setSelectedCard(getGameCardById(selected.id) ?? null);
   }, [deck, role]);
+
+  React.useEffect(() => {
+    if (!role || !topology) return;
+    const selected = topology.nodes.find((node) => node.selected[role]);
+
+    if (!selected) setSelectedNode(null);
+    else {
+      setSelectedNode(selected);
+      setSelectedNodeDetail(getTopologyNodeById(selected.id) ?? null);
+    }
+  }, [topology, role]);
 
   return (
     <div
@@ -49,7 +63,7 @@ export const GameSide = React.forwardRef<HTMLDivElement, GameSideProps>(({ class
             )}
             {roleRoundPhase === GameRoundPhase.NodeSelect && (
               <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                Choose node for used card to continue
+                Choose target node to continue
               </motion.span>
             )}
             {roleRoundPhase === GameRoundPhase.ActionEnd && (
@@ -173,14 +187,19 @@ export const GameSide = React.forwardRef<HTMLDivElement, GameSideProps>(({ class
               <AccordionContent className='mt-4 space-y-4'>
                 <div className='bg-background-200 flex h-96 w-full items-center justify-center rounded-xs border border-gray-400 px-4'>
                   <AnimatePresence mode='wait'>
-                    {selectedCard ? (
+                    {selectedNode && selectedNodeDetail && role ? (
                       <motion.div
-                        key={selectedCard.id}
+                        key={selectedNode.id}
                         initial={{ opacity: 0, scale: 0.75 }}
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.75 }}
                       >
-                        <GameCard card={selectedCard} className='scale-110' />
+                        <GameNode
+                          node={selectedNode}
+                          nodeDetail={selectedNodeDetail}
+                          role={role}
+                          className='scale-110'
+                        />
                       </motion.div>
                     ) : (
                       <motion.p
@@ -189,14 +208,14 @@ export const GameSide = React.forwardRef<HTMLDivElement, GameSideProps>(({ class
                         exit={{ opacity: 0 }}
                         className='font-normal text-gray-900'
                       >
-                        Select card to see the description
+                        Select node to see the description
                       </motion.p>
                     )}
                   </AnimatePresence>
                 </div>
-                {selectedCard && (
+                {selectedNodeDetail && (
                   <div className='bg-background-200 w-full space-y-2 rounded-xs border border-gray-400 p-4'>
-                    <p className='text-heading-18 text-gray-1000'>What is {selectedCard.name}?</p>
+                    <p className='text-heading-18 text-gray-1000'>What is {selectedNodeDetail.name}?</p>
                     <p className='text-copy-14 text-gray-800'>
                       Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a diam lectus. Sed sit amet ipsum
                       mauris.
@@ -209,28 +228,61 @@ export const GameSide = React.forwardRef<HTMLDivElement, GameSideProps>(({ class
             {Object.keys(history).map((key, index) => {
               if (!role) return null;
 
-              const roleUsedCard = history[key].usedCard[role];
-              if (!roleUsedCard) return null;
-
+              const roleUsedCard = history[key].usedCard[role] ?? undefined;
               const usedCard = getGameCardById(roleUsedCard);
+
+              const usedNode = history[key].usedNode?.[role] ?? undefined;
+              const usedNodeDetail = getTopologyNodeById(usedNode?.id) ?? undefined;
+
+              if (!usedCard) return null;
+
               return (
                 <AccordionItem key={index} value={`history-${key}`}>
                   <AccordionTrigger>Round {key} Action</AccordionTrigger>
                   <AccordionContent className='mt-4 space-y-4'>
-                    <div className='bg-background-200 flex h-96 w-full items-center justify-center rounded-xs border border-gray-400 px-4'>
-                      <AnimatePresence mode='wait'>
-                        {usedCard && (
+                    <AnimatePresence mode='wait'>
+                      {usedCard && (
+                        <div className='bg-background-200 flex h-96 w-full flex-col items-center justify-center gap-4 rounded-xs border border-gray-400 px-4'>
+                          <motion.p
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className='text-copy-16 -translate-y-3 text-gray-900'
+                          >
+                            Used Card
+                          </motion.p>
                           <motion.div
-                            key={usedCard.id}
                             initial={{ opacity: 0, scale: 0.75 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.75 }}
                           >
                             <GameCard card={usedCard} className='scale-110' />
                           </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </div>
+                        </div>
+                      )}
+                    </AnimatePresence>
+
+                    <AnimatePresence mode='wait'>
+                      {usedNode && usedNodeDetail && (
+                        <div className='bg-background-200 flex h-96 w-full flex-col items-center justify-center gap-4 rounded-xs border border-gray-400 px-4'>
+                          <motion.p
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className='text-copy-16 -translate-y-3 text-gray-900'
+                          >
+                            Target Node
+                          </motion.p>
+                          <motion.div
+                            initial={{ opacity: 0, scale: 0.75 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.75 }}
+                          >
+                            <GameNode node={usedNode} nodeDetail={usedNodeDetail} role={role} className='scale-110' />
+                          </motion.div>
+                        </div>
+                      )}
+                    </AnimatePresence>
                   </AccordionContent>
                 </AccordionItem>
               );

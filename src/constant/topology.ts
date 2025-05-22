@@ -1,8 +1,8 @@
 import { CloudIcon, CpuIcon, DatabaseIcon, GlobeIcon, MailIcon, MonitorIcon, NetworkIcon } from 'lucide-react';
 
-import { TopologyType } from '@/lib/topology';
+import { TopologyDetailType } from '@/lib/topology';
 
-export const TOPOLOGY: TopologyType = {
+export const TOPOLOGY: TopologyDetailType = {
   nodes: [
     {
       id: 'NH002',
@@ -10,15 +10,8 @@ export const TOPOLOGY: TopologyType = {
       token: 0,
       security: 'high',
       icon: NetworkIcon,
-      stolenToken: 0,
-      revealed: false,
-      defenses: [],
       x: 290,
       y: 370,
-      selected: {
-        attacker: false,
-        defender: false,
-      },
     },
     {
       id: 'NH001',
@@ -26,15 +19,8 @@ export const TOPOLOGY: TopologyType = {
       token: 2,
       security: 'high',
       icon: DatabaseIcon,
-      stolenToken: 0,
-      revealed: false,
-      defenses: [],
       x: 0,
       y: 370,
-      selected: {
-        attacker: false,
-        defender: false,
-      },
     },
     {
       id: 'NM001',
@@ -42,15 +28,8 @@ export const TOPOLOGY: TopologyType = {
       token: 1,
       security: 'medium',
       icon: GlobeIcon,
-      stolenToken: 0,
-      revealed: false,
-      defenses: [],
       x: 0,
       y: 0,
-      selected: {
-        attacker: false,
-        defender: false,
-      },
     },
     {
       id: 'NM003',
@@ -58,15 +37,8 @@ export const TOPOLOGY: TopologyType = {
       token: 2,
       security: 'medium',
       icon: CloudIcon,
-      stolenToken: 0,
-      revealed: false,
-      defenses: [],
       x: 290,
       y: 0,
-      selected: {
-        attacker: false,
-        defender: false,
-      },
     },
     {
       id: 'NL002',
@@ -74,15 +46,8 @@ export const TOPOLOGY: TopologyType = {
       token: 0,
       security: 'low',
       icon: CpuIcon,
-      stolenToken: 0,
-      revealed: false,
-      defenses: [],
       x: 580,
       y: 370,
-      selected: {
-        attacker: false,
-        defender: false,
-      },
     },
     {
       id: 'NM002',
@@ -90,15 +55,8 @@ export const TOPOLOGY: TopologyType = {
       token: 1,
       security: 'medium',
       icon: MailIcon,
-      stolenToken: 0,
-      revealed: false,
-      defenses: [],
       x: 290,
       y: 740,
-      selected: {
-        attacker: false,
-        defender: false,
-      },
     },
     {
       id: 'NL001',
@@ -106,15 +64,8 @@ export const TOPOLOGY: TopologyType = {
       token: 1,
       security: 'low',
       icon: MonitorIcon,
-      stolenToken: 0,
-      revealed: false,
-      defenses: [],
       x: 580,
       y: 740,
-      selected: {
-        attacker: false,
-        defender: false,
-      },
     },
   ],
   links: [
