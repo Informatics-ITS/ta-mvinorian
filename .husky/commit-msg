@@ -1,4 +1,4 @@
 #!/usr/bin/env sh
-exec >/dev/tty 2>&1
+exec >/dev/tty 2>&1 || true
 
 npx --no-install commitlint --edit $1
