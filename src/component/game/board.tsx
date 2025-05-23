@@ -203,7 +203,7 @@ export const GameBoard = React.forwardRef<HTMLDivElement, GameBoardProps>(({ cla
                 y={node.y + height / 8}
                 className={cn('node flex items-center justify-center overflow-visible', node.id)}
               >
-                <GameNode node={item} nodeDetail={node} role={role!} className='relative z-0' />
+                <GameNode node={item} role={role!} className='relative z-0' />
                 <AnimatePresence>
                   {item.selected[role] && isNodeUsable(node.id) && (
                     <motion.div
@@ -218,7 +218,7 @@ export const GameBoard = React.forwardRef<HTMLDivElement, GameBoardProps>(({ cla
                         onClick={() => handleUseNode(node.id)}
                         className='!text-label-20 hover:bg-background-100 hover:border-background-100 relative z-20 mt-[72px] border border-gray-400 text-gray-100'
                       >
-                        Use Node
+                        Target Node
                       </Button>
                       <div
                         className='bg-gray-1000 absolute right-0 left-0 h-full w-full opacity-40'

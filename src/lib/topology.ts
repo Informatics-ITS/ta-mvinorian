@@ -1,12 +1,12 @@
 import { LucideIcon } from 'lucide-react';
 
-import { TOPOLOGY } from '@/constant/topology';
+import { TOPOLOGY, TOPOLOGY_NODE_DEFENSES } from '@/constant/topology';
 
 export type TopologyNodeType = {
   id: string;
   stolenToken: number;
   revealed: boolean;
-  defenses: string[];
+  defenses: TopologyDefenseType[];
   selected: {
     attacker: boolean;
     defender: boolean;
@@ -28,6 +28,11 @@ export type TopologyLinkType = {
   target: string;
 };
 
+export type TopologyDefenseType = {
+  id: string;
+  revealed: boolean;
+};
+
 export type TopologyType = {
   nodes: TopologyNodeType[];
   links: TopologyLinkType[];
@@ -43,7 +48,8 @@ export const defaultTopology: TopologyType = {
     id: node.id,
     stolenToken: 0,
     revealed: false,
-    defenses: [],
+    // TODO: change defense back to []
+    defenses: TOPOLOGY_NODE_DEFENSES[node.id] ?? [],
     selected: {
       attacker: false,
       defender: false,

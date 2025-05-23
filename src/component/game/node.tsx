@@ -1,8 +1,10 @@
 import React from 'react';
 
-import { TopologyNodeDetailType, TopologyNodeType } from '@/lib/topology';
+import { getTopologyNodeById, TopologyNodeDetailType, TopologyNodeType } from '@/lib/topology';
 import { cn } from '@/lib/utils';
 import { GameRoleType } from '@/provider/game-engine-provider';
+
+import { GameDefense, GameDefenseEmpty, GameDefenseLocked } from './defense';
 
 export const nodeAttribute: {
   [k in TopologyNodeDetailType['security']]: {
@@ -41,118 +43,119 @@ export const nodeAttribute: {
 };
 
 export interface GameNodeProps extends React.HTMLAttributes<HTMLDivElement> {
-  nodeDetail: TopologyNodeDetailType;
   node: TopologyNodeType;
   role: GameRoleType;
 }
 
-export const GameNode = React.forwardRef<HTMLDivElement, GameNodeProps>(
-  ({ node, nodeDetail, role, className, ...props }, ref) => {
-    const NodeIcon = nodeDetail.icon;
-    return (
-      <div
-        ref={ref}
-        className={cn('bg-background-100 shadow-card h-72 w-52 shrink-0 rounded-xl p-1.5', className)}
-        {...props}
-      >
-        <div className={cn('h-full w-full space-y-3 rounded-lg p-2', nodeAttribute[nodeDetail.security].bg)}>
-          <div className='relative flex h-36 w-full items-center justify-center overflow-clip rounded-md'>
-            <div
-              className={cn(
-                'absolute -top-1 -left-0.5 rounded-md p-2',
-                nodeAttribute[nodeDetail.security].bg,
-                nodeAttribute[nodeDetail.security].text,
-              )}
-            >
-              {nodeAttribute[nodeDetail.security].icon}
-            </div>
+export const GameNode = React.forwardRef<HTMLDivElement, GameNodeProps>(({ node, role, className, ...props }, ref) => {
+  const nodeDetail = getTopologyNodeById(node.id);
+  if (!nodeDetail) return null;
 
-            <NodeIcon className={cn('z-10 h-24 w-24', nodeAttribute[nodeDetail.security].strong)} strokeWidth={1.25} />
+  const NodeIcon = nodeDetail.icon;
 
-            {((role === 'attacker' && node.revealed === true) || role === 'defender') && (
-              <div className='absolute top-1.5 right-1.5 z-10 space-y-1.5'>
-                {Array.from({ length: nodeDetail.token - node.stolenToken }, (_, i) => (
-                  <_ActiveDataToken key={i} />
-                ))}
-                {Array.from({ length: node.stolenToken }, (_, i) => (
-                  <_StolenDataToken key={i} />
-                ))}
-              </div>
+  return (
+    <div
+      ref={ref}
+      className={cn('bg-background-100 shadow-card h-72 w-52 shrink-0 rounded-xl p-1.5', className)}
+      {...props}
+    >
+      <div className={cn('h-full w-full space-y-3 rounded-lg p-2', nodeAttribute[nodeDetail.security].bg)}>
+        <div className='relative flex h-36 w-full items-center justify-center overflow-clip rounded-md'>
+          <div
+            className={cn(
+              'absolute -top-1 -left-0.5 rounded-md p-2',
+              nodeAttribute[nodeDetail.security].bg,
+              nodeAttribute[nodeDetail.security].text,
             )}
-
-            <svg
-              className='absolute top-0 left-0 z-0 h-full w-full object-fill'
-              fill='none'
-              xmlns='http://www.w3.org/2000/svg'
-            >
-              <g filter='url(#filter0_i_2025_34)'>
-                <path
-                  fillRule='evenodd'
-                  clipRule='evenodd'
-                  d='M6 36C2.68629 36 0 38.6863 0 42V142C0 145.314 2.68629 148 6 148H176C179.314 148 182 145.314 182 142V6C182 2.68629 179.314 0 176 0H42C38.6863 0 36 2.68629 36 6V30C36 33.3137 33.3137 36 30 36H6Z'
-                  fill='white'
-                />
-              </g>
-              <defs>
-                <filter
-                  id='filter0_i_2025_34'
-                  x='0'
-                  y='0'
-                  width='182'
-                  height='148'
-                  filterUnits='userSpaceOnUse'
-                  colorInterpolationFilters='sRGB'
-                >
-                  <feFlood floodOpacity='0' result='BackgroundImageFix' />
-                  <feBlend mode='normal' in='SourceGraphic' in2='BackgroundImageFix' result='shape' />
-                  <feColorMatrix
-                    in='SourceAlpha'
-                    type='matrix'
-                    values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0'
-                    result='hardAlpha'
-                  />
-                  <feOffset />
-                  <feGaussianBlur stdDeviation='2' />
-                  <feComposite in2='hardAlpha' operator='arithmetic' k2='-1' k3='1' />
-                  <feColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0' />
-                  <feBlend mode='normal' in2='shape' result='effect1_innerShadow_2025_34' />
-                </filter>
-              </defs>
-            </svg>
+          >
+            {nodeAttribute[nodeDetail.security].icon}
           </div>
-          <div className='space-y-4 px-1 text-left'>
-            <p className={cn('!text-label-16 font-semibold', nodeAttribute[nodeDetail.security].text)}>
-              {nodeDetail.name}
-            </p>
-            <div className='grid grid-cols-3 gap-3'>
-              <div
-                className={cn(
-                  'aspect-square w-full rounded-md border-2 border-dashed',
-                  nodeAttribute[nodeDetail.security].accent,
-                  nodeAttribute[nodeDetail.security].stroke,
-                )}
-              ></div>
-              <div
-                className={cn(
-                  'aspect-square w-full rounded-md border-2 border-dashed',
-                  nodeAttribute[nodeDetail.security].accent,
-                  nodeAttribute[nodeDetail.security].stroke,
-                )}
-              ></div>
-              <div
-                className={cn(
-                  'aspect-square w-full rounded-md border-2 border-dashed',
-                  nodeAttribute[nodeDetail.security].accent,
-                  nodeAttribute[nodeDetail.security].stroke,
-                )}
-              ></div>
+
+          <NodeIcon className={cn('z-10 h-24 w-24', nodeAttribute[nodeDetail.security].strong)} strokeWidth={1.25} />
+
+          {(role === 'attacker' && node.revealed === true) || role === 'defender' ? (
+            <div className='absolute top-1.5 right-1.5 z-10 space-y-1.5'>
+              {Array.from({ length: nodeDetail.token - node.stolenToken }, (_, i) => (
+                <_ActiveDataToken key={i} />
+              ))}
+              {Array.from({ length: node.stolenToken }, (_, i) => (
+                <_StolenDataToken key={i} />
+              ))}
             </div>
+          ) : (
+            <div className='absolute top-1.5 right-1.5 z-10 space-y-1.5'>
+              <_LockedDataToken />
+            </div>
+          )}
+
+          <svg
+            className='absolute top-0 left-0 z-0 h-full w-full object-fill'
+            fill='none'
+            xmlns='http://www.w3.org/2000/svg'
+          >
+            <g filter='url(#filter0_i_2025_34)'>
+              <path
+                fillRule='evenodd'
+                clipRule='evenodd'
+                d='M6 36C2.68629 36 0 38.6863 0 42V142C0 145.314 2.68629 148 6 148H176C179.314 148 182 145.314 182 142V6C182 2.68629 179.314 0 176 0H42C38.6863 0 36 2.68629 36 6V30C36 33.3137 33.3137 36 30 36H6Z'
+                fill='white'
+              />
+            </g>
+            <defs>
+              <filter
+                id='filter0_i_2025_34'
+                x='0'
+                y='0'
+                width='182'
+                height='148'
+                filterUnits='userSpaceOnUse'
+                colorInterpolationFilters='sRGB'
+              >
+                <feFlood floodOpacity='0' result='BackgroundImageFix' />
+                <feBlend mode='normal' in='SourceGraphic' in2='BackgroundImageFix' result='shape' />
+                <feColorMatrix
+                  in='SourceAlpha'
+                  type='matrix'
+                  values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0'
+                  result='hardAlpha'
+                />
+                <feOffset />
+                <feGaussianBlur stdDeviation='2' />
+                <feComposite in2='hardAlpha' operator='arithmetic' k2='-1' k3='1' />
+                <feColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0' />
+                <feBlend mode='normal' in2='shape' result='effect1_innerShadow_2025_34' />
+              </filter>
+            </defs>
+          </svg>
+        </div>
+        <div className='space-y-4 px-1 text-left'>
+          <p className={cn('!text-label-16 font-semibold', nodeAttribute[nodeDetail.security].text)}>
+            {nodeDetail.name}
+          </p>
+          <div className='grid grid-cols-3 gap-2'>
+            {node.defenses.map((defense, index) =>
+              role === 'attacker' && !defense.revealed ? (
+                <GameDefenseLocked key={index} />
+              ) : (
+                <GameDefense key={index} defense={defense} />
+              ),
+            )}
+            {Array.from({ length: 3 - node.defenses.length }, (_, i) =>
+              role === 'attacker' ? (
+                <GameDefenseLocked key={i} />
+              ) : (
+                <GameDefenseEmpty
+                  key={i}
+                  className={cn(nodeAttribute[nodeDetail.security].accent, nodeAttribute[nodeDetail.security].stroke)}
+                />
+              ),
+            )}
           </div>
         </div>
       </div>
-    );
-  },
-);
+    </div>
+  );
+});
 
 export { _ActiveDataToken as ActiveDataToken };
 
@@ -286,3 +289,73 @@ function _StolenDataToken() {
     </svg>
   );
 }
+
+const _LockedDataToken = () => {
+  return (
+    <svg width='22' height='22' viewBox='0 0 22 22' fill='none' xmlns='http://www.w3.org/2000/svg'>
+      <path
+        d='M9.10034 1.18216C10.3554 0.93928 11.6453 0.93928 12.9003 1.18216'
+        stroke='#FFB224'
+        strokeWidth='2'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+      />
+      <path
+        d='M12.9003 20.8182C11.6453 21.0611 10.3554 21.0611 9.10034 20.8182'
+        stroke='#FFB224'
+        strokeWidth='2'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+      />
+      <path
+        d='M16.6091 2.72119C17.6706 3.44041 18.5839 4.35706 19.2991 5.42119'
+        stroke='#FFB224'
+        strokeWidth='2'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+      />
+      <path
+        d='M1.18216 12.9002C0.93928 11.6451 0.93928 10.3552 1.18216 9.10016'
+        stroke='#FFB224'
+        strokeWidth='2'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+      />
+      <path
+        d='M19.2793 17C18.5601 18.0615 17.6435 18.9747 16.5793 19.69'
+        stroke='#FFB224'
+        strokeWidth='2'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+      />
+      <path
+        d='M20.8184 9.10016C21.0612 10.3552 21.0612 11.6451 20.8184 12.9002'
+        stroke='#FFB224'
+        strokeWidth='2'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+      />
+      <path
+        d='M2.72119 5.39117C3.44041 4.3297 4.35706 3.41645 5.42119 2.70117'
+        stroke='#FFB224'
+        strokeWidth='2'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+      />
+      <path
+        d='M5.39117 19.2792C4.3297 18.5599 3.41645 17.6433 2.70117 16.5792'
+        stroke='#FFB224'
+        strokeWidth='2'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+      />
+      <path
+        d='M8.22222 9.4V7.75C8.22222 7.02065 8.51488 6.32118 9.03581 5.80546C9.55675 5.28973 10.2633 5 11 5C11.7367 5 12.4433 5.28973 12.9642 5.80546C13.4851 6.32118 13.7778 7.02065 13.7778 7.75V9.4M11.5556 12.7C11.5556 13.0038 11.3068 13.25 11 13.25C10.6932 13.25 10.4444 13.0038 10.4444 12.7C10.4444 12.3962 10.6932 12.15 11 12.15C11.3068 12.15 11.5556 12.3962 11.5556 12.7ZM7.11111 9.4H14.8889C15.5025 9.4 16 9.89249 16 10.5V14.9C16 15.5075 15.5025 16 14.8889 16H7.11111C6.49746 16 6 15.5075 6 14.9V10.5C6 9.89249 6.49746 9.4 7.11111 9.4Z'
+        stroke='#FFB224'
+        strokeWidth='1.5'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+      />
+    </svg>
+  );
+};

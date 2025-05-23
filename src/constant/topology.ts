@@ -1,6 +1,6 @@
 import { CloudIcon, CpuIcon, DatabaseIcon, GlobeIcon, MailIcon, MonitorIcon, NetworkIcon } from 'lucide-react';
 
-import { TopologyDetailType } from '@/lib/topology';
+import { TopologyDefenseType, TopologyDetailType } from '@/lib/topology';
 
 export const TOPOLOGY: TopologyDetailType = {
   nodes: [
@@ -94,4 +94,25 @@ export const TOPOLOGY: TopologyDetailType = {
       target: 'NM001',
     },
   ],
+};
+
+export const TOPOLOGY_NODE_DEFENSES: Record<string, TopologyDefenseType[]> = {
+  NH001: [
+    { id: 'D0001', revealed: false },
+    { id: 'D0002', revealed: false },
+  ],
+  NH002: [
+    { id: 'D0004', revealed: false },
+    { id: 'D0005', revealed: false },
+  ],
+  NM001: [{ id: 'D0001', revealed: false }],
+  NM003: [
+    { id: 'D0007', revealed: false },
+    { id: 'D0008', revealed: false },
+  ],
+  NM002: [
+    { id: 'D0006', revealed: false },
+    { id: 'D0007', revealed: false },
+  ],
+  NL001: [{ id: 'D0003', revealed: false }],
 };

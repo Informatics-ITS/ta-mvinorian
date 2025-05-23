@@ -263,10 +263,9 @@ export const GameEngineProvider = ({ children }: GameEngineProviderProps) => {
 
   const runCardEffects = () => {
     if (!role) return;
-    setRoundPhase((prevRoundPhase) => ({
-      ...prevRoundPhase,
-      [role]: GameRoundPhase.RoundResult,
-    }));
+    // TODO: implement runCardEffects
+    // eslint-disable-next-line no-console
+    console.log('runCardEffects');
   };
 
   const resetRoundPhase = () => {
@@ -276,6 +275,7 @@ export const GameEngineProvider = ({ children }: GameEngineProviderProps) => {
 
   const checkRoundEnd = React.useCallback(() => {
     if (roundPhase.attacker === GameRoundPhase.ActionEnd && roundPhase.defender === GameRoundPhase.ActionEnd) {
+      runCardEffects();
       setRoundPhase((prevRoundState) => ({
         ...prevRoundState,
         attacker: GameRoundPhase.RoundResult,
@@ -292,10 +292,7 @@ export const GameEngineProvider = ({ children }: GameEngineProviderProps) => {
       setPhase(GamePhase.End);
       return;
     }
-    runCardEffects();
-    setTimeout(() => {
-      resetRoundPhase();
-    }, 3000);
+    resetRoundPhase();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [roundPhase]);
 

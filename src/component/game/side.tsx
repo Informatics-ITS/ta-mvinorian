@@ -3,12 +3,12 @@ import React from 'react';
 
 import { useElementDimensions } from '@/hook/use-element-dimensions';
 import { GameCardType, getGameCardById } from '@/lib/game-card';
-import { getTopologyNodeById, TopologyNodeDetailType, TopologyNodeType } from '@/lib/topology';
+import { getTopologyNodeById, TopologyNodeType } from '@/lib/topology';
 import { cn } from '@/lib/utils';
 import { GameConstant, GameRoundPhase, useGameEngineContext } from '@/provider/game-engine-provider';
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
-import { ScrollArea } from '../ui/scroll-area';
+import { DragScrollArea } from '../ui/drag-scroll-area';
 import { GameCard } from './card';
 import { ActiveDataToken, GameNode } from './node';
 
@@ -21,7 +21,6 @@ export const GameSide = React.forwardRef<HTMLDivElement, GameSideProps>(({ class
   const { round, role, deck, topology, stolenTokens, roundPhase, history, clickNextRound } = useGameEngineContext();
   const [selectedCard, setSelectedCard] = React.useState<GameCardType | null>(null);
   const [selectedNode, setSelectedNode] = React.useState<TopologyNodeType | null>(null);
-  const [selectedNodeDetail, setSelectedNodeDetail] = React.useState<TopologyNodeDetailType | null>(null);
 
   const roleRoundPhase = roundPhase[role!];
 
@@ -38,10 +37,7 @@ export const GameSide = React.forwardRef<HTMLDivElement, GameSideProps>(({ class
     const selected = topology.nodes.find((node) => node.selected[role]);
 
     if (!selected) setSelectedNode(null);
-    else {
-      setSelectedNode(selected);
-      setSelectedNodeDetail(getTopologyNodeById(selected.id) ?? null);
-    }
+    else setSelectedNode(selected);
   }, [topology, role]);
 
   return (
@@ -122,7 +118,7 @@ export const GameSide = React.forwardRef<HTMLDivElement, GameSideProps>(({ class
       </div>
 
       <div ref={sideRef} className='relative flex flex-1 overflow-clip'>
-        <ScrollArea className='absolute z-20 w-full px-4' style={{ height: `${height}px` }}>
+        <DragScrollArea className='absolute z-20 w-full px-4' style={{ height: `${height}px` }}>
           <Accordion type='multiple'>
             <AccordionItem value='tutorial'>
               <AccordionTrigger>How to Play?</AccordionTrigger>
@@ -187,19 +183,14 @@ export const GameSide = React.forwardRef<HTMLDivElement, GameSideProps>(({ class
               <AccordionContent className='mt-4 space-y-4'>
                 <div className='bg-background-200 flex h-96 w-full items-center justify-center rounded-xs border border-gray-400 px-4'>
                   <AnimatePresence mode='wait'>
-                    {selectedNode && selectedNodeDetail && role ? (
+                    {selectedNode && role ? (
                       <motion.div
                         key={selectedNode.id}
                         initial={{ opacity: 0, scale: 0.75 }}
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.75 }}
                       >
-                        <GameNode
-                          node={selectedNode}
-                          nodeDetail={selectedNodeDetail}
-                          role={role}
-                          className='scale-110'
-                        />
+                        <GameNode node={selectedNode} role={role} className='scale-110' />
                       </motion.div>
                     ) : (
                       <motion.p
@@ -213,15 +204,19 @@ export const GameSide = React.forwardRef<HTMLDivElement, GameSideProps>(({ class
                     )}
                   </AnimatePresence>
                 </div>
-                {selectedNodeDetail && (
-                  <div className='bg-background-200 w-full space-y-2 rounded-xs border border-gray-400 p-4'>
-                    <p className='text-heading-18 text-gray-1000'>What is {selectedNodeDetail.name}?</p>
-                    <p className='text-copy-14 text-gray-800'>
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a diam lectus. Sed sit amet ipsum
-                      mauris.
-                    </p>
-                  </div>
-                )}
+                {(() => {
+                  const selectedNodeDetail = getTopologyNodeById(selectedNode?.id);
+                  if (!selectedNodeDetail) return null;
+                  return (
+                    <div className='bg-background-200 w-full space-y-2 rounded-xs border border-gray-400 p-4'>
+                      <p className='text-heading-18 text-gray-1000'>What is {selectedNodeDetail.name}?</p>
+                      <p className='text-copy-14 text-gray-800'>
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a diam lectus. Sed sit amet ipsum
+                        mauris.
+                      </p>
+                    </div>
+                  );
+                })()}
               </AccordionContent>
             </AccordionItem>
 
@@ -232,7 +227,6 @@ export const GameSide = React.forwardRef<HTMLDivElement, GameSideProps>(({ class
               const usedCard = getGameCardById(roleUsedCard);
 
               const usedNode = history[key].usedNode?.[role] ?? undefined;
-              const usedNodeDetail = getTopologyNodeById(usedNode?.id) ?? undefined;
 
               if (!usedCard) return null;
 
@@ -263,7 +257,7 @@ export const GameSide = React.forwardRef<HTMLDivElement, GameSideProps>(({ class
                     </AnimatePresence>
 
                     <AnimatePresence mode='wait'>
-                      {usedNode && usedNodeDetail && (
+                      {usedNode && (
                         <div className='bg-background-200 flex h-96 w-full flex-col items-center justify-center gap-4 rounded-xs border border-gray-400 px-4'>
                           <motion.p
                             initial={{ opacity: 0 }}
@@ -278,7 +272,7 @@ export const GameSide = React.forwardRef<HTMLDivElement, GameSideProps>(({ class
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.75 }}
                           >
-                            <GameNode node={usedNode} nodeDetail={usedNodeDetail} role={role} className='scale-110' />
+                            <GameNode node={usedNode} role={role} className='scale-110' />
                           </motion.div>
                         </div>
                       )}
@@ -288,7 +282,7 @@ export const GameSide = React.forwardRef<HTMLDivElement, GameSideProps>(({ class
               );
             })}
           </Accordion>
-        </ScrollArea>
+        </DragScrollArea>
       </div>
     </div>
   );

@@ -32,11 +32,12 @@ import {
 
 import { GameCardType } from '@/lib/game-card';
 
+// TODO: adjust applicableToNodes
 export const GAME_CARDS: GameCardType[] = [
   {
     id: 'CAS01',
     name: 'Network Scanning',
-    desc: 'Scan the network. Reveal the security level of target node.',
+    desc: 'Scan the network. Reveal tokens of target node.',
     role: 'attacker',
     type: 'stealth',
     icon: NetworkIcon,
@@ -175,6 +176,7 @@ export const GAME_CARDS: GameCardType[] = [
     role: 'defender',
     type: 'block',
     icon: FlameIcon,
+    applicableToNodes: ['NM001', 'NM002', 'NL001', 'NL002'],
   },
   {
     id: 'CDB02',
@@ -183,6 +185,7 @@ export const GAME_CARDS: GameCardType[] = [
     role: 'defender',
     type: 'block',
     icon: LockIcon,
+    applicableToNodes: ['NM001', 'NM002', 'NL001', 'NL002'],
   },
   {
     id: 'CDB03',
@@ -191,6 +194,7 @@ export const GAME_CARDS: GameCardType[] = [
     role: 'defender',
     type: 'block',
     icon: KeyRoundIcon,
+    applicableToNodes: ['NM001', 'NM002', 'NL001', 'NL002'],
   },
   {
     id: 'CDB04',
@@ -199,6 +203,7 @@ export const GAME_CARDS: GameCardType[] = [
     role: 'defender',
     type: 'block',
     icon: BracesIcon,
+    applicableToNodes: ['NM001', 'NM002', 'NL001', 'NL002'],
   },
   {
     id: 'CDB05',
@@ -207,6 +212,7 @@ export const GAME_CARDS: GameCardType[] = [
     role: 'defender',
     type: 'block',
     icon: LayoutGridIcon,
+    applicableToNodes: ['NM001', 'NM002', 'NL001', 'NL002'],
   },
   {
     id: 'CDD01',
@@ -215,6 +221,7 @@ export const GAME_CARDS: GameCardType[] = [
     role: 'defender',
     type: 'detect',
     icon: ShieldEllipsisIcon,
+    applicableToNodes: ['NM001', 'NM002', 'NL001', 'NL002'],
   },
   {
     id: 'CDD02',
@@ -223,6 +230,7 @@ export const GAME_CARDS: GameCardType[] = [
     role: 'defender',
     type: 'detect',
     icon: BookLockIcon,
+    applicableToNodes: ['NM001', 'NM002', 'NL001', 'NL002'],
   },
   {
     id: 'CDD03',
@@ -231,6 +239,7 @@ export const GAME_CARDS: GameCardType[] = [
     role: 'defender',
     type: 'detect',
     icon: AmphoraIcon,
+    applicableToNodes: ['NM001', 'NM002', 'NL001', 'NL002'],
   },
   {
     id: 'CDD04',
@@ -239,6 +248,7 @@ export const GAME_CARDS: GameCardType[] = [
     role: 'defender',
     type: 'detect',
     icon: NetworkIcon,
+    applicableToNodes: ['NM001', 'NM002', 'NL001', 'NL002'],
   },
   {
     id: 'CDD05',
@@ -247,6 +257,7 @@ export const GAME_CARDS: GameCardType[] = [
     role: 'defender',
     type: 'detect',
     icon: LogsIcon,
+    applicableToNodes: ['NM001', 'NM002', 'NL001', 'NL002'],
   },
   {
     id: 'CDR01',
@@ -255,6 +266,7 @@ export const GAME_CARDS: GameCardType[] = [
     role: 'defender',
     type: 'recover',
     icon: DatabaseBackupIcon,
+    applicableToNodes: ['NM001', 'NM002', 'NL001', 'NL002'],
   },
   {
     id: 'CDR02',
@@ -263,6 +275,7 @@ export const GAME_CARDS: GameCardType[] = [
     role: 'defender',
     type: 'recover',
     icon: BandageIcon,
+    applicableToNodes: ['NM001', 'NM002', 'NL001', 'NL002'],
   },
   {
     id: 'CDR03',
@@ -271,6 +284,7 @@ export const GAME_CARDS: GameCardType[] = [
     role: 'defender',
     type: 'recover',
     icon: FileSearchIcon,
+    applicableToNodes: ['NM001', 'NM002', 'NL001', 'NL002'],
   },
   {
     id: 'CDR04',
@@ -279,6 +293,7 @@ export const GAME_CARDS: GameCardType[] = [
     role: 'defender',
     type: 'recover',
     icon: ScrollTextIcon,
+    applicableToNodes: ['NM001', 'NM002', 'NL001', 'NL002'],
   },
   {
     id: 'CDR05',
@@ -287,5 +302,6 @@ export const GAME_CARDS: GameCardType[] = [
     role: 'defender',
     type: 'recover',
     icon: BookKeyIcon,
+    applicableToNodes: ['NM001', 'NM002', 'NL001', 'NL002'],
   },
 ];
