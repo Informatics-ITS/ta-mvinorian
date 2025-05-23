@@ -5,7 +5,7 @@ import { createRequest, withAsyncValidateRequest } from '@/lib/request';
 import { createResponseJson } from '@/lib/response';
 import { createUserService } from '@/service/user-service';
 
-export const userCreateSchema = createRequest({
+const userCreateSchema = createRequest({
   body: z.object({
     name: z.string().min(1, 'name is required'),
     email: z.string().min(1, 'email is required').email('invalid email address'),
