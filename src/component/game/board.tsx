@@ -56,8 +56,6 @@ export const GameBoard = React.forwardRef<HTMLDivElement, GameBoardProps>(({ cla
       }
 
       return g
-        .attr('stroke', 'currentColor')
-        .attr('stroke-opacity', 0.1)
         .selectAll('circle')
         .data(gridPoints)
         .join(
@@ -68,7 +66,7 @@ export const GameBoard = React.forwardRef<HTMLDivElement, GameBoardProps>(({ cla
               .attr('cy', (d) => y(d.y))
               .attr('r', 2)
               .attr('fill', 'currentColor')
-              .attr('fill-opacity', 0.2),
+              .attr('fill-opacity', 0.1),
           (update) => update.attr('cx', (d) => x(d.x)).attr('cy', (d) => y(d.y)),
           (exit) => exit.remove(),
         );

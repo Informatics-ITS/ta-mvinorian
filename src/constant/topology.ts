@@ -5,7 +5,7 @@ import { TopologyDefenseType, TopologyDetailType } from '@/lib/topology';
 export const TOPOLOGY: TopologyDetailType = {
   nodes: [
     {
-      id: 'NH002',
+      id: 'nh-internal-network-hub',
       name: 'Internal Network Hub',
       token: 0,
       security: 'high',
@@ -14,7 +14,7 @@ export const TOPOLOGY: TopologyDetailType = {
       y: 370,
     },
     {
-      id: 'NH001',
+      id: 'nh-database-server',
       name: 'Database Server',
       token: 2,
       security: 'high',
@@ -23,7 +23,7 @@ export const TOPOLOGY: TopologyDetailType = {
       y: 370,
     },
     {
-      id: 'NM001',
+      id: 'nm-web-server',
       name: 'Web Server',
       token: 1,
       security: 'medium',
@@ -32,7 +32,7 @@ export const TOPOLOGY: TopologyDetailType = {
       y: 0,
     },
     {
-      id: 'NM003',
+      id: 'nm-cloud-storage',
       name: 'Cloud Storage',
       token: 2,
       security: 'medium',
@@ -41,7 +41,7 @@ export const TOPOLOGY: TopologyDetailType = {
       y: 0,
     },
     {
-      id: 'NL002',
+      id: 'nl-iot-device',
       name: 'IoT Device',
       token: 0,
       security: 'low',
@@ -50,7 +50,7 @@ export const TOPOLOGY: TopologyDetailType = {
       y: 370,
     },
     {
-      id: 'NM002',
+      id: 'nm-email-server',
       name: 'Email Server',
       token: 1,
       security: 'medium',
@@ -59,7 +59,7 @@ export const TOPOLOGY: TopologyDetailType = {
       y: 740,
     },
     {
-      id: 'NL001',
+      id: 'nl-workstation',
       name: 'Workstation',
       token: 1,
       security: 'low',
@@ -70,49 +70,49 @@ export const TOPOLOGY: TopologyDetailType = {
   ],
   links: [
     {
-      source: 'NH002',
-      target: 'NM003',
+      source: 'nh-internal-network-hub',
+      target: 'nm-cloud-storage',
     },
     {
-      source: 'NH002',
-      target: 'NM001',
+      source: 'nh-internal-network-hub',
+      target: 'nh-database-server',
     },
     {
-      source: 'NH002',
-      target: 'NL001',
+      source: 'nh-internal-network-hub',
+      target: 'nl-iot-device',
     },
     {
-      source: 'NH002',
-      target: 'NL002',
+      source: 'nh-internal-network-hub',
+      target: 'nm-email-server',
     },
     {
-      source: 'NH002',
-      target: 'NM002',
+      source: 'nh-internal-network-hub',
+      target: 'nl-workstation',
     },
     {
-      source: 'NH001',
-      target: 'NM001',
+      source: 'nh-database-server',
+      target: 'nm-web-server',
     },
   ],
 };
 
 export const TOPOLOGY_NODE_DEFENSES: Record<string, TopologyDefenseType[]> = {
-  NH001: [
-    { id: 'D0001', revealed: false },
-    { id: 'D0002', revealed: false },
+  'nh-database-server': [
+    { id: 'd-firewall', revealed: false },
+    { id: 'd-ids', revealed: false },
   ],
-  NH002: [
-    { id: 'D0004', revealed: false },
-    { id: 'D0005', revealed: false },
+  'nh-internal-network-hub': [
+    { id: 'd-network-segmentation', revealed: false },
+    { id: 'd-anomaly-detection', revealed: false },
   ],
-  NM001: [{ id: 'D0001', revealed: false }],
-  NM003: [
-    { id: 'D0007', revealed: false },
-    { id: 'D0008', revealed: false },
+  'nm-web-server': [{ id: 'd-firewall', revealed: false }],
+  'nm-email-server': [
+    { id: 'd-encryption', revealed: false },
+    { id: 'd-mfa', revealed: false },
   ],
-  NM002: [
-    { id: 'D0006', revealed: false },
-    { id: 'D0007', revealed: false },
+  'nm-cloud-storage': [
+    { id: 'd-spam-filter', revealed: false },
+    { id: 'd-encryption', revealed: false },
   ],
-  NL001: [{ id: 'D0003', revealed: false }],
+  'nl-workstation': [{ id: 'd-antivirus', revealed: false }],
 };

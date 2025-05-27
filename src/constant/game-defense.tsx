@@ -13,7 +13,7 @@ import { GameDefenseType } from '@/lib/game-defense';
 
 export const GAME_DEFENSES: GameDefenseType[] = [
   {
-    id: 'D0001',
+    id: 'd-firewall',
     name: 'Firewall',
     icon: FlameIcon,
     color: {
@@ -24,7 +24,7 @@ export const GAME_DEFENSES: GameDefenseType[] = [
     },
   },
   {
-    id: 'D0002',
+    id: 'd-ids',
     name: 'IDS',
     icon: RadarIcon,
     color: {
@@ -35,7 +35,7 @@ export const GAME_DEFENSES: GameDefenseType[] = [
     },
   },
   {
-    id: 'D0003',
+    id: 'd-antivirus',
     name: 'Antivirus',
     icon: UmbrellaIcon,
     color: {
@@ -46,7 +46,7 @@ export const GAME_DEFENSES: GameDefenseType[] = [
     },
   },
   {
-    id: 'D0004',
+    id: 'd-network-segmentation',
     name: 'Network Segmentation',
     icon: LayoutGridIcon,
     color: {
@@ -57,7 +57,7 @@ export const GAME_DEFENSES: GameDefenseType[] = [
     },
   },
   {
-    id: 'D0005',
+    id: 'd-anomaly-detection',
     name: 'Anomaly Detection',
     icon: ScanSearchIcon,
     color: {
@@ -68,7 +68,7 @@ export const GAME_DEFENSES: GameDefenseType[] = [
     },
   },
   {
-    id: 'D0006',
+    id: 'd-spam-filter',
     name: 'Spam Filter',
     icon: ListFilterIcon,
     color: {
@@ -79,7 +79,7 @@ export const GAME_DEFENSES: GameDefenseType[] = [
     },
   },
   {
-    id: 'D0007',
+    id: 'd-encryption',
     name: 'Encryption',
     icon: FolderLockIcon,
     color: {
@@ -90,7 +90,7 @@ export const GAME_DEFENSES: GameDefenseType[] = [
     },
   },
   {
-    id: 'D0008',
+    id: 'd-mfa',
     name: 'MFA',
     icon: KeyRoundIcon,
     color: {

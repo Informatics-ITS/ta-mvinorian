@@ -2,7 +2,6 @@
 
 import React from 'react';
 
-import { useAuthStore } from '@/hook/use-auth-store';
 import { useWsPlayers, useWsState } from '@/hook/use-ws-state';
 import {
   defaultGameDeckType,
@@ -12,6 +11,7 @@ import {
   getGameCardById,
   getRandomGameCards,
 } from '@/lib/game-card';
+import { applyCardEffect, isCardApplicableToNode, isCardTargetNode } from '@/lib/game-card-effect';
 import { defaultTopology, getTopologyNodeById, TopologyNodeType, TopologyType } from '@/lib/topology';
 
 import { useWsContext } from './ws-provider';
@@ -41,8 +41,10 @@ const defaultGameRoundPhaseType: GameRoundPhaseType = {
 type GameHistoryType = Record<
   string,
   {
-    usedCard: Record<GameRoleType, string | null>;
+    usedCard: Record<GameRoleType, string>;
     usedNode?: Record<GameRoleType, TopologyNodeType | null>;
+    effectMsg?: Record<GameRoleType, string | null>;
+    effectApplied?: boolean;
   }
 >;
 
@@ -53,7 +55,7 @@ export enum GameConstant {
 
 export type GameEngineType = {
   deck: GameDeckType;
-  role: GameRoleType | null;
+  role: GameRoleType | undefined;
   round: number;
   phase: GamePhase;
   history: GameHistoryType;
@@ -70,7 +72,7 @@ export type GameEngineType = {
 
 const GameEngineContext = React.createContext<GameEngineType>({
   deck: defaultGameDeckType,
-  role: null,
+  role: undefined,
   round: 1,
   phase: GamePhase.WaitingJoin,
   history: {},
@@ -98,10 +100,8 @@ export interface GameEngineProviderProps {
 }
 
 export const GameEngineProvider = ({ children }: GameEngineProviderProps) => {
-  const players = useWsPlayers();
-  // const refresh = useWsRefresh();
-  const { user } = useAuthStore();
-  const { isConnected, lastMessage } = useWsContext();
+  const { isConnected } = useWsContext();
+  const { players, isHost, role } = useWsPlayers();
 
   //* ===== Game Engine State =====
   const [deck, setDeck] = useWsState<GameEngineType['deck']>('deck', defaultGameDeckType);
@@ -111,15 +111,6 @@ export const GameEngineProvider = ({ children }: GameEngineProviderProps) => {
   const [topology, setTopology] = useWsState<GameEngineType['topology']>('topology', null);
   const [roundPhase, setRoundPhase] = useWsState<GameEngineType['roundPhase']>('roundPhase', defaultGameRoundPhaseType);
   const [stolenTokens, setStolenTokens] = useWsState<GameEngineType['stolenTokens']>('stolenTokens', 0);
-
-  //* ===== Role Refresh =====
-  const roleRef = React.useRef<GameRoleType>(null);
-  const role = React.useMemo(() => {
-    if (roleRef.current !== null) return roleRef.current;
-    if (!user) return;
-    if (user.id === players.attacker) return 'attacker';
-    if (user.id === players.defender) return 'defender';
-  }, [players, user]);
 
   //* ===== Player Actions =====
   const clickCard = (cardId: string) => {
@@ -193,7 +184,7 @@ export const GameEngineProvider = ({ children }: GameEngineProviderProps) => {
 
     //? Update round phase
     const card = getGameCardById(cardId);
-    if (card && card.applicableToNodes) {
+    if (card && isCardTargetNode(card.id)) {
       setRoundPhase((prevRoundPhase) => ({
         ...prevRoundPhase,
         [role]: GameRoundPhase.NodeSelect,
@@ -239,15 +230,6 @@ export const GameEngineProvider = ({ children }: GameEngineProviderProps) => {
   };
 
   //* ===== Game Engine Logic =====
-  const isCardApplicableToNode = (cardId: string, nodeId: string) => {
-    const card = getGameCardById(cardId);
-
-    if (!card) return false;
-    if (card.applicableToNodes) return card.applicableToNodes.includes(nodeId);
-
-    return true;
-  };
-
   const isNodeUsable = (nodeId: string) => {
     if (!role || roundPhase[role] !== GameRoundPhase.NodeSelect) return false;
     if (!topology) return false;
@@ -256,24 +238,47 @@ export const GameEngineProvider = ({ children }: GameEngineProviderProps) => {
     if (!node) return false;
 
     const usedCard = history[round]?.usedCard;
-    if (!usedCard) return false;
 
-    return isCardApplicableToNode(usedCard[role] ?? '', nodeId);
+    return isCardApplicableToNode(usedCard[role], nodeId);
   };
 
   const runCardEffects = () => {
-    if (!role) return;
-    // TODO: implement runCardEffects
-    // eslint-disable-next-line no-console
-    console.log('runCardEffects');
+    if (!isHost) return;
+    if (history[round]?.effectApplied) return;
+    const effects = applyCardEffect({
+      attacker: {
+        cardId: history[round]?.usedCard.attacker ?? '',
+        nodeId: history[round]?.usedNode?.attacker?.id ?? '',
+      },
+      defender: {
+        cardId: history[round]?.usedCard.defender ?? '',
+        nodeId: history[round]?.usedNode?.defender?.id ?? '',
+      },
+      topology,
+    });
+    if (effects.newTopology) setTopology(effects.newTopology);
+    if (effects.tokenStolen) setStolenTokens((prevTokens) => prevTokens + effects.tokenStolen);
+    setHistory((prevHistory) => ({
+      ...prevHistory,
+      [round]: {
+        ...prevHistory[round],
+        effectMsg: {
+          attacker: effects.effectMsg.attacker,
+          defender: effects.effectMsg.defender,
+        },
+        effectApplied: true,
+      },
+    }));
   };
 
   const resetRoundPhase = () => {
-    setRound(round + 1);
+    if (!isHost) return;
+    setRound((prevRound) => prevRound + 1);
     setRoundPhase(defaultGameRoundPhaseType);
   };
 
   const checkRoundEnd = React.useCallback(() => {
+    if (!isHost) return;
     if (roundPhase.attacker === GameRoundPhase.ActionEnd && roundPhase.defender === GameRoundPhase.ActionEnd) {
       runCardEffects();
       setRoundPhase((prevRoundState) => ({
@@ -319,11 +324,11 @@ export const GameEngineProvider = ({ children }: GameEngineProviderProps) => {
       default:
         break;
     }
-  }, [players, phase, setPhase, round, startGame, checkRoundEnd, isConnected, lastMessage]);
+  }, [checkRoundEnd, isConnected, phase, players, role, startGame]);
 
   const gameEngine: GameEngineType = {
     deck,
-    role: role ?? null,
+    role,
     round,
     phase,
     history,

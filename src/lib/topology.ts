@@ -48,7 +48,6 @@ export const defaultTopology: TopologyType = {
     id: node.id,
     stolenToken: 0,
     revealed: false,
-    // TODO: change defense back to []
     defenses: TOPOLOGY_NODE_DEFENSES[node.id] ?? [],
     selected: {
       attacker: false,

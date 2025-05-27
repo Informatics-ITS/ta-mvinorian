@@ -5,12 +5,12 @@ import { useElementDimensions } from '@/hook/use-element-dimensions';
 import { GameCardType, getGameCardById } from '@/lib/game-card';
 import { getTopologyNodeById, TopologyNodeType } from '@/lib/topology';
 import { cn } from '@/lib/utils';
-import { GameConstant, GameRoundPhase, useGameEngineContext } from '@/provider/game-engine-provider';
+import { useGameEngineContext } from '@/provider/game-engine-provider';
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
 import { DragScrollArea } from '../ui/drag-scroll-area';
 import { GameCard } from './card';
-import { ActiveDataToken, GameNode } from './node';
+import { GameNode } from './node';
 
 export interface GameSideProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -18,11 +18,9 @@ export const GameSide = React.forwardRef<HTMLDivElement, GameSideProps>(({ class
   const sideRef = React.useRef<HTMLDivElement>(null);
   const { height } = useElementDimensions(sideRef);
 
-  const { round, role, deck, topology, stolenTokens, roundPhase, history, clickNextRound } = useGameEngineContext();
+  const { role, deck, topology, history } = useGameEngineContext();
   const [selectedCard, setSelectedCard] = React.useState<GameCardType | null>(null);
   const [selectedNode, setSelectedNode] = React.useState<TopologyNodeType | null>(null);
-
-  const roleRoundPhase = roundPhase[role!];
 
   React.useEffect(() => {
     if (!role) return;
@@ -49,74 +47,6 @@ export const GameSide = React.forwardRef<HTMLDivElement, GameSideProps>(({ class
       )}
       {...props}
     >
-      <div className='mx-4 flex gap-4'>
-        <p className='text-heading-18 flex flex-1 animate-pulse justify-center gap-1.5 rounded-xs border-2 border-green-400 bg-green-100 p-2 font-medium text-green-900'>
-          <AnimatePresence>
-            {roleRoundPhase === GameRoundPhase.CardSelect && (
-              <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                Choose card to use
-              </motion.span>
-            )}
-            {roleRoundPhase === GameRoundPhase.NodeSelect && (
-              <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                Choose target node to continue
-              </motion.span>
-            )}
-            {roleRoundPhase === GameRoundPhase.ActionEnd && (
-              <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                Waiting for other player to finish
-              </motion.span>
-            )}
-            {roleRoundPhase === GameRoundPhase.RoundResult && (
-              <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                Showing result
-              </motion.span>
-            )}
-            {roleRoundPhase === GameRoundPhase.RoundEnd && (
-              <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                Waiting for other player to end round
-              </motion.span>
-            )}
-          </AnimatePresence>
-        </p>
-
-        <AnimatePresence>
-          {roleRoundPhase === GameRoundPhase.RoundResult && (
-            <motion.button
-              onClick={() => clickNextRound()}
-              className='text-heading-18 bg-background-100 hover:bg-background-200 line-clamp-1 flex items-center justify-center border-2 border-gray-400 px-4 font-medium text-gray-900'
-            >
-              Next round
-            </motion.button>
-          )}
-        </AnimatePresence>
-      </div>
-
-      <div className='space-y-4 px-4'>
-        <div className='flex gap-4'>
-          <p
-            className={cn(
-              'text-heading-18 flex flex-1 justify-center gap-2 rounded-xs border-2 p-2 font-medium',
-              role === 'attacker' && 'border-red-400 bg-red-100 text-red-900',
-              role === 'defender' && 'border-blue-400 bg-blue-100 text-blue-900',
-            )}
-          >
-            {role && role[0].toUpperCase() + role.slice(1)}
-          </p>
-          <p className='text-heading-18 flex flex-1 justify-center gap-1.5 rounded-xs border-2 p-2 font-medium'>
-            Round <span>{round}</span>/<span>{GameConstant.MaxRounds}</span>
-          </p>
-        </div>
-
-        <div className='text-heading-18 flex justify-center gap-1.5 rounded-xs border-2 border-amber-400 bg-amber-100 p-2 font-medium text-amber-900'>
-          <span className='text-heading-24 leading-none'>{stolenTokens}</span>
-          <span className='mr-2 pt-0.5'>
-            <ActiveDataToken />
-          </span>
-          <span>Stolen</span>
-        </div>
-      </div>
-
       <div ref={sideRef} className='relative flex flex-1 overflow-clip'>
         <DragScrollArea className='absolute z-20 w-full px-4' style={{ height: `${height}px` }}>
           <Accordion type='multiple'>
@@ -223,10 +153,12 @@ export const GameSide = React.forwardRef<HTMLDivElement, GameSideProps>(({ class
             {Object.keys(history).map((key, index) => {
               if (!role) return null;
 
-              const roleUsedCard = history[key].usedCard[role] ?? undefined;
+              const roleUsedCard = history[key].usedCard[role];
               const usedCard = getGameCardById(roleUsedCard);
 
               const usedNode = history[key].usedNode?.[role] ?? undefined;
+
+              const effectMsg = history[key].effectMsg?.[role] ?? undefined;
 
               if (!usedCard) return null;
 
@@ -263,7 +195,7 @@ export const GameSide = React.forwardRef<HTMLDivElement, GameSideProps>(({ class
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            className='text-copy-16 -translate-y-3 text-gray-900'
+                            className='text-heading-18 text-gray-1000 -translate-y-3'
                           >
                             Target Node
                           </motion.p>
@@ -277,6 +209,13 @@ export const GameSide = React.forwardRef<HTMLDivElement, GameSideProps>(({ class
                         </div>
                       )}
                     </AnimatePresence>
+
+                    {effectMsg && (
+                      <div className='bg-background-200 w-full space-y-2 rounded-xs border border-gray-400 p-4'>
+                        <p className='text-heading-18 text-gray-1000'>Game Message</p>
+                        <p className='text-copy-14 text-gray-800'>{effectMsg[0].toUpperCase() + effectMsg.slice(1)}</p>
+                      </div>
+                    )}
                   </AccordionContent>
                 </AccordionItem>
               );
