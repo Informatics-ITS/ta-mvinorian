@@ -43,7 +43,7 @@ type GameHistoryType = Record<
   {
     usedCard: Record<GameRoleType, string>;
     usedNode?: Record<GameRoleType, TopologyNodeType | null>;
-    effectMsg?: Record<GameRoleType, string | null>;
+    effectMsg?: Record<GameRoleType, string[]>;
     effectApplied?: boolean;
   }
 >;
@@ -116,17 +116,34 @@ export const GameEngineProvider = ({ children }: GameEngineProviderProps) => {
   const clickCard = (cardId: string) => {
     if (!role) return;
 
+    //? Set selected card
     setDeck((prevDeck) => ({
       ...prevDeck,
       [role]: prevDeck[role].map((card) =>
         card.id === cardId ? { ...card, selected: !card.selected } : { ...card, selected: false },
       ),
     }));
+
+    //? Unselect all nodes
+    setTopology((prevTopology) => {
+      if (!prevTopology) return prevTopology;
+      return {
+        ...prevTopology,
+        nodes: prevTopology.nodes.map((node) => ({
+          ...node,
+          selected: {
+            ...node.selected,
+            [role]: false,
+          },
+        })),
+      };
+    });
   };
 
   const clickNode = (nodeId: string) => {
     if (!role) return;
 
+    //? Set selected node
     setTopology((prevTopology) => {
       if (!prevTopology) return prevTopology;
       return {
@@ -150,6 +167,12 @@ export const GameEngineProvider = ({ children }: GameEngineProviderProps) => {
         ),
       };
     });
+
+    //? Unselect all cards
+    setDeck((prevDeck) => ({
+      ...prevDeck,
+      [role]: prevDeck[role].map((card) => ({ ...card, selected: false })),
+    }));
   };
 
   const clickUseCard = (cardId: string) => {
@@ -242,9 +265,10 @@ export const GameEngineProvider = ({ children }: GameEngineProviderProps) => {
     return isCardApplicableToNode(usedCard[role], nodeId);
   };
 
-  const runCardEffects = () => {
+  const runCardEffects = React.useCallback(() => {
     if (!isHost) return;
     if (history[round]?.effectApplied) return;
+
     const effects = applyCardEffect({
       attacker: {
         cardId: history[round]?.usedCard.attacker ?? '',
@@ -256,26 +280,32 @@ export const GameEngineProvider = ({ children }: GameEngineProviderProps) => {
       },
       topology,
     });
-    if (effects.newTopology) setTopology(effects.newTopology);
-    if (effects.tokenStolen) setStolenTokens((prevTokens) => prevTokens + effects.tokenStolen);
-    setHistory((prevHistory) => ({
-      ...prevHistory,
-      [round]: {
-        ...prevHistory[round],
-        effectMsg: {
-          attacker: effects.effectMsg.attacker,
-          defender: effects.effectMsg.defender,
-        },
-        effectApplied: true,
-      },
-    }));
-  };
 
-  const resetRoundPhase = () => {
+    React.startTransition(() => {
+      if (effects.newTopology) setTopology(effects.newTopology);
+      if (effects.tokenStolen) setStolenTokens((prevTokens) => prevTokens + effects.tokenStolen);
+      setHistory((prevHistory) => ({
+        ...prevHistory,
+        [round]: {
+          ...prevHistory[round],
+          effectMsg: {
+            attacker: effects.effectMsg.attacker,
+            defender: effects.effectMsg.defender,
+          },
+          effectApplied: true,
+        },
+      }));
+    });
+  }, [history, isHost, round, setHistory, setStolenTokens, setTopology, topology]);
+
+  const resetRoundPhase = React.useCallback(() => {
     if (!isHost) return;
-    setRound((prevRound) => prevRound + 1);
-    setRoundPhase(defaultGameRoundPhaseType);
-  };
+    if (roundPhase.attacker !== GameRoundPhase.RoundEnd || roundPhase.defender !== GameRoundPhase.RoundEnd) return;
+    React.startTransition(() => {
+      setRound((prevRound) => prevRound + 1);
+      setRoundPhase(defaultGameRoundPhaseType);
+    });
+  }, [isHost, roundPhase, setRound, setRoundPhase]);
 
   const checkRoundEnd = React.useCallback(() => {
     if (!isHost) return;
@@ -298,8 +328,17 @@ export const GameEngineProvider = ({ children }: GameEngineProviderProps) => {
       return;
     }
     resetRoundPhase();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [roundPhase]);
+  }, [
+    isHost,
+    resetRoundPhase,
+    round,
+    roundPhase.attacker,
+    roundPhase.defender,
+    runCardEffects,
+    setPhase,
+    setRoundPhase,
+    stolenTokens,
+  ]);
 
   const startGame = React.useCallback(() => {
     setDeck(generateGameDeck(5, 5));

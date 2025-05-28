@@ -5,4 +5,8 @@ export const GAME_CARD_EFFECTS: Record<string, GameCardEffectType> = {
     nodes: ['nh-database-server', 'nm-web-server'],
     aStealTokens: 1,
   },
+  'cdb-firewall-upgrade': {
+    nodes: ['nh-database-server', 'nm-web-server'],
+    dAddDefense: 'd-firewall',
+  },
 };
