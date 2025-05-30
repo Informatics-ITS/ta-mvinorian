@@ -4,9 +4,9 @@ import React from 'react';
 
 import { useElementDimensions } from '@/hook/use-element-dimensions';
 import { useForwardedRef } from '@/hook/use-forwarded-ref';
-import { getTopologyNodeById } from '@/lib/topology';
+import { getGameNodeById, getGameNodePlayerById } from '@/lib/game-topology';
 import { cn } from '@/lib/utils';
-import { useGameEngineContext } from '@/provider/game-engine-provider';
+import { GamePlayerPhase, useGameStateContext } from '@/provider/game-state-provider';
 
 import { Button } from '../ui/button';
 import { GameNode } from './node';
@@ -14,7 +14,10 @@ import { GameNode } from './node';
 export interface GameBoardProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export const GameBoard = React.forwardRef<HTMLDivElement, GameBoardProps>(({ className, ...props }, ref) => {
-  const { topology, role, isNodeUsable, clickNode, clickUseNode } = useGameEngineContext();
+  const { role, playerPhase, getGameTopology, getGamePlayerNodes, checkIsNodeTargetable, clickNode, clickTargetNode } =
+    useGameStateContext();
+  const topology = getGameTopology();
+  const playerNodes = getGamePlayerNodes();
 
   const zoomRef = React.useRef<d3.ZoomBehavior<SVGSVGElement, unknown> | null>(null);
   const zoomStateRef = React.useRef<d3.ZoomTransform | null>(null);
@@ -37,6 +40,7 @@ export const GameBoard = React.forwardRef<HTMLDivElement, GameBoardProps>(({ cla
         .range([height, 0]),
     [ratio, height],
   );
+
   const grid = React.useCallback(
     (
       g: d3.Selection<d3.BaseType, unknown, null, undefined>,
@@ -135,7 +139,7 @@ export const GameBoard = React.forwardRef<HTMLDivElement, GameBoardProps>(({ cla
 
   const nodeAnimation: Variants = {
     initial: {
-      border: '8px solid #cce6ff',
+      border: '8px solid transparent',
       opacity: 0,
       borderRadius: '1.5rem',
     },
@@ -156,11 +160,9 @@ export const GameBoard = React.forwardRef<HTMLDivElement, GameBoardProps>(({ cla
     },
   };
 
-  const handleUseNode = (nodeId: string) => {
-    clickNode(nodeId);
-    setTimeout(() => {
-      clickUseNode(nodeId);
-    }, 150);
+  const handleCheckIsNodeTargetable = (nodeId: string) => {
+    if (playerPhase !== GamePlayerPhase.SelectNode) return false;
+    return checkIsNodeTargetable(nodeId);
   };
 
   return (
@@ -170,8 +172,8 @@ export const GameBoard = React.forwardRef<HTMLDivElement, GameBoardProps>(({ cla
           <g id='grid' className='grid'></g>
 
           {topology.links.map((link) => {
-            const sourceNode = getTopologyNodeById(link.source);
-            const targetNode = getTopologyNodeById(link.target);
+            const sourceNode = getGameNodeById(link.source);
+            const targetNode = getGameNodeById(link.target);
 
             if (!sourceNode || !targetNode) return null;
 
@@ -187,23 +189,24 @@ export const GameBoard = React.forwardRef<HTMLDivElement, GameBoardProps>(({ cla
             );
           })}
 
-          {topology.nodes.map((item) => {
-            const node = getTopologyNodeById(item.id);
-            if (!node) return null;
+          {topology.nodes.map((topologyNode) => {
+            const playerNode = getGameNodePlayerById(playerNodes, topologyNode.id);
+            const gameNode = getGameNodeById(topologyNode.id);
+            if (!gameNode || !playerNode) return null;
 
             return (
               <foreignObject
-                id={node.id}
-                key={node.id}
+                id={gameNode.id}
+                key={gameNode.id}
                 width={210}
                 height={290}
-                x={node.x + width / 4}
-                y={node.y + height / 8}
-                className={cn('node flex items-center justify-center overflow-visible', node.id)}
+                x={gameNode.x + width / 4}
+                y={gameNode.y + height / 8}
+                className={cn('node flex items-center justify-center overflow-visible', gameNode.id)}
               >
-                <GameNode node={item} role={role!} className='relative z-0' />
+                <GameNode node={topologyNode} role={role!} className='relative z-0' />
                 <AnimatePresence>
-                  {item.selected[role] && isNodeUsable(node.id) && (
+                  {playerNode.selected && handleCheckIsNodeTargetable(playerNode.id) && (
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
@@ -213,14 +216,14 @@ export const GameBoard = React.forwardRef<HTMLDivElement, GameBoardProps>(({ cla
                       <Button
                         size='lg'
                         variant='ghost'
-                        onClick={() => handleUseNode(node.id)}
+                        onClick={() => clickTargetNode(playerNode.id)}
                         className='!text-label-20 hover:bg-background-100 hover:border-background-100 relative z-20 mt-[72px] border border-gray-400 text-gray-100'
                       >
                         Target Node
                       </Button>
                       <div
                         className='bg-gray-1000 absolute right-0 left-0 h-full w-full opacity-40'
-                        onClick={() => clickNode(node.id)}
+                        onClick={() => clickNode(playerNode.id)}
                       ></div>
                     </motion.div>
                   )}
@@ -228,9 +231,11 @@ export const GameBoard = React.forwardRef<HTMLDivElement, GameBoardProps>(({ cla
                 <motion.div
                   variants={nodeAnimation}
                   initial='initial'
-                  animate={item.selected[role] ? 'active' : isNodeUsable(node.id) ? 'pulse' : 'initial'}
-                  whileHover={!item.selected[role] ? 'hover' : isNodeUsable(node.id) ? 'pulse' : 'active'}
-                  onClick={() => clickNode(node.id)}
+                  animate={
+                    handleCheckIsNodeTargetable(playerNode.id) ? 'pulse' : playerNode.selected ? 'active' : 'initial'
+                  }
+                  whileHover={!playerNode.selected ? 'hover' : 'active'}
+                  onClick={() => clickNode(playerNode.id)}
                   className='absolute -top-5 -right-5 -bottom-5 -left-5 z-0 rounded-3xl'
                 ></motion.div>
               </foreignObject>

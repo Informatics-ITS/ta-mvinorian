@@ -1,11 +1,11 @@
 import { LockKeyholeIcon } from 'lucide-react';
 
 import { getGameDefenseById } from '@/lib/game-defense';
-import { TopologyDefenseType } from '@/lib/topology';
+import { GameTopologyDefenseType } from '@/lib/game-topology';
 import { cn } from '@/lib/utils';
 
 export interface GameDefenseProps {
-  defense: TopologyDefenseType;
+  defense: GameTopologyDefenseType;
 }
 
 export const GameDefense = ({ defense }: GameDefenseProps) => {

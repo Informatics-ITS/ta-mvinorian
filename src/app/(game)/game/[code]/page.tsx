@@ -1,13 +1,12 @@
-import dynamic from 'next/dynamic';
 import { redirect } from 'next/navigation';
 
 import { getServerAuthToken } from '@/lib/cookies';
 import { verifyAuthToken } from '@/lib/jwt';
-import { GameEngineProvider } from '@/provider/game-engine-provider';
+import { GameStateProvider } from '@/provider/game-state-provider';
 import { WsProvider } from '@/provider/ws-provider';
 import { getGameByUserIdService } from '@/service/game-service';
 
-const GameClientWrapper = dynamic(() => import('./game-client'));
+import GameClient from './game-client';
 
 export default async function GamePage({ params }: { params: Promise<{ code: string }> }) {
   const { code } = await params;
@@ -30,9 +29,9 @@ export default async function GamePage({ params }: { params: Promise<{ code: str
 
   return (
     <WsProvider wsUrl={wsUrl}>
-      <GameEngineProvider>
-        <GameClientWrapper code={code} />
-      </GameEngineProvider>
+      <GameStateProvider>
+        <GameClient code={code} />
+      </GameStateProvider>
     </WsProvider>
   );
 }

@@ -2,19 +2,19 @@ import { AnimatePresence, motion } from 'motion/react';
 import React from 'react';
 
 import { cn } from '@/lib/utils';
-import { GameConstant, GameRoundPhase, useGameEngineContext } from '@/provider/game-engine-provider';
+import { GameConstant, GamePlayerPhase, useGameStateContext } from '@/provider/game-state-provider';
 
 import { Button } from '../ui/button';
 import { ActiveDataToken } from './node';
 
 export const GameFloating = () => {
-  const { roundPhase, role, stolenTokens, round, clickNextRound } = useGameEngineContext();
-  const roleRoundPhase = roundPhase[role!];
+  const { playerPhase, role, round, clickNextRound, getGameStolenTokens } = useGameStateContext();
+  const stolenTokens = getGameStolenTokens();
 
   return (
     <React.Fragment>
       <AnimatePresence>
-        {roleRoundPhase === GameRoundPhase.RoundResult && (
+        {playerPhase === GamePlayerPhase.WaitResult && (
           <motion.div
             initial={{ opacity: 0, y: -48 }}
             animate={{ opacity: 1, y: 6 }}
@@ -41,27 +41,27 @@ export const GameFloating = () => {
 
         <p className='text-heading-18 flex w-72 flex-1 justify-center gap-1.5 rounded-xs border-2 border-green-400 bg-green-100 p-2 font-medium text-green-900'>
           <AnimatePresence>
-            {roleRoundPhase === GameRoundPhase.CardSelect && (
+            {playerPhase === GamePlayerPhase.SelectCard && (
               <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                 Choose card to use
               </motion.span>
             )}
-            {roleRoundPhase === GameRoundPhase.NodeSelect && (
+            {playerPhase === GamePlayerPhase.SelectNode && (
               <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                 Choose target node to continue
               </motion.span>
             )}
-            {roleRoundPhase === GameRoundPhase.ActionEnd && (
+            {playerPhase === GamePlayerPhase.WaitTurn && (
               <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                 Waiting for other player to finish
               </motion.span>
             )}
-            {roleRoundPhase === GameRoundPhase.RoundResult && (
+            {playerPhase === GamePlayerPhase.WaitResult && (
               <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                 Showing result
               </motion.span>
             )}
-            {roleRoundPhase === GameRoundPhase.RoundEnd && (
+            {playerPhase === GamePlayerPhase.EndRound && (
               <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                 Waiting for other player to end round
               </motion.span>

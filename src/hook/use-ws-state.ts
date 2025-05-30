@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { WsMessageType, WsPlayersType } from '@/app/(_api)/api/ws/route';
-import { GameRoleType } from '@/provider/game-engine-provider';
+import { GameRoleType } from '@/provider/game-state-provider';
 import { useWsContext } from '@/provider/ws-provider';
 
 import { useAuthStore } from './use-auth-store';
@@ -25,11 +25,6 @@ export const useWsState = <TData>(stateName: string, defaultData: TData) => {
     },
     [stateName, sendMessage, localState],
   );
-
-  React.useEffect(() => {
-    setState(defaultData);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   React.useEffect(() => {
     const handleMessage = (message: WsMessageType) => {

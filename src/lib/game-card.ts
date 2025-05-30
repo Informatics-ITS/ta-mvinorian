@@ -1,7 +1,7 @@
 import { LucideIcon } from 'lucide-react';
 
 import { GAME_CARDS } from '@/constant/game-card';
-import { GameRoleType } from '@/provider/game-engine-provider';
+import { GameRoleType } from '@/provider/game-state-provider';
 
 export type GameCardType = {
   id: string;
@@ -12,19 +12,9 @@ export type GameCardType = {
   icon: LucideIcon;
 };
 
-export type GameDeckCardType = {
+export type GameCardPlayerType = {
   id: string;
   selected: boolean;
-};
-
-export type GameDeckType = {
-  attacker: GameDeckCardType[];
-  defender: GameDeckCardType[];
-};
-
-export const defaultGameDeckType: GameDeckType = {
-  attacker: [],
-  defender: [],
 };
 
 export const getRandomGameCards = (role: GameRoleType, count: number) => {
@@ -33,14 +23,9 @@ export const getRandomGameCards = (role: GameRoleType, count: number) => {
   return randomCards;
 };
 
-export const generateGameDeck = (attackerCount: number, defenderCount: number): GameDeckType => {
-  const attackerDeck = getRandomGameCards('attacker', attackerCount);
-  const defenderDeck = getRandomGameCards('defender', defenderCount);
-
-  return {
-    attacker: attackerDeck.map((card) => ({ id: card.id, selected: false })),
-    defender: defenderDeck.map((card) => ({ id: card.id, selected: false })),
-  };
+export const generateGameDeckByRole = (role: GameRoleType, count: number): GameCardPlayerType[] => {
+  const deck = getRandomGameCards(role, count);
+  return deck.map((card) => ({ id: card.id, selected: false }));
 };
 
 export const getGameCardById = (id?: string): GameCardType | undefined => {

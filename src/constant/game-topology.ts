@@ -1,8 +1,8 @@
 import { CloudIcon, CpuIcon, DatabaseIcon, GlobeIcon, MailIcon, MonitorIcon, NetworkIcon } from 'lucide-react';
 
-import { TopologyDefenseType, TopologyDetailType } from '@/lib/topology';
+import { GameTopologyDefenseType, TopologyType } from '@/lib/game-topology';
 
-export const TOPOLOGY: TopologyDetailType = {
+export const GAME_TOPOLOGY: TopologyType = {
   nodes: [
     {
       id: 'nh-internal-network-hub',
@@ -96,7 +96,7 @@ export const TOPOLOGY: TopologyDetailType = {
   ],
 };
 
-export const TOPOLOGY_NODE_DEFENSES: Record<string, TopologyDefenseType[]> = {
+export const GAME_TOPOLOGY_NODE_DEFENSES: Record<string, GameTopologyDefenseType[]> = {
   'nh-database-server': [
     { id: 'd-firewall', revealed: false },
     { id: 'd-ids', revealed: false },

@@ -1,18 +1,18 @@
 import { GAME_CARD_EFFECTS } from '@/constant/game-card-effect';
-import { GameEngineType } from '@/provider/game-engine-provider';
+import { GamePlayerStateType } from '@/provider/game-state-provider';
 
 import { getGameDefenseById } from './game-defense';
-import { getTopologyNodeById } from './topology';
+import { GameTopologyType, getGameNodeById, getGameTopologyNodeById } from './game-topology';
 
 export type GameCardEffectType = {
   //? Node IDs effected by the card
   nodes?: string[];
 
   //? Attacker's effect
-  aStealTokens?: number;
+  stealTokens?: number;
 
   //? Defender's effect
-  dAddDefense?: string;
+  addDefense?: string;
   // revealCard?: {
   //   role: GameRoleType;
   //   count: number;
@@ -28,7 +28,8 @@ export type GameCardEffectType = {
   // };
 };
 
-export const getGameCardEffect = (cardId: string): GameCardEffectType | undefined => {
+export const getGameCardEffect = (cardId?: string): GameCardEffectType | undefined => {
+  if (!cardId) return undefined;
   const effect = GAME_CARD_EFFECTS[cardId];
   if (!effect) return undefined;
 
@@ -43,7 +44,9 @@ export const isCardTargetNode = (cardId: string): boolean => {
   return true;
 };
 
-export const isCardApplicableToNode = (cardId: string, nodeId: string): boolean => {
+export const isCardApplicableToNode = (cardId?: string, nodeId?: string): boolean => {
+  if (!cardId || !nodeId) return false;
+
   const effect = getGameCardEffect(cardId);
   if (!effect) return false;
 
@@ -53,115 +56,106 @@ export const isCardApplicableToNode = (cardId: string, nodeId: string): boolean 
   return effect.nodes.includes(nodeId);
 };
 
-interface ApplyCardEffectRoleParams {
-  cardId: string;
-  nodeId: string;
-}
-
 interface ApplyCardEffectParams {
-  attacker: ApplyCardEffectRoleParams;
-  defender: ApplyCardEffectRoleParams;
-  topology: GameEngineType['topology'];
+  attackerState: GamePlayerStateType;
+  defenderState: GamePlayerStateType;
+  topology: GameTopologyType;
 }
 
 interface ApplyCardEffectReturn {
-  effectMsg: {
-    attacker: string[];
-    defender: string[];
-  };
-  tokenStolen: number;
-  newTopology: GameEngineType['topology'];
+  attackerResult: string[];
+  defenderResult: string[];
+  stolenTokens: number;
+  topology: GameTopologyType;
 }
 
-// TODO: Continue to implement other card effects
-export const applyCardEffect = ({ attacker, defender, topology }: ApplyCardEffectParams): ApplyCardEffectReturn => {
-  const aEffect = getGameCardEffect(attacker.cardId);
-  const dEffect = getGameCardEffect(defender.cardId);
-  const aNodeId = attacker.nodeId;
-  const dNodeId = defender.nodeId;
-  const aMessage: string[] = [];
-  const dMessage: string[] = [];
+export const calculateCardEffect = ({
+  attackerState,
+  defenderState,
+  topology,
+}: ApplyCardEffectParams): ApplyCardEffectReturn => {
+  const attackerEffect = getGameCardEffect(attackerState.usedCardId);
+  const defenderEffect = getGameCardEffect(defenderState.usedCardId);
 
-  let tokenStolen: number = 0;
-  let newTopology: GameEngineType['topology'] = topology;
+  const attackerNodeId = attackerState.targetNodeId;
+  const defenderNodeId = defenderState.targetNodeId;
 
-  //* ===== Attacker Effect: Steal Token =====
-  if (aEffect?.aStealTokens) {
-    const stealTokens = aEffect.aStealTokens;
-    let nodeName = '';
+  const attackerResult: string[] = [];
+  const defenderResult: string[] = [];
+
+  let topologyResult: GameTopologyType = topology;
+  let stolenTokens = 0;
+
+  //* ===== Attacker Effect: Steal Tokens =====
+  if (attackerEffect?.stealTokens) {
+    const effectStealTokens = attackerEffect.stealTokens;
+
+    const targetNode = getGameTopologyNodeById(topologyResult, attackerNodeId);
+    const gameNode = getGameNodeById(attackerNodeId);
+
     let blocked = false;
 
-    if (newTopology) {
-      const targetNode = newTopology.nodes.find((node) => node.id === aNodeId);
-      if (targetNode) {
-        const nodeDetail = getTopologyNodeById(targetNode.id);
-        const currentToken = (nodeDetail?.token ?? 0) - targetNode.stolenToken;
-        tokenStolen = Math.min(currentToken, stealTokens);
-        blocked = targetNode.defenses.length > 0;
-        nodeName = nodeDetail?.name ?? '';
+    if (targetNode && gameNode) {
+      const currentTokens = gameNode.token - targetNode.stolenToken;
+      stolenTokens = Math.min(currentTokens, effectStealTokens);
+      blocked = targetNode.defenses.length > 0;
 
-        newTopology = {
-          ...newTopology,
-          nodes: newTopology.nodes.map((node) => {
-            if (node.id !== aNodeId) return node;
-            if (blocked) return { ...node, defenses: node.defenses.slice(1) };
-            return { ...node, stolenToken: node.stolenToken + tokenStolen };
-          }),
-        };
-      }
+      topologyResult = {
+        ...topologyResult,
+        nodes: topologyResult.nodes.map((node) => {
+          if (node.id !== attackerNodeId) return node;
+          if (blocked) return { ...node, defenses: node.defenses.slice(1) };
+          return { ...node, stolenToken: node.stolenToken + stolenTokens };
+        }),
+      };
     }
 
     if (blocked) {
-      tokenStolen = 0;
-      aMessage.push(`attack blocked by defense, no data token stolen`);
-      dMessage.push(`${nodeName} defense blocked the attempted attack, no data token stolen`);
-    } else if (tokenStolen > 0) {
-      aMessage.push(`successfully stole ${tokenStolen} data token`);
-      dMessage.push(`attacker has stolen ${tokenStolen} data token`);
+      stolenTokens = 0;
+      attackerResult.push(`attack blocked by defense, no data token stolen`);
+      defenderResult.push(`${gameNode?.name} defense blocked the attempted attack, no data token stolen`);
+    } else if (stolenTokens > 0) {
+      attackerResult.push(`successfully stole ${stolenTokens} data token(s)`);
+      defenderResult.push(`attacker has stolen ${stolenTokens} data token(s)`);
     } else {
-      aMessage.push('no data token in target node');
+      attackerResult.push('no data token in target node');
     }
   }
 
   //* ===== Defender Effect: Add Defense =====
-  if (dEffect?.dAddDefense) {
-    const defenseId = dEffect.dAddDefense;
-    let nodeName = '';
+  if (defenderEffect?.addDefense) {
+    const defenseId = defenderEffect.addDefense;
+
+    const targetNode = getGameTopologyNodeById(topologyResult, defenderNodeId);
+    const gameNode = getGameNodeById(defenderNodeId);
+
     let isDefenseMaxed = false;
 
-    if (newTopology) {
-      const targetNode = newTopology.nodes.find((node) => node.id === dNodeId);
-      if (targetNode) {
-        const nodeDetail = getTopologyNodeById(targetNode.id);
-        nodeName = nodeDetail?.name ?? '';
-
-        newTopology = {
-          ...newTopology,
-          nodes: newTopology.nodes.map((node) => {
-            if (node.id !== dNodeId) return node;
-            if (node.defenses.length >= 3) {
-              isDefenseMaxed = true;
-              return node;
-            }
-            return { ...node, defenses: [...node.defenses, { id: defenseId, revealed: false }] };
-          }),
-        };
-      }
+    if (targetNode && gameNode) {
+      topologyResult = {
+        ...topologyResult,
+        nodes: topologyResult.nodes.map((node) => {
+          if (node.id !== defenderNodeId) return node;
+          if (node.defenses.length >= 3) {
+            isDefenseMaxed = true;
+            return node;
+          }
+          return { ...node, defenses: [...node.defenses, { id: defenseId, revealed: false }] };
+        }),
+      };
     }
 
     if (isDefenseMaxed) {
-      dMessage.push(`${nodeName} defense is already maxed, no new defense added`);
+      defenderResult.push(`${gameNode?.name} defense is already maxed, no new defense added`);
     } else {
-      dMessage.push(`added ${getGameDefenseById(defenseId)?.name} defense to ${nodeName}`);
+      defenderResult.push(`added ${getGameDefenseById(defenseId)?.name} defense to ${gameNode?.name}`);
     }
   }
 
   return {
-    effectMsg: {
-      attacker: aMessage,
-      defender: dMessage,
-    },
-    tokenStolen,
-    newTopology,
+    attackerResult,
+    defenderResult,
+    stolenTokens,
+    topology: topologyResult,
   };
 };

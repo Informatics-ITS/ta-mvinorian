@@ -5,7 +5,7 @@ import React from 'react';
 import { GamePlay } from '@/component/game/play';
 import { GameWaitingJoin } from '@/component/game/waiting-join';
 import { withAuth } from '@/component/hoc/with-auth';
-import { GamePhase, useGameEngineContext } from '@/provider/game-engine-provider';
+import { GamePlayerPhase, useGameStateContext } from '@/provider/game-state-provider';
 import { useWsContext } from '@/provider/ws-provider';
 
 export interface GameClientProps {
@@ -14,12 +14,12 @@ export interface GameClientProps {
 
 const GameClient = ({ code }: GameClientProps) => {
   const { closeSocket } = useWsContext();
-  const { phase } = useGameEngineContext();
+  const { playerPhase } = useGameStateContext();
 
   return (
     <React.Fragment>
-      {phase === GamePhase.WaitingJoin && <GameWaitingJoin code={code} onLeaveGame={() => closeSocket()} />}
-      {phase === GamePhase.Play && <GamePlay />}
+      {playerPhase === GamePlayerPhase.WaitGame && <GameWaitingJoin code={code} onLeaveGame={() => closeSocket()} />}
+      {playerPhase !== GamePlayerPhase.WaitGame && <GamePlay />}
     </React.Fragment>
   );
 };

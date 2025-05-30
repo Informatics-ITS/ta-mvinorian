@@ -3,7 +3,7 @@ import React from 'react';
 
 import { getGameCardById } from '@/lib/game-card';
 import { cn } from '@/lib/utils';
-import { GameRoundPhase, useGameEngineContext } from '@/provider/game-engine-provider';
+import { GamePlayerPhase, useGameStateContext } from '@/provider/game-state-provider';
 
 import { Button } from '../ui/button';
 import { GameCard } from './card';
@@ -11,16 +11,9 @@ import { GameCard } from './card';
 export interface GameDeckProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export const GameDeck = React.forwardRef<HTMLDivElement, GameDeckProps>(({ className, ...props }, ref) => {
-  const { role, deck, roundPhase, clickCard, clickUseCard } = useGameEngineContext();
+  const { playerPhase, getGamePlayerCards, clickCard, clickUseCard } = useGameStateContext();
 
-  const roleRoundPhase = roundPhase[role!];
-
-  const handleUseCard = (cardId: string) => {
-    clickCard(cardId);
-    setTimeout(() => {
-      clickUseCard(cardId);
-    }, 150);
-  };
+  const gamePlayerCards = getGamePlayerCards();
 
   const cardAnimation = {
     initial: { scale: 1, y: 0 },
@@ -38,9 +31,9 @@ export const GameDeck = React.forwardRef<HTMLDivElement, GameDeckProps>(({ class
     >
       <div className='absolute bottom-0 left-0 z-20 h-32 w-full'></div>
       <AnimatePresence initial={false} mode='popLayout'>
-        {deck &&
-          role &&
-          deck[role].map((card) => (
+        {gamePlayerCards &&
+          gamePlayerCards.length > 0 &&
+          gamePlayerCards.map((card) => (
             <motion.div
               key={card.id}
               initial={{ opacity: 0, y: 300 }}
@@ -58,7 +51,7 @@ export const GameDeck = React.forwardRef<HTMLDivElement, GameDeckProps>(({ class
               >
                 <GameCard card={getGameCardById(card.id)!} onClick={() => clickCard(card.id)} className='relative' />
                 <AnimatePresence>
-                  {card.selected && roleRoundPhase === GameRoundPhase.CardSelect && (
+                  {card.selected && playerPhase === GamePlayerPhase.SelectCard && (
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
@@ -68,7 +61,7 @@ export const GameDeck = React.forwardRef<HTMLDivElement, GameDeckProps>(({ class
                       <Button
                         size='lg'
                         variant='ghost'
-                        onClick={() => handleUseCard(card.id)}
+                        onClick={() => clickUseCard(card.id)}
                         className='!text-label-20 hover:bg-background-100 hover:border-background-100 relative z-20 mt-[72px] border border-gray-400 text-gray-100'
                       >
                         Use Card

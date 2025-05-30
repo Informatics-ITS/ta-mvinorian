@@ -1,13 +1,13 @@
 import React from 'react';
 
-import { getTopologyNodeById, TopologyNodeDetailType, TopologyNodeType } from '@/lib/topology';
+import { GameNodeType, GameTopologyNodeType, getGameNodeById } from '@/lib/game-topology';
 import { cn } from '@/lib/utils';
-import { GameRoleType } from '@/provider/game-engine-provider';
+import { GameRoleType } from '@/provider/game-state-provider';
 
 import { GameDefense, GameDefenseEmpty, GameDefenseLocked } from './defense';
 
 export const nodeAttribute: {
-  [k in TopologyNodeDetailType['security']]: {
+  [k in GameNodeType['security']]: {
     bg: string;
     icon: React.ReactNode;
     text: string;
@@ -43,15 +43,15 @@ export const nodeAttribute: {
 };
 
 export interface GameNodeProps extends React.HTMLAttributes<HTMLDivElement> {
-  node: TopologyNodeType;
+  node: GameTopologyNodeType;
   role: GameRoleType;
 }
 
 export const GameNode = React.forwardRef<HTMLDivElement, GameNodeProps>(({ node, role, className, ...props }, ref) => {
-  const nodeDetail = getTopologyNodeById(node.id);
-  if (!nodeDetail) return null;
+  const gameNode = getGameNodeById(node.id);
+  if (!gameNode) return null;
 
-  const NodeIcon = nodeDetail.icon;
+  const NodeIcon = gameNode.icon;
 
   return (
     <div
@@ -59,23 +59,23 @@ export const GameNode = React.forwardRef<HTMLDivElement, GameNodeProps>(({ node,
       className={cn('bg-background-100 shadow-card h-72 w-52 shrink-0 rounded-xl p-1.5', className)}
       {...props}
     >
-      <div className={cn('h-full w-full space-y-3 rounded-lg p-2', nodeAttribute[nodeDetail.security].bg)}>
+      <div className={cn('h-full w-full space-y-3 rounded-lg p-2', nodeAttribute[gameNode.security].bg)}>
         <div className='relative flex h-36 w-full items-center justify-center overflow-clip rounded-md'>
           <div
             className={cn(
               'absolute -top-1 -left-0.5 rounded-md p-2',
-              nodeAttribute[nodeDetail.security].bg,
-              nodeAttribute[nodeDetail.security].text,
+              nodeAttribute[gameNode.security].bg,
+              nodeAttribute[gameNode.security].text,
             )}
           >
-            {nodeAttribute[nodeDetail.security].icon}
+            {nodeAttribute[gameNode.security].icon}
           </div>
 
-          <NodeIcon className={cn('z-10 h-24 w-24', nodeAttribute[nodeDetail.security].strong)} strokeWidth={1.25} />
+          <NodeIcon className={cn('z-10 h-24 w-24', nodeAttribute[gameNode.security].strong)} strokeWidth={1.25} />
 
           {(role === 'attacker' && node.revealed === true) || role === 'defender' ? (
             <div className='absolute top-1.5 right-1.5 z-10 space-y-1.5'>
-              {Array.from({ length: nodeDetail.token - node.stolenToken }, (_, i) => (
+              {Array.from({ length: gameNode.token - node.stolenToken }, (_, i) => (
                 <_ActiveDataToken key={i} />
               ))}
               {Array.from({ length: node.stolenToken }, (_, i) => (
@@ -129,9 +129,7 @@ export const GameNode = React.forwardRef<HTMLDivElement, GameNodeProps>(({ node,
           </svg>
         </div>
         <div className='space-y-4 px-1 text-left'>
-          <p className={cn('!text-label-16 font-semibold', nodeAttribute[nodeDetail.security].text)}>
-            {nodeDetail.name}
-          </p>
+          <p className={cn('!text-label-16 font-semibold', nodeAttribute[gameNode.security].text)}>{gameNode.name}</p>
           <div className='grid grid-cols-3 gap-2'>
             {node.defenses.map((defense, index) =>
               role === 'attacker' && !defense.revealed ? (
@@ -146,7 +144,7 @@ export const GameNode = React.forwardRef<HTMLDivElement, GameNodeProps>(({ node,
               ) : (
                 <GameDefenseEmpty
                   key={i}
-                  className={cn(nodeAttribute[nodeDetail.security].accent, nodeAttribute[nodeDetail.security].stroke)}
+                  className={cn(nodeAttribute[gameNode.security].accent, nodeAttribute[gameNode.security].stroke)}
                 />
               ),
             )}
