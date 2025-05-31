@@ -1,10 +1,11 @@
+import { AnimatePresence, motion } from 'motion/react';
 import React from 'react';
 
 import { GameNodeType, GameTopologyNodeType, getGameNodeById } from '@/lib/game-topology';
 import { cn } from '@/lib/utils';
 import { GameRoleType } from '@/provider/game-state-provider';
 
-import { GameDefense, GameDefenseEmpty, GameDefenseLocked } from './defense';
+import { GameDefense, GameDefenseEmpty, GameDefenseHidden } from './defense';
 
 export const nodeAttribute: {
   [k in GameNodeType['security']]: {
@@ -131,23 +132,53 @@ export const GameNode = React.forwardRef<HTMLDivElement, GameNodeProps>(({ node,
         <div className='space-y-4 px-1 text-left'>
           <p className={cn('!text-label-16 font-semibold', nodeAttribute[gameNode.security].text)}>{gameNode.name}</p>
           <div className='grid grid-cols-3 gap-2'>
-            {node.defenses.map((defense, index) =>
-              role === 'attacker' && !defense.revealed ? (
-                <GameDefenseLocked key={index} />
-              ) : (
-                <GameDefense key={index} defense={defense} />
-              ),
-            )}
-            {Array.from({ length: 3 - node.defenses.length }, (_, i) =>
-              role === 'attacker' ? (
-                <GameDefenseLocked key={i} />
-              ) : (
-                <GameDefenseEmpty
-                  key={i}
-                  className={cn(nodeAttribute[gameNode.security].accent, nodeAttribute[gameNode.security].stroke)}
-                />
-              ),
-            )}
+            <AnimatePresence mode='wait'>
+              {node.defenses.map((defense, index) =>
+                role === 'attacker' && !defense.revealed ? (
+                  <motion.div
+                    key={'defense' + index}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                  >
+                    <GameDefenseHidden />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key={'defense' + defense.id + index}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                  >
+                    <GameDefense defense={defense} />
+                  </motion.div>
+                ),
+              )}
+              {Array.from({ length: 3 - node.defenses.length }, (_, index) =>
+                role === 'attacker' ? (
+                  <motion.div
+                    key={'placeholder' + index}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                  >
+                    <GameDefenseHidden />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key={'placeholder' + index}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                  >
+                    <GameDefenseEmpty
+                      key={index}
+                      className={cn(nodeAttribute[gameNode.security].accent, nodeAttribute[gameNode.security].stroke)}
+                    />
+                  </motion.div>
+                ),
+              )}
+            </AnimatePresence>
           </div>
         </div>
       </div>

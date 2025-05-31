@@ -37,7 +37,7 @@ export const GameSideRight = React.forwardRef<HTMLDivElement, GameSideRightProps
 
               const usedCardId = playerHistory[h.round].usedCardId;
               const targetNodeId = playerHistory[h.round].targetNodeId;
-              const result = playerHistory[h.round].result;
+              const messages = playerHistory[h.round].messages;
 
               const usedGameCard = usedCardId ? getGameCardById(usedCardId) : null;
               const usedGameTopologyNode = getGameTopologyNodeById(h.topology, targetNodeId);
@@ -48,12 +48,12 @@ export const GameSideRight = React.forwardRef<HTMLDivElement, GameSideRightProps
                 <div key={index} className='space-y-0'>
                   <p className='border-y border-gray-400 p-4 px-4 text-gray-900'>Round {h.round} Action</p>
                   <div className='space-y-4 p-4'>
-                    {result && result.length > 0 && (
+                    {messages && messages.length > 0 && (
                       <div className='bg-background-200 w-full space-y-2 rounded-xs border border-gray-400 p-4'>
                         <p className='text-heading-18 text-gray-1000'>Game Message</p>
-                        {result.map((r, i) => (
+                        {messages.map((msg, i) => (
                           <p key={i} className='text-copy-14 text-gray-800'>
-                            {r[0].toUpperCase() + r.slice(1) + '.'}
+                            {msg[0].toUpperCase() + msg.slice(1) + '.'}
                           </p>
                         ))}
                       </div>

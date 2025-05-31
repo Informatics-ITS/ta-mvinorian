@@ -55,14 +55,19 @@ export const GAME_CARDS: GameCardType[] = [
     role: 'attacker',
     type: 'stealth',
     icon: WorkflowIcon,
+    effect: {},
   },
   {
     id: 'caa-sql-injection',
     name: 'SQL Injection',
-    desc: 'Inject an SQL payload. Steal 1 data token from Database Server. Action revealed if failed.',
+    desc: 'Inject an SQL payload. Steal 1 data token from Database Server or Web Server.',
     role: 'attacker',
     type: 'attack',
     icon: SquareChartGanttIcon,
+    effect: {
+      nodes: ['nh-database-server', 'nm-web-server'],
+      stealTokens: 1,
+    },
   },
   {
     id: 'caa-phishing-attack',
@@ -71,6 +76,10 @@ export const GAME_CARDS: GameCardType[] = [
     role: 'attacker',
     type: 'attack',
     icon: FishIcon,
+    effect: {
+      nodes: ['nl-workstation'],
+      stealTokens: 1,
+    },
   },
   {
     id: 'caa-zero-day-exploit',
@@ -79,6 +88,11 @@ export const GAME_CARDS: GameCardType[] = [
     role: 'attacker',
     type: 'attack',
     icon: CircleIcon,
+    effect: {
+      nodes: ['all'],
+      stealTokens: 1,
+      ignoredDefenses: 1,
+    },
   },
   {
     id: 'caa-ransomware-attack',
@@ -87,6 +101,7 @@ export const GAME_CARDS: GameCardType[] = [
     role: 'attacker',
     type: 'attack',
     icon: BugIcon,
+    effect: {},
   },
   {
     id: 'caa-man-in-the-middle',
@@ -95,6 +110,7 @@ export const GAME_CARDS: GameCardType[] = [
     role: 'attacker',
     type: 'attack',
     icon: VenetianMaskIcon,
+    effect: {},
   },
   // {
   //   id: 'cad-ddos-attack',
@@ -139,10 +155,14 @@ export const GAME_CARDS: GameCardType[] = [
   {
     id: 'cdb-firewall-upgrade',
     name: 'Firewall Upgrade',
-    desc: 'Add firewall on target node. Block 1 attack on target node.',
+    desc: 'Add firewall on Database Server and Web Server. Block 1 attack on target node.',
     role: 'defender',
     type: 'block',
     icon: FlameIcon,
+    effect: {
+      nodes: ['nh-database-server', 'nm-web-server'],
+      addDefense: 'd-firewall',
+    },
   },
   {
     id: 'cdb-access-control-policy',
@@ -151,14 +171,19 @@ export const GAME_CARDS: GameCardType[] = [
     role: 'defender',
     type: 'block',
     icon: LockIcon,
+    effect: {},
   },
   {
     id: 'cdb-mfa-implementation',
     name: 'MFA Implementation',
-    desc: 'Implement Multi-Factor Authentication. Prevent attack to Workstation for 1 attack.',
+    desc: 'Implement Multi-Factor Authentication. Block attack to Workstation or Email Server for 1 attack.',
     role: 'defender',
     type: 'block',
     icon: KeyRoundIcon,
+    effect: {
+      nodes: ['nm-email-server', 'nl-workstation'],
+      addDefense: 'd-mfa',
+    },
   },
   {
     id: 'cdb-endpoint-protection',
@@ -167,14 +192,19 @@ export const GAME_CARDS: GameCardType[] = [
     role: 'defender',
     type: 'block',
     icon: BracesIcon,
+    effect: {},
   },
   {
     id: 'cdb-network-segmentation',
     name: 'Network Segmentation',
-    desc: 'Segregate network. Target node cannot be attacked this turn.',
+    desc: 'Segregate network. Target node cannot be attacked this round.',
     role: 'defender',
     type: 'block',
     icon: LayoutGridIcon,
+    effect: {
+      nodes: ['all'],
+      ignoreAttack: true,
+    },
   },
   {
     id: 'cdd-obfuscation-shield',
@@ -183,6 +213,7 @@ export const GAME_CARDS: GameCardType[] = [
     role: 'defender',
     type: 'detect',
     icon: ShieldEllipsisIcon,
+    effect: {},
   },
   // {
   //   id: 'cdd-security-awareness',

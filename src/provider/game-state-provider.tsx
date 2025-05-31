@@ -3,8 +3,15 @@
 import React from 'react';
 
 import { useWsPlayers, useWsState } from '@/hook/use-ws-state';
-import { GameCardPlayerType, GameCardType, generateGameDeckByRole, getRandomGameCards } from '@/lib/game-card';
-import { calculateCardEffect, isCardApplicableToNode, isCardTargetNode } from '@/lib/game-card-effect';
+import {
+  GameCardPlayerType,
+  GameCardType,
+  generateGameDeckByRole,
+  getRandomGameCards,
+  isCardApplicableToNode,
+  isCardTargetNode,
+} from '@/lib/game-card';
+import { processGameCardEffect } from '@/lib/game-card-effect';
 import { defaultGameNodePlayer, defaultGameTopology, GameNodePlayerType, GameTopologyType } from '@/lib/game-topology';
 
 import { useWsContext } from './ws-provider';
@@ -36,7 +43,7 @@ export type GamePlayerStateType = {
 export type GamePlayerHistoryType = {
   usedCardId?: string;
   targetNodeId?: string;
-  result?: string[];
+  messages?: string[];
 }[];
 
 export type GameHistoryType = {
@@ -340,7 +347,7 @@ export const GameStateProvider = ({ children }: GameStateProviderProps) => {
   };
 
   const calculateEffects = () => {
-    const effect = calculateCardEffect({
+    const effect = processGameCardEffect({
       attackerState,
       defenderState,
       topology: getGameTopology(),
@@ -354,14 +361,14 @@ export const GameStateProvider = ({ children }: GameStateProviderProps) => {
         ...prevHistory.slice(0, -1),
         {
           ...prevHistory[prevHistory.length - 1],
-          result: effect.attackerResult,
+          messages: effect.attackerMessages,
         },
       ]);
       setDefenderHistory((prevHistory) => [
         ...prevHistory.slice(0, -1),
         {
           ...prevHistory[prevHistory.length - 1],
-          result: effect.defenderResult,
+          messages: effect.defenderMessages,
         },
       ]);
 

@@ -1,4 +1,4 @@
-import { LockKeyholeIcon } from 'lucide-react';
+import { EyeOffIcon } from 'lucide-react';
 
 import { getGameDefenseById } from '@/lib/game-defense';
 import { GameTopologyDefenseType } from '@/lib/game-topology';
@@ -30,14 +30,14 @@ export const GameDefense = ({ defense }: GameDefenseProps) => {
   );
 };
 
-export const GameDefenseLocked = () => {
+export const GameDefenseHidden = () => {
   return (
     <div className='shadow-card flex aspect-square w-full flex-col items-center overflow-clip rounded-sm opacity-50'>
       <div className='flex w-full flex-1 items-center justify-center bg-gray-700'>
-        <LockKeyholeIcon className='text-gray-100' />
+        <EyeOffIcon className='text-gray-100' />
       </div>
       <p className='text-gray-1000 flex h-5 w-full items-center justify-center bg-gray-600 text-center text-[8px] leading-none tracking-tight'>
-        Locked
+        Hidden
       </p>
     </div>
   );
