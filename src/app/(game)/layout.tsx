@@ -18,7 +18,7 @@ import { useAuthStore } from '@/hook/use-auth-store';
 
 export default withAuth(GameLayout);
 
-export function GameLayout({
+function GameLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
