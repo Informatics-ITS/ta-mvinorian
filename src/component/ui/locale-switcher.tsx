@@ -10,7 +10,7 @@ import { setUserLocale } from '@/lib/locale';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger } from './select';
 
 export const LocaleSwitcher = () => {
-  const t = useTranslations('LocaleSwitcher');
+  const t = useTranslations('locale-switcher');
   const locale = useLocale();
 
   const [isPending, startTransition] = React.useTransition();

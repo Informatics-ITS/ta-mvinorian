@@ -27,7 +27,7 @@ const authRegisterSchema = z.object({
 type AuthRegisterSchema = z.infer<typeof authRegisterSchema>;
 
 export default function AuthRegisterPage() {
-  const t = useTranslations('Auth');
+  const t = useTranslations('auth');
 
   const router = useRouter();
   const { login } = useAuthStore();

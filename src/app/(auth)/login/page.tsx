@@ -26,7 +26,7 @@ const authLoginSchema = z.object({
 type AuthLoginSchema = z.infer<typeof authLoginSchema>;
 
 export default function AuthLoginPage() {
-  const t = useTranslations('Auth');
+  const t = useTranslations('auth');
 
   const router = useRouter();
   const { login } = useAuthStore();

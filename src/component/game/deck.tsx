@@ -1,4 +1,5 @@
 import { AnimatePresence, motion } from 'motion/react';
+import { useTranslations } from 'next-intl';
 import React from 'react';
 
 import { getGameCardById } from '@/lib/game-card';
@@ -11,6 +12,7 @@ import { GameCard } from './card';
 export interface GameDeckProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export const GameDeck = React.forwardRef<HTMLDivElement, GameDeckProps>(({ className, ...props }, ref) => {
+  const t = useTranslations('game');
   const { playerPhase, getGamePlayerCards, clickCard, clickUseCard } = useGameStateContext();
 
   const gamePlayerCards = getGamePlayerCards();
@@ -64,7 +66,7 @@ export const GameDeck = React.forwardRef<HTMLDivElement, GameDeckProps>(({ class
                         onClick={() => clickUseCard(card.id)}
                         className='!text-label-20 hover:bg-background-100 hover:border-background-100 relative z-20 mt-[72px] border border-gray-400 text-gray-100'
                       >
-                        Use Card
+                        {t('use-card')}
                       </Button>
                       <div
                         className='bg-gray-1000 absolute right-0 left-0 h-full w-full opacity-40'

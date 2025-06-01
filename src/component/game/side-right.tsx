@@ -1,4 +1,5 @@
 import { AnimatePresence, motion } from 'motion/react';
+import { useTranslations } from 'next-intl';
 import React from 'react';
 
 import { useElementDimensions } from '@/hook/use-element-dimensions';
@@ -14,6 +15,8 @@ import { GameNode } from './node';
 export interface GameSideRightProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export const GameSideRight = React.forwardRef<HTMLDivElement, GameSideRightProps>(({ className, ...props }, ref) => {
+  const t = useTranslations('game');
+
   const sideRef = React.useRef<HTMLDivElement>(null);
   const { height } = useElementDimensions(sideRef);
 
@@ -28,10 +31,10 @@ export const GameSideRight = React.forwardRef<HTMLDivElement, GameSideRightProps
       )}
       {...props}
     >
-      <p className='z-10 border-b border-gray-400 px-4 pb-4 text-gray-900'>Round History</p>
+      <p className='z-10 border-b border-gray-400 px-4 pb-4 text-gray-900'>{t('round-history')}</p>
       <div ref={sideRef} className='relative flex-1 -translate-y-px overflow-clip'>
         <DragScrollArea className='absolute w-full' style={{ height: `${height}px` }}>
-          {history.length > 0 ? (
+          {playerHistory[1]?.usedCardId ? (
             history.toReversed().map((h, index) => {
               if (!role) return null;
 
@@ -46,11 +49,14 @@ export const GameSideRight = React.forwardRef<HTMLDivElement, GameSideRightProps
 
               return (
                 <div key={index} className='space-y-0'>
-                  <p className='border-y border-gray-400 p-4 px-4 text-gray-900'>Round {h.round} Action</p>
+                  <p className='border-y border-gray-400 p-4 px-4 text-gray-900'>
+                    {t('round-nth')}
+                    {h.round}
+                  </p>
                   <div className='space-y-4 p-4'>
                     {messages && messages.length > 0 && (
                       <div className='bg-background-200 w-full space-y-2 rounded-xs border border-gray-400 p-4'>
-                        <p className='text-heading-18 text-gray-1000'>Game Message</p>
+                        <p className='text-heading-18 text-gray-1000'>{t('game-message')}</p>
                         {messages.map((msg, i) => (
                           <p key={i} className='text-copy-14 text-gray-800'>
                             {msg[0].toUpperCase() + msg.slice(1) + '.'}
@@ -68,7 +74,7 @@ export const GameSideRight = React.forwardRef<HTMLDivElement, GameSideRightProps
                             exit={{ opacity: 0 }}
                             className='text-heading-18 text-gray-1000 -translate-y-3'
                           >
-                            Target Node
+                            {t('target-node')}
                           </motion.p>
                           <motion.div
                             initial={{ opacity: 0, scale: 0.75 }}
@@ -90,7 +96,7 @@ export const GameSideRight = React.forwardRef<HTMLDivElement, GameSideRightProps
                             exit={{ opacity: 0 }}
                             className='text-copy-16 text-gray-1000 -translate-y-3'
                           >
-                            Used Card
+                            {t('used-card')}
                           </motion.p>
                           <motion.div
                             initial={{ opacity: 0, scale: 0.75 }}
@@ -109,9 +115,8 @@ export const GameSideRight = React.forwardRef<HTMLDivElement, GameSideRightProps
           ) : (
             <div className='p-4'>
               <div className='bg-background-200 flex h-96 w-full items-center justify-center rounded-xs border border-gray-400 px-4'>
-                <p className='text-center font-normal text-gray-900'>
-                  Play the game to see
-                  <br /> the round history.
+                <p className='text-center font-normal whitespace-pre-line text-gray-900'>
+                  {t('play-the-game-to-see-the-round-history')}
                 </p>
               </div>
             </div>

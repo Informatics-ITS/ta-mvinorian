@@ -1,10 +1,10 @@
 {
-  "LocaleSwitcher": {
+  "locale-switcher": {
     "language": "Language",
     "en": "English",
     "id": "Bahasa Indonesia"
   },
-  "Auth": {
+  "auth": {
     "enter-your-email-and-password-to-login-to-your-account": "Enter your email and password to login to your account.",
     "login": "Login",
     "email": "Email",
@@ -15,7 +15,7 @@
     "name": "Name",
     "already-have-an-account": "Already have an account?"
   },
-  "Game": {
+  "game": {
     "node-clash": "Node Clash",
     "create-game": "Create Game",
     "join-game": "Join Game",
@@ -24,9 +24,28 @@
     "waiting-for-another-player": "Waiting for another player...",
     "copy-the-game-code-below-and-ask-other-to-join-the-game": "Copy the game code below and ask other to join the game.",
     "leave-game": "Leave Game",
-    "logout": "Logout"
+    "logout": "Logout",
+    "what-am-i-clicking": "What am I Clicking?",
+    "select-card-or-node-to-see": "Select card or node to see",
+    "select-card-or-node-to-see-the-description": "Select card or node to see\nthe description.",
+    "what-is": "What is",
+    "round-history": "Round History",
+    "round-nth": "Round",
+    "game-message": "Game Message",
+    "target-node": "Target Node",
+    "used-card": "Used Card",
+    "play-the-game-to-see-the-round-history": "Play the game to see\nthe round history.",
+    "go-to-next-round": "Go to next round",
+    "choose-card-to-use": "Choose card to use",
+    "choose-target-node-to-continue": "Choose target node to continue",
+    "waiting-for-other-player-to-finish": "Waiting for other player to finish",
+    "showing-result": "Showing result",
+    "waiting-for-other-player-to-end-round": "Waiting for other player to end round",
+    "round": "Round",
+    "stolen": "Stolen",
+    "use-card": "Use Card"
   },
-  "Response": {
+  "response": {
     "service-error": "service error",
     "user-already-exists": "user already exists",
     "failed-to-create-user": "failed to create user",
@@ -52,11 +71,19 @@
     "failed-to-get-game": "failed to get game",
     "valid-request": "valid request"
   },
-  "Request": {
+  "request": {
     "code-must-be-6-characters-long": "code must be 6 characters long",
     "name-is-required": "name is required",
     "email-is-required": "email is required",
     "invalid-email-address": "invalid email address",
     "password-is-required": "password is required"
+  },
+  "game-card": {
+    "sql-injection": "Inject an SQL payload. Steal 1 data token from Database Server or Web Server.",
+    "phishing-attack": "Trick user into revealing credential. Steal 1 data token from a Workstation.",
+    "zero-day-exploit": "Bypass all defenses to steal 1 data token from a node. After use reveal 1 random attacker card.",
+    "firewall-upgrade": "Add firewall on Database Server or Web Server. Block 1 attack on target node.",
+    "mfa-implementation": "Implement Multi-Factor Authentication. Block attack to Workstation or Email Server for 1 attack.",
+    "network-segmentation": "Segregate the network. Target node cannot be attacked this round."
   }
 }

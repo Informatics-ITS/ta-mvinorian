@@ -10,7 +10,7 @@ export const createUserService = createService(async (t, user: UserInsertType) =
     if (userDB)
       return createResponse({
         success: false,
-        message: t('Response.user-already-exists'),
+        message: t('response.user-already-exists'),
         data: undefined,
       });
 
@@ -18,20 +18,20 @@ export const createUserService = createService(async (t, user: UserInsertType) =
     if (!newUser)
       return createResponse({
         success: false,
-        message: t('Response.failed-to-create-user'),
+        message: t('response.failed-to-create-user'),
         data: undefined,
       });
 
     const token = generateAuthToken(newUser);
     return createResponse({
       success: true,
-      message: t('Response.user-created-successfully'),
+      message: t('response.user-created-successfully'),
       data: { token },
     });
   } catch (_) {
     return createResponse({
       success: false,
-      message: t('Response.failed-to-create-user'),
+      message: t('response.failed-to-create-user'),
       data: undefined,
     });
   }
@@ -43,20 +43,20 @@ export const loginUserService = createService(async (t, email: string, password:
     if (!user)
       return createResponse({
         success: false,
-        message: t('Response.invalid-credentials'),
+        message: t('response.invalid-credentials'),
         data: undefined,
       });
 
     const token = generateAuthToken(user);
     return createResponse({
       success: true,
-      message: t('Response.login-successful'),
+      message: t('response.login-successful'),
       data: { token },
     });
   } catch (_) {
     return createResponse({
       success: false,
-      message: t('Response.failed-to-login-user'),
+      message: t('response.failed-to-login-user'),
       data: undefined,
     });
   }
@@ -68,14 +68,14 @@ export const getMeService = createService(async (t, userId: string) => {
     if (!user)
       return createResponse({
         success: false,
-        message: t('Response.user-not-found'),
+        message: t('response.user-not-found'),
         data: undefined,
       });
-    return createResponse({ success: true, message: t('Response.user-found'), data: user });
+    return createResponse({ success: true, message: t('response.user-found'), data: user });
   } catch (_) {
     return createResponse({
       success: false,
-      message: t('Response.failed-to-get-user'),
+      message: t('response.failed-to-get-user'),
       data: undefined,
     });
   }

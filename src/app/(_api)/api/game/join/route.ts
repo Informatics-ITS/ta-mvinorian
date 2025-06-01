@@ -11,8 +11,8 @@ export async function POST(request: NextRequest) {
     body: z.object({
       code: z
         .string()
-        .min(6, t('Request.code-must-be-6-characters-long'))
-        .max(6, t('Request.code-must-be-6-characters-long')),
+        .min(6, t('request.code-must-be-6-characters-long'))
+        .max(6, t('request.code-must-be-6-characters-long')),
     }),
   }));
 

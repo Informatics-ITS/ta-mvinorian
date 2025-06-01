@@ -21,6 +21,7 @@ export const GameBoard = React.forwardRef<HTMLDivElement, GameBoardProps>(({ cla
 
   const zoomRef = React.useRef<d3.ZoomBehavior<SVGSVGElement, unknown> | null>(null);
   const zoomStateRef = React.useRef<d3.ZoomTransform | null>(null);
+  const hasInitializedZoom = React.useRef(false);
 
   const innerRef = useForwardedRef(ref);
   const { width, height } = useElementDimensions(innerRef);
@@ -89,6 +90,8 @@ export const GameBoard = React.forwardRef<HTMLDivElement, GameBoardProps>(({ cla
       g.call(grid, zx, zy);
       node.attr('transform', e.transform.toString());
       link.attr('transform', e.transform.toString());
+
+      zoomStateRef.current = e.transform;
     },
     [grid, scaleX, scaleY],
   );
@@ -96,8 +99,8 @@ export const GameBoard = React.forwardRef<HTMLDivElement, GameBoardProps>(({ cla
   React.useEffect(() => {
     if (!svgRef.current || !width || !height) return;
 
-    const svgTopLeft: [number, number] = [-width / 4, -height / 4];
-    const svgBottomRight: [number, number] = [width + width / 4, (7 * height) / 4];
+    const svgTopLeft: [number, number] = [-width, -height];
+    const svgBottomRight: [number, number] = [2 * width, 2 * height];
 
     if (!zoomRef.current) {
       zoomRef.current = d3
@@ -108,11 +111,7 @@ export const GameBoard = React.forwardRef<HTMLDivElement, GameBoardProps>(({ cla
     } else zoomRef.current.translateExtent([svgTopLeft, svgBottomRight]);
 
     const svg = d3.select<SVGSVGElement, unknown>(svgRef.current);
-
     svg.call(zoomRef.current);
-
-    if (zoomStateRef.current) svg.call(zoomRef.current.transform, zoomStateRef.current);
-    else svg.call(zoomRef.current.transform, d3.zoomIdentity);
 
     return () => {
       if (zoomRef.current) svg.on('.zoom', null);
@@ -120,7 +119,18 @@ export const GameBoard = React.forwardRef<HTMLDivElement, GameBoardProps>(({ cla
   }, [zoomed, width, height]);
 
   React.useEffect(() => {
-    if (!svgRef.current || !zoomRef.current) return;
+    if (!svgRef.current || !zoomRef.current || !width || !height || !topology) return;
+
+    const svg = d3.select<SVGSVGElement, unknown>(svgRef.current);
+
+    if (!hasInitializedZoom.current) {
+      const initialTransform =
+        zoomStateRef.current ?? d3.zoomIdentity.scale(0.5).translate(width / 2 - 80, height / 2 - 250);
+
+      svg.call(zoomRef.current.transform, initialTransform);
+      zoomStateRef.current = initialTransform;
+      hasInitializedZoom.current = true;
+    }
 
     if (zoomStateRef.current) {
       const transform = zoomStateRef.current;
@@ -135,7 +145,7 @@ export const GameBoard = React.forwardRef<HTMLDivElement, GameBoardProps>(({ cla
       node.attr('transform', transform.toString());
       link.attr('transform', transform.toString());
     }
-  }, [topology, grid, scaleX, scaleY]);
+  }, [topology, grid, scaleX, scaleY, width, height]);
 
   const nodeAnimation: Variants = {
     initial: {

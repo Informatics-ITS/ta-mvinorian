@@ -14,6 +14,9 @@ import {
 } from 'lucide-react';
 
 import { GameCardType } from '@/lib/game-card';
+import { getClientTranslations } from '@/lib/locale-client';
+
+const t = await getClientTranslations();
 
 export const GAME_CARDS: GameCardType[] = [
   // {
@@ -60,7 +63,7 @@ export const GAME_CARDS: GameCardType[] = [
   {
     id: 'caa-sql-injection',
     name: 'SQL Injection',
-    desc: 'Inject an SQL payload. Steal 1 data token from Database Server or Web Server.',
+    desc: t('game-card.sql-injection'),
     role: 'attacker',
     type: 'attack',
     icon: SquareChartGanttIcon,
@@ -72,7 +75,7 @@ export const GAME_CARDS: GameCardType[] = [
   {
     id: 'caa-phishing-attack',
     name: 'Phising Attack',
-    desc: 'Trick user into revealing credential. Steal 1 data token from a Workstation.',
+    desc: t('game-card.phishing-attack'),
     role: 'attacker',
     type: 'attack',
     icon: FishIcon,
@@ -84,14 +87,14 @@ export const GAME_CARDS: GameCardType[] = [
   {
     id: 'caa-zero-day-exploit',
     name: 'Zero-Day Exploit',
-    desc: 'Bypass all defenses to steal 1 data token from a node. After use reveal 1 random attacker card.',
+    desc: t('game-card.zero-day-exploit'),
     role: 'attacker',
     type: 'attack',
     icon: CircleIcon,
     effect: {
       nodes: ['all'],
       stealTokens: 1,
-      ignoredDefenses: 1,
+      ignoredDefenses: 3,
     },
   },
   {
@@ -155,7 +158,7 @@ export const GAME_CARDS: GameCardType[] = [
   {
     id: 'cdb-firewall-upgrade',
     name: 'Firewall Upgrade',
-    desc: 'Add firewall on Database Server and Web Server. Block 1 attack on target node.',
+    desc: t('game-card.firewall-upgrade'),
     role: 'defender',
     type: 'block',
     icon: FlameIcon,
@@ -176,7 +179,7 @@ export const GAME_CARDS: GameCardType[] = [
   {
     id: 'cdb-mfa-implementation',
     name: 'MFA Implementation',
-    desc: 'Implement Multi-Factor Authentication. Block attack to Workstation or Email Server for 1 attack.',
+    desc: t('game-card.mfa-implementation'),
     role: 'defender',
     type: 'block',
     icon: KeyRoundIcon,
@@ -197,7 +200,7 @@ export const GAME_CARDS: GameCardType[] = [
   {
     id: 'cdb-network-segmentation',
     name: 'Network Segmentation',
-    desc: 'Segregate network. Target node cannot be attacked this round.',
+    desc: t('game-card.network-segmentation'),
     role: 'defender',
     type: 'block',
     icon: LayoutGridIcon,

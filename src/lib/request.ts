@@ -71,7 +71,7 @@ export const validateRequest = async <TQuery, TBody>(request: NextRequest, schem
       data: undefined,
     });
 
-  return createResponse({ success: true, message: req.t('Response.valid-request'), data: req });
+  return createResponse({ success: true, message: req.t('response.valid-request'), data: req });
 };
 
 export const withValidateRequest = async <TQuery, TBody, TData>(
@@ -85,7 +85,7 @@ export const withValidateRequest = async <TQuery, TBody, TData>(
   const { data } = validate;
   if (!data) {
     const t = await getRequestTranslations(request);
-    return createResponse({ success: false, message: t('Response.invalid-request'), data: undefined });
+    return createResponse({ success: false, message: t('response.invalid-request'), data: undefined });
   }
 
   return onSuccess(data);
@@ -102,7 +102,7 @@ export const withAsyncValidateRequest = async <TQuery, TBody, TData>(
   const { data } = validate;
   if (!data) {
     const t = await getRequestTranslations(request);
-    return createResponse({ success: false, message: t('Response.invalid-request'), data: undefined });
+    return createResponse({ success: false, message: t('response.invalid-request'), data: undefined });
   }
 
   return await onSuccess(data);

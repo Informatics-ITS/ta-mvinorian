@@ -16,7 +16,7 @@ export interface GameWaitingJoinProps {
 }
 
 export const GameWaitingJoin = ({ code, onLeaveGame }: GameWaitingJoinProps) => {
-  const t = useTranslations('Game');
+  const t = useTranslations('game');
   const router = useRouter();
   const { mutate, isPending } = useMutation({
     mutationFn: async () => {

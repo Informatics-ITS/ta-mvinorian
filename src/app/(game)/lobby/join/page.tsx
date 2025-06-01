@@ -26,7 +26,7 @@ const gameJoinSchema = z.object({
 type GameJoinSchema = z.infer<typeof gameJoinSchema>;
 
 export default function GameJoinPage() {
-  const t = useTranslations('Game');
+  const t = useTranslations('game');
   const router = useRouter();
 
   const form = useForm<GameJoinSchema>({

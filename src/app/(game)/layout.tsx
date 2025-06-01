@@ -23,7 +23,7 @@ export function GameLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const t = useTranslations('Game');
+  const t = useTranslations('game');
   const { user, logout } = useAuthStore();
 
   return (

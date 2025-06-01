@@ -10,7 +10,7 @@ export const createService = <T>(service: ServiceType<T>) => {
     } catch (error) {
       return {
         success: false,
-        message: t('Response.service-error'),
+        message: t('response.service-error'),
         data: error,
       } as ResponseType<T>;
     }

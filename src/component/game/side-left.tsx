@@ -1,4 +1,5 @@
 import { AnimatePresence, motion } from 'motion/react';
+import { useTranslations } from 'next-intl';
 import React from 'react';
 
 import { useElementDimensions } from '@/hook/use-element-dimensions';
@@ -14,6 +15,8 @@ import { GameNode } from './node';
 export interface GameSideLeftProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export const GameSideLeft = React.forwardRef<HTMLDivElement, GameSideLeftProps>(({ className, ...props }, ref) => {
+  const t = useTranslations('game');
+
   const sideRef = React.useRef<HTMLDivElement>(null);
   const { height } = useElementDimensions(sideRef);
 
@@ -36,7 +39,7 @@ export const GameSideLeft = React.forwardRef<HTMLDivElement, GameSideLeftProps>(
       )}
       {...props}
     >
-      <p className='border-b border-gray-400 px-4 pb-4 text-gray-900'>What am I Clicking?</p>
+      <p className='border-b border-gray-400 px-4 pb-4 text-gray-900'>{t('what-am-i-clicking')}</p>
       <div ref={sideRef} className='relative flex-1 overflow-clip'>
         <DragScrollArea className='absolute w-full px-4' style={{ height: `${height}px` }}>
           <div className='space-y-4'>
@@ -65,11 +68,9 @@ export const GameSideLeft = React.forwardRef<HTMLDivElement, GameSideLeftProps>(
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className='text-center font-normal text-gray-900'
+                    className='text-center font-normal whitespace-pre-line text-gray-900'
                   >
-                    Select card or node to see
-                    <br />
-                    the description.
+                    {t('select-card-or-node-to-see-the-description')}
                   </motion.p>
                 )}
               </AnimatePresence>
@@ -85,7 +86,9 @@ export const GameSideLeft = React.forwardRef<HTMLDivElement, GameSideLeftProps>(
                   transition={{ type: 'keyframes', ease: 'easeInOut' }}
                   className='bg-background-200 w-full space-y-2 rounded-xs border border-gray-400 p-4'
                 >
-                  <p className='text-heading-18 text-gray-1000'>What is {selectedGameCard.name}?</p>
+                  <p className='text-heading-18 text-gray-1000'>
+                    {t('what-is')} {selectedGameCard.name}?
+                  </p>
                   <p className='text-copy-14 text-gray-800'>
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a diam lectus. Sed sit amet ipsum
                     mauris.
@@ -102,7 +105,9 @@ export const GameSideLeft = React.forwardRef<HTMLDivElement, GameSideLeftProps>(
                   transition={{ type: 'keyframes', ease: 'easeInOut' }}
                   className='bg-background-200 w-full space-y-2 rounded-xs border border-gray-400 p-4'
                 >
-                  <p className='text-heading-18 text-gray-1000'>What is {selectedGameNode.name}?</p>
+                  <p className='text-heading-18 text-gray-1000'>
+                    {t('what-is')} {selectedGameNode.name}?
+                  </p>
                   <p className='text-copy-14 text-gray-800'>
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a diam lectus. Sed sit amet ipsum
                     mauris.

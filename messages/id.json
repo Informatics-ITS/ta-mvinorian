@@ -1,10 +1,10 @@
 {
-  "LocaleSwitcher": {
+  "locale-switcher": {
     "language": "Bahasa",
     "en": "English",
     "id": "Bahasa Indonesia"
   },
-  "Auth": {
+  "auth": {
     "enter-your-email-and-password-to-login-to-your-account": "Masukkan email dan kata sandi untuk masuk ke akun Anda.",
     "login": "Masuk",
     "email": "Email",
@@ -15,7 +15,7 @@
     "name": "Nama",
     "already-have-an-account": "Sudah punya akun?"
   },
-  "Game": {
+  "game": {
     "node-clash": "Node Clash",
     "create-game": "Buat Game",
     "join-game": "Gabung Game",
@@ -24,9 +24,27 @@
     "waiting-for-another-player": "Menunggu pemain lain...",
     "copy-the-game-code-below-and-ask-other-to-join-the-game": "Salin kode game di bawah ini dan minta temanmu bergabung.",
     "leave-game": "Tinggalkan Game",
-    "logout": "Keluar"
+    "logout": "Keluar",
+    "what-am-i-clicking": "Apa sih yang aku klik?",
+    "select-card-or-node-to-see-the-description": "Klik kartu atau node untuk\nmelihat deskripsi.",
+    "what-is": "Apa itu",
+    "round-history": "Riwayat Ronde",
+    "round-nth": "Ronde ke-",
+    "game-message": "Hasil Ronde",
+    "target-node": "Node Target",
+    "used-card": "Kartu Terpakai",
+    "play-the-game-to-see-the-round-history": "Mainkan game untuk melihat riwayat ronde.",
+    "go-to-next-round": "Lanjut ronde berikutnya",
+    "choose-card-to-use": "Pilih kartu untuk dipakai",
+    "choose-target-node-to-continue": "Pilih node target untuk lanjut",
+    "waiting-for-other-player-to-finish": "Menunggu pemain lain selesai",
+    "showing-result": "Menampilkan hasil ronde",
+    "waiting-for-other-player-to-end-round": "Menunggu pemain lain mengakhiri ronde",
+    "round": "Ronde",
+    "stolen": "Dicuri",
+    "use-card": "Pakai Kartu"
   },
-  "Response": {
+  "response": {
     "invalid-request": "request tidak valid",
     "service-error": "layanan error",
     "user-already-exists": "user sudah ada",
@@ -52,11 +70,19 @@
     "failed-to-get-game": "gagal untuk mendapatkan game",
     "valid-request": "request valid"
   },
-  "Request": {
+  "request": {
     "code-must-be-6-characters-long": "panjang kode harus 6 karakter",
     "name-is-required": "nama tidak boleh kosong",
     "email-is-required": "email tidak boleh kosong",
     "invalid-email-address": "email tidak valid",
     "password-is-required": "password tidak boleh kosong"
+  },
+  "game-card": {
+    "sql-injection": "Menyuntikkan muatan SQL. \nMencuri 1 token data dari Database Server atau Web Server.",
+    "phishing-attack": "Trik pengguna untuk mengungkapkan kredensial. \nMencuri 1 token data dari Workstation.",
+    "zero-day-exploit": "Lewati semua pertahanan untuk mencuri 1 token data dari node. \nSetelah digunakan 1 kartu acak attacker akan diperlihatkan.",
+    "firewall-upgrade": "Menambahkan firewall di Database Server atau Web Server. \nBlok 1 serangan pada node target.",
+    "mfa-implementation": "Menerapkan Multi-Factor Authentication. \nBlokir serangan ke Workstation atau Email Server untuk 1 serangan.",
+    "network-segmentation": "Melakukan segregasi jaringan. \nNode target tidak dapat diserang pada ronde ini."
   }
 }

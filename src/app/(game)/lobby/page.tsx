@@ -15,7 +15,7 @@ import { api } from '@/lib/api';
 import { ResponseType } from '@/lib/response';
 
 export default function GamePage() {
-  const t = useTranslations('Game');
+  const t = useTranslations('game');
   const router = useRouter();
 
   const { mutate: createGame, isPending: createGameIsPending } = useMutation({

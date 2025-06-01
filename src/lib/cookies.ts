@@ -1,5 +1,7 @@
 import Cookies from 'universal-cookie';
 
+import { defaultLocale, Locale } from '@/i18n/config';
+
 const cookies = new Cookies();
 
 export const getAuthToken = () => {
@@ -19,4 +21,8 @@ export const setAuthToken = (token: string) => {
 
 export const removeAuthToken = () => {
   cookies.remove('@node-clash/auth-token', { path: '/' });
+};
+
+export const getClientLocale = () => {
+  return (cookies.get('@node-clash/locale') ?? defaultLocale) as Locale;
 };
