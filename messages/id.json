@@ -28,19 +28,19 @@
     "what-am-i-clicking": "Apa sih yang aku klik?",
     "select-card-or-node-to-see-the-description": "Klik kartu atau node untuk\nmelihat deskripsi.",
     "what-is": "Apa itu",
-    "round-history": "Riwayat Ronde",
-    "round-nth": "Ronde ke-",
-    "game-message": "Hasil Ronde",
+    "round-history": "Riwayat Putaran",
+    "round-nth": "Putaran ke-",
+    "game-message": "Hasil Putaran",
     "target-node": "Node Target",
     "used-card": "Kartu Terpakai",
-    "play-the-game-to-see-the-round-history": "Mainkan game untuk melihat riwayat ronde.",
-    "go-to-next-round": "Lanjut ronde berikutnya",
+    "play-the-game-to-see-the-round-history": "Mainkan game untuk melihat riwayat putaran.",
+    "go-to-next-round": "Lanjut putaran berikutnya",
     "choose-card-to-use": "Pilih kartu untuk dipakai",
     "choose-target-node-to-continue": "Pilih node target untuk lanjut",
     "waiting-for-other-player-to-finish": "Menunggu pemain lain selesai",
-    "showing-result": "Menampilkan hasil ronde",
-    "waiting-for-other-player-to-end-round": "Menunggu pemain lain mengakhiri ronde",
-    "round": "Ronde",
+    "showing-result": "Menampilkan hasil putaran",
+    "waiting-for-other-player-to-end-round": "Menunggu pemain lain mengakhiri putaran",
+    "round": "Putaran",
     "stolen": "Dicuri",
     "use-card": "Pakai Kartu"
   },
@@ -83,6 +83,6 @@
     "zero-day-exploit": "Lewati semua pertahanan untuk mencuri 1 token data dari node. \nSetelah digunakan 1 kartu acak attacker akan diperlihatkan.",
     "firewall-upgrade": "Menambahkan firewall di Database Server atau Web Server. \nBlok 1 serangan pada node target.",
     "mfa-implementation": "Menerapkan Multi-Factor Authentication. \nBlokir serangan ke Workstation atau Email Server untuk 1 serangan.",
-    "network-segmentation": "Melakukan segregasi jaringan. \nNode target tidak dapat diserang pada ronde ini."
+    "network-segmentation": "Melakukan segregasi jaringan. \nNode target tidak dapat diserang pada putaran ini."
   }
 }

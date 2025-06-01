@@ -42,7 +42,7 @@ export const GameFloating = () => {
           {role && role[0].toUpperCase() + role.slice(1)}
         </p>
 
-        <p className='text-heading-18 flex w-72 flex-1 justify-center gap-1.5 rounded-xs border-2 border-green-400 bg-green-100 p-2 font-medium text-green-900'>
+        <p className='text-heading-18 flex w-[328px] flex-1 justify-center gap-1.5 rounded-xs border-2 border-green-400 bg-green-100 p-2 font-medium text-green-900'>
           <AnimatePresence>
             {playerPhase === GamePlayerPhase.SelectCard && (
               <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
