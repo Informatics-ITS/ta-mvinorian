@@ -5,6 +5,7 @@ import { useMutation } from '@tanstack/react-query';
 import { LoaderCircleIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -18,14 +19,16 @@ import { api } from '@/lib/api';
 import { setAuthToken } from '@/lib/cookies';
 
 const authRegisterSchema = z.object({
-  name: z.string().min(1, 'name is required'),
-  email: z.string().min(1, 'email is required').email('invalid email address'),
-  password: z.string().min(1, 'password is required'),
+  name: z.string(),
+  email: z.string(),
+  password: z.string(),
 });
 
 type AuthRegisterSchema = z.infer<typeof authRegisterSchema>;
 
 export default function AuthRegisterPage() {
+  const t = useTranslations('Auth');
+
   const router = useRouter();
   const { login } = useAuthStore();
 
@@ -60,8 +63,8 @@ export default function AuthRegisterPage() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className='text-2xl'>Sign Up</CardTitle>
-        <CardDescription>Enter your name, email, and password to create an account.</CardDescription>
+        <CardTitle className='text-2xl'>{t('sign-up')}</CardTitle>
+        <CardDescription>{t('enter-your-name-email-and-password-to-create-an-account')}</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -72,7 +75,7 @@ export default function AuthRegisterPage() {
                 name='name'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Name</FormLabel>
+                    <FormLabel>{t('name')}</FormLabel>
                     <FormControl>
                       <Input type='name' placeholder='John Doe' autoComplete='name' {...field} />
                     </FormControl>
@@ -98,7 +101,7 @@ export default function AuthRegisterPage() {
                 name='password'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel>{t('password')}</FormLabel>
                     <FormControl>
                       <Input type='password' {...field} />
                     </FormControl>
@@ -107,15 +110,15 @@ export default function AuthRegisterPage() {
               />
 
               <Button type='submit' size='lg' disabled={isPending} className='w-full'>
-                Sign Up
+                {t('sign-up')}
                 {isPending && <LoaderCircleIcon className='ml-2 animate-spin' />}
               </Button>
             </div>
 
             <div className='mt-4 text-center text-sm font-light'>
-              Already have an account?{' '}
+              {t('already-have-an-account')}{' '}
               <Link href='/login' className='font-normal underline underline-offset-4'>
-                Login
+                {t('login')}
               </Link>
             </div>
           </form>

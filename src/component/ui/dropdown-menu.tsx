@@ -15,7 +15,13 @@ function DropdownMenuPortal({ ...props }: React.ComponentProps<typeof DropdownMe
 }
 
 function DropdownMenuTrigger({ ...props }: React.ComponentProps<typeof DropdownMenuPrimitive.Trigger>) {
-  return <DropdownMenuPrimitive.Trigger data-slot='dropdown-menu-trigger' {...props} />;
+  return (
+    <DropdownMenuPrimitive.Trigger
+      data-slot='dropdown-menu-trigger'
+      className='focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 dark:hover:bg-input/50 rounded-sm transition-[color,box-shadow] outline-none focus-visible:ring-[3px]'
+      {...props}
+    />
+  );
 }
 
 function DropdownMenuContent({

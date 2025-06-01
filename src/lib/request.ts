@@ -1,6 +1,9 @@
 import { NextRequest } from 'next/server';
+import { getTranslations } from 'next-intl/server';
 import queryString from 'query-string';
 import { ZodError, ZodSchema } from 'zod';
+
+import { defaultLocale, Locale } from '@/i18n/config';
 
 import { createResponse, ResponseType } from './response';
 
@@ -13,10 +16,7 @@ export type RequestType<TQuery, TBody> = {
   query: TQuery;
   body: TBody;
   token: string | undefined;
-};
-
-export const createRequest = <TQuery, TBody>(schema: RequestSchema<TQuery, TBody>) => {
-  return schema;
+  t: (key: string) => string;
 };
 
 export const getRequestToken = (request: NextRequest) => {
@@ -29,12 +29,27 @@ export const getRequestToken = (request: NextRequest) => {
   return bearer[1];
 };
 
+export const getRequestTranslations = async (request: NextRequest) => {
+  const locale = (request.cookies.get('@node-clash/locale')?.value ?? defaultLocale) as Locale;
+  const t = (await getTranslations({ locale })) as (key: string) => string;
+  return t;
+};
+
+export const createRequest = async <TQuery, TBody>(
+  request: NextRequest,
+  builder: (params: { t: (key: string) => string }) => RequestSchema<TQuery, TBody>,
+) => {
+  const t = await getRequestTranslations(request);
+  return builder({ t });
+};
+
 export const validateRequest = async <TQuery, TBody>(request: NextRequest, schema: RequestSchema<TQuery, TBody>) => {
   const { query, body } = schema;
-  const req = {
-    query: queryString.parse(request.nextUrl.searchParams.toString()),
+  const req: RequestType<TQuery, TBody> = {
+    query: queryString.parse(request.nextUrl.searchParams.toString()) as TQuery,
     body: body ? await request.json() : undefined,
     token: getRequestToken(request),
+    t: await getRequestTranslations(request),
   };
 
   let error: ZodError<unknown> | undefined;
@@ -52,23 +67,26 @@ export const validateRequest = async <TQuery, TBody>(request: NextRequest, schem
   if (error)
     return createResponse({
       success: false,
-      message: `${error.issues[0].path[0]} ${error.issues[0].message}`.toLowerCase(),
+      message: `${error.issues[0].message}`.toLowerCase(),
       data: undefined,
     });
 
-  return createResponse({ success: true, message: 'valid request', data: req as RequestType<TQuery, TBody> });
+  return createResponse({ success: true, message: req.t('Response.valid-request'), data: req });
 };
 
 export const withValidateRequest = async <TQuery, TBody, TData>(
   request: NextRequest,
   schema: RequestSchema<TQuery, TBody>,
-  onSuccess: ({ body, query }: RequestType<TQuery, TBody>) => ResponseType<TData>,
+  onSuccess: (params: RequestType<TQuery, TBody>) => ResponseType<TData>,
 ) => {
   const validate = await validateRequest(request, schema);
   if (!validate.success) return validate;
 
   const { data } = validate;
-  if (!data) return createResponse({ success: false, message: 'invalid request', data: undefined });
+  if (!data) {
+    const t = await getRequestTranslations(request);
+    return createResponse({ success: false, message: t('Response.invalid-request'), data: undefined });
+  }
 
   return onSuccess(data);
 };
@@ -76,13 +94,16 @@ export const withValidateRequest = async <TQuery, TBody, TData>(
 export const withAsyncValidateRequest = async <TQuery, TBody, TData>(
   request: NextRequest,
   schema: RequestSchema<TQuery, TBody>,
-  onSuccess: ({ body, query }: RequestType<TQuery, TBody>) => Promise<ResponseType<TData>>,
+  onSuccess: (params: RequestType<TQuery, TBody>) => Promise<ResponseType<TData>>,
 ) => {
   const validate = await validateRequest(request, schema);
   if (!validate.success) return validate;
 
   const { data } = validate;
-  if (!data) return createResponse({ success: false, message: 'invalid request', data: undefined });
+  if (!data) {
+    const t = await getRequestTranslations(request);
+    return createResponse({ success: false, message: t('Response.invalid-request'), data: undefined });
+  }
 
   return await onSuccess(data);
 };

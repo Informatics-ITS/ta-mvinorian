@@ -1,0 +1,62 @@
+{
+  "LocaleSwitcher": {
+    "language": "Bahasa",
+    "en": "English",
+    "id": "Bahasa Indonesia"
+  },
+  "Auth": {
+    "enter-your-email-and-password-to-login-to-your-account": "Masukkan email dan kata sandi untuk masuk ke akun Anda.",
+    "login": "Masuk",
+    "email": "Email",
+    "password": "Kata Sandi",
+    "dont-have-an-account": "Belum punya akun?",
+    "sign-up": "Daftar",
+    "enter-your-name-email-and-password-to-create-an-account": "Masukkan nama, email, dan kata sandi untuk membuat akun.",
+    "name": "Nama",
+    "already-have-an-account": "Sudah punya akun?"
+  },
+  "Game": {
+    "node-clash": "Node Clash",
+    "create-game": "Buat Game",
+    "join-game": "Gabung Game",
+    "get-the-game-code-from-other-player-and-copy-here": "Dapatkan kode permainan dari pemain lain dan salin di sini.",
+    "go-back": "Kembali",
+    "waiting-for-another-player": "Menunggu pemain lain...",
+    "copy-the-game-code-below-and-ask-other-to-join-the-game": "Salin kode game di bawah ini dan minta temanmu bergabung.",
+    "leave-game": "Tinggalkan Game",
+    "logout": "Keluar"
+  },
+  "Response": {
+    "invalid-request": "request tidak valid",
+    "service-error": "layanan error",
+    "user-already-exists": "user sudah ada",
+    "failed-to-create-user": "gagal membuat user",
+    "user-created-successfully": "berhasil membuat user",
+    "invalid-credentials": "kredensial tidak valid",
+    "login-successful": "berhasil untuk masuk",
+    "failed-to-login-user": "gagal untuk masuk",
+    "user-not-found": "user tidak ditemukan",
+    "user-found": "berhasil mendapatkan user",
+    "failed-to-get-user": "gagal untuk mendapatkan user",
+    "user-already-in-game": "user masih dalam game",
+    "failed-to-create-game": "gagal untuk membuat game",
+    "game-created": "berhasil membuat game",
+    "game-not-found": "game tidak ditemukan",
+    "game-already-full": "game telah penuh",
+    "failed-to-join-game": "gagal untuk bergabung ke game",
+    "game-joined": "berhasil bergabung ke game",
+    "user-not-in-game": "user sedang tidak dalam game",
+    "failed-to-leave-game": "gagal untuk keluar dari game",
+    "game-left": "berhasil keluar dari game",
+    "game-found": "berhasil mendapatkan game",
+    "failed-to-get-game": "gagal untuk mendapatkan game",
+    "valid-request": "request valid"
+  },
+  "Request": {
+    "code-must-be-6-characters-long": "panjang kode harus 6 karakter",
+    "name-is-required": "nama tidak boleh kosong",
+    "email-is-required": "email tidak boleh kosong",
+    "invalid-email-address": "email tidak valid",
+    "password-is-required": "password tidak boleh kosong"
+  }
+}

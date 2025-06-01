@@ -2,6 +2,7 @@ import './globals.css';
 
 import type { Metadata } from 'next';
 import { Outfit } from 'next/font/google';
+import { getLocale } from 'next-intl/server';
 
 import { Provider } from '@/provider';
 
@@ -15,13 +16,15 @@ export const metadata: Metadata = {
   description: 'Cyber Network Security Attack and Defense Educational Game',
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getLocale();
+
   return (
-    <html lang='en'>
+    <html lang={locale}>
       <body className={`${outfit.variable} bg-background-200 antialiased`}>
         <Provider>{children}</Provider>
       </body>

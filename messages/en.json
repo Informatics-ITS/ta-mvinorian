@@ -1,0 +1,62 @@
+{
+  "LocaleSwitcher": {
+    "language": "Language",
+    "en": "English",
+    "id": "Bahasa Indonesia"
+  },
+  "Auth": {
+    "enter-your-email-and-password-to-login-to-your-account": "Enter your email and password to login to your account.",
+    "login": "Login",
+    "email": "Email",
+    "password": "Password",
+    "dont-have-an-account": "Don't have an account?",
+    "sign-up": "Sign Up",
+    "enter-your-name-email-and-password-to-create-an-account": "Enter your name, email, and password to create an account.",
+    "name": "Name",
+    "already-have-an-account": "Already have an account?"
+  },
+  "Game": {
+    "node-clash": "Node Clash",
+    "create-game": "Create Game",
+    "join-game": "Join Game",
+    "get-the-game-code-from-other-player-and-copy-here": "Get the game code from other player and copy here.",
+    "go-back": "Go Back",
+    "waiting-for-another-player": "Waiting for another player...",
+    "copy-the-game-code-below-and-ask-other-to-join-the-game": "Copy the game code below and ask other to join the game.",
+    "leave-game": "Leave Game",
+    "logout": "Logout"
+  },
+  "Response": {
+    "service-error": "service error",
+    "user-already-exists": "user already exists",
+    "failed-to-create-user": "failed to create user",
+    "user-created-successfully": "user created successfully",
+    "invalid-credentials": "invalid credentials",
+    "login-successful": "login successful",
+    "failed-to-login-user": "failed to login user",
+    "user-not-found": "user not found",
+    "user-found": "user found",
+    "failed-to-get-user": "failed to get user",
+    "invalid-request": "invalid request",
+    "user-already-in-game": "user already in game",
+    "failed-to-create-game": "failed to create game",
+    "game-created": "game created",
+    "game-not-found": "game not found",
+    "game-already-full": "game already full",
+    "failed-to-join-game": "failed to join game",
+    "game-joined": "game joined",
+    "user-not-in-game": "user not in game",
+    "failed-to-leave-game": "failed to leave game",
+    "game-left": "game left",
+    "game-found": "game found",
+    "failed-to-get-game": "failed to get game",
+    "valid-request": "valid request"
+  },
+  "Request": {
+    "code-must-be-6-characters-long": "code must be 6 characters long",
+    "name-is-required": "name is required",
+    "email-is-required": "email is required",
+    "invalid-email-address": "invalid email address",
+    "password-is-required": "password is required"
+  }
+}

@@ -6,8 +6,8 @@ import { createResponseJson } from '@/lib/response';
 import { leaveGameService } from '@/service/game-service';
 
 export async function DELETE(request: NextRequest) {
-  const res = await withAsyncValidateRequest(request, {}, ({ token }) =>
-    withAsyncAuthUser(token, ({ id: userId }) => leaveGameService(userId)),
+  const res = await withAsyncValidateRequest(request, {}, ({ t, token }) =>
+    withAsyncAuthUser(token, ({ id: userId }) => leaveGameService(t, userId)),
   );
 
   if (!res.success) return createResponseJson(400, { success: false, message: res.message, data: res.data });

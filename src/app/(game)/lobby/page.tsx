@@ -5,6 +5,7 @@ import { AxiosError } from 'axios';
 import { LoaderCircleIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import React from 'react';
 
 import { Button } from '@/component/ui/button';
@@ -14,6 +15,7 @@ import { api } from '@/lib/api';
 import { ResponseType } from '@/lib/response';
 
 export default function GamePage() {
+  const t = useTranslations('Game');
   const router = useRouter();
 
   const { mutate: createGame, isPending: createGameIsPending } = useMutation({
@@ -34,16 +36,16 @@ export default function GamePage() {
   return (
     <Card className='w-full max-w-md'>
       <CardHeader>
-        <CardTitle className='text-heading-32 my-4 text-center'>Node Clash</CardTitle>
+        <CardTitle className='text-heading-32 my-4 text-center'>{t('node-clash')}</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className='flex flex-col gap-6'>
+        <div className='flex flex-col gap-3'>
           <Button size='lg' onClick={() => createGame()} disabled={createGameIsPending} className='cursor-pointer'>
-            Create Game
+            {t('create-game')}
             {createGameIsPending && <LoaderCircleIcon className='ml-2 animate-spin' />}
           </Button>
           <Button size='lg' variant='outline' asChild>
-            <Link href='/lobby/join'>Join Game</Link>
+            <Link href='/lobby/join'>{t('join-game')}</Link>
           </Button>
         </div>
       </CardContent>

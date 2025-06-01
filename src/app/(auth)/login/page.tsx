@@ -5,6 +5,7 @@ import { useMutation } from '@tanstack/react-query';
 import { LoaderCircleIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -18,13 +19,15 @@ import { api } from '@/lib/api';
 import { setAuthToken } from '@/lib/cookies';
 
 const authLoginSchema = z.object({
-  email: z.string().min(1, 'email is required').email('invalid email address'),
-  password: z.string().min(1, 'password is required'),
+  email: z.string(),
+  password: z.string(),
 });
 
 type AuthLoginSchema = z.infer<typeof authLoginSchema>;
 
 export default function AuthLoginPage() {
+  const t = useTranslations('Auth');
+
   const router = useRouter();
   const { login } = useAuthStore();
 
@@ -58,8 +61,8 @@ export default function AuthLoginPage() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className='text-2xl'>Login</CardTitle>
-        <CardDescription>Enter your email and password to login to your account.</CardDescription>
+        <CardTitle className='text-2xl'>{t('login')}</CardTitle>
+        <CardDescription>{t('enter-your-email-and-password-to-login-to-your-account')}</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -70,7 +73,7 @@ export default function AuthLoginPage() {
                 name='email'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>{t('email')}</FormLabel>
                     <FormControl>
                       <Input type='email' placeholder='mail@example.com' autoComplete='email' {...field} />
                     </FormControl>
@@ -83,7 +86,7 @@ export default function AuthLoginPage() {
                 name='password'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel>{t('password')}</FormLabel>
                     <FormControl>
                       <Input type='password' autoComplete='current-password' {...field} />
                     </FormControl>
@@ -92,15 +95,15 @@ export default function AuthLoginPage() {
               />
 
               <Button type='submit' size='lg' disabled={isPending} className='w-full'>
-                Login
+                {t('login')}
                 {isPending && <LoaderCircleIcon className='ml-2 animate-spin' />}
               </Button>
             </div>
 
             <div className='mt-4 text-center text-sm font-light'>
-              Don&apos;t have an account?{' '}
+              {t('dont-have-an-account')}{' '}
               <Link href='/register' className='font-normal underline underline-offset-4'>
-                Sign Up
+                {t('sign-up')}
               </Link>
             </div>
           </form>

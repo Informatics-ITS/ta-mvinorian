@@ -1,6 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import { LoaderCircleIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 import { GameLayout } from '@/app/(game)/layout';
 import { api } from '@/lib/api';
@@ -15,6 +16,7 @@ export interface GameWaitingJoinProps {
 }
 
 export const GameWaitingJoin = ({ code, onLeaveGame }: GameWaitingJoinProps) => {
+  const t = useTranslations('Game');
   const router = useRouter();
   const { mutate, isPending } = useMutation({
     mutationFn: async () => {
@@ -33,15 +35,15 @@ export const GameWaitingJoin = ({ code, onLeaveGame }: GameWaitingJoinProps) => 
       <Card className='w-full max-w-md'>
         <CardTitle>
           <CardHeader className='text-center'>
-            <CardTitle className='text-2xl'>Waiting for another player...</CardTitle>
+            <CardTitle className='text-2xl'>{t('waiting-for-another-player')}</CardTitle>
             <CardDescription className='font-normal'>
-              Copy the game code below and ask other to join the game.
+              {t('copy-the-game-code-below-and-ask-other-to-join-the-game')}
             </CardDescription>
           </CardHeader>
           <CardContent className='mt-6 flex flex-col gap-6'>
             <Input value={code} readOnly className='!text-heading-40 h-fit text-center tracking-wide' />
             <Button size='lg' onClick={() => mutate()} disabled={isPending} className='w-full'>
-              Leave Game
+              {t('leave-game')}
               {isPending && <LoaderCircleIcon className='ml-2 animate-spin' />}
             </Button>
           </CardContent>

@@ -6,6 +6,7 @@ import { AxiosError } from 'axios';
 import { LoaderCircleIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -19,12 +20,13 @@ import { api } from '@/lib/api';
 import { ResponseType } from '@/lib/response';
 
 const gameJoinSchema = z.object({
-  code: z.string().min(6, 'Invalid code').max(6, 'Invalid code'),
+  code: z.string(),
 });
 
 type GameJoinSchema = z.infer<typeof gameJoinSchema>;
 
 export default function GameJoinPage() {
+  const t = useTranslations('Game');
   const router = useRouter();
 
   const form = useForm<GameJoinSchema>({
@@ -57,8 +59,10 @@ export default function GameJoinPage() {
     <Card className='w-full max-w-md'>
       <CardTitle>
         <CardHeader className='text-center'>
-          <CardTitle className='text-2xl'>Join Game</CardTitle>
-          <CardDescription className='font-normal'>Get the game code from other player and copy here.</CardDescription>
+          <CardTitle className='text-2xl'>{t('join-game')}</CardTitle>
+          <CardDescription className='font-normal'>
+            {t('get-the-game-code-from-other-player-and-copy-here')}
+          </CardDescription>
         </CardHeader>
         <CardContent className='mt-6'>
           <Form {...form}>
@@ -84,14 +88,16 @@ export default function GameJoinPage() {
                   )}
                 />
 
-                <Button type='submit' size='lg' disabled={isPending} className='cursor-pointer'>
-                  Join Game
-                  {isPending && <LoaderCircleIcon className='ml-2 animate-spin' />}
-                </Button>
+                <div className='flex flex-col gap-3'>
+                  <Button type='submit' size='lg' disabled={isPending} className='cursor-pointer'>
+                    {t('join-game')}
+                    {isPending && <LoaderCircleIcon className='ml-2 animate-spin' />}
+                  </Button>
 
-                <Button size='lg' variant='outline' asChild>
-                  <Link href='/lobby'>Go Back</Link>
-                </Button>
+                  <Button size='lg' variant='outline' asChild>
+                    <Link href='/lobby'>{t('go-back')}</Link>
+                  </Button>
+                </div>
               </div>
             </form>
           </Form>
