@@ -14,6 +14,7 @@ import {
 import { processGameCardEffect } from '@/lib/game-card-effect';
 import { defaultGameNodePlayer, defaultGameTopology, GameNodePlayerType, GameTopologyType } from '@/lib/game-topology';
 
+import { useUserTourContext } from './user-tour-provider';
 import { useWsContext } from './ws-provider';
 
 export type GameRoleType = 'attacker' | 'defender';
@@ -117,6 +118,7 @@ export const GameStateProvider = ({ children }: GameStateProviderProps) => {
   //* ===== Contexts =====
   const { isConnected } = useWsContext();
   const { players, isHost, role } = useWsPlayers();
+  const { setIsReady: setIsUserTourReady } = useUserTourContext();
 
   //* ===== Game State Definition =====
   const [round, setRound] = useWsState('round', 0);
@@ -449,6 +451,12 @@ export const GameStateProvider = ({ children }: GameStateProviderProps) => {
 
     return () => clearTimeout(timer);
   }, [isConnected]);
+
+  //? Set user tour ready when game state is initialized
+  React.useEffect(() => {
+    if (playerPhase === GamePlayerPhase.WaitGame) return;
+    setIsUserTourReady(true);
+  }, [playerPhase, setIsUserTourReady]);
 
   //? Main game loop
   React.useEffect(() => {

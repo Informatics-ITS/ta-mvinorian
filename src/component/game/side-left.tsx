@@ -4,6 +4,7 @@ import React from 'react';
 
 import { useElementDimensions } from '@/hook/use-element-dimensions';
 import { getGameCardById } from '@/lib/game-card';
+import { getGameDefenseById } from '@/lib/game-defense';
 import { getGameNodeById, getGameTopologyNodeById } from '@/lib/game-topology';
 import { cn } from '@/lib/utils';
 import { useGameStateContext } from '@/provider/game-state-provider';
@@ -97,22 +98,46 @@ export const GameSideLeft = React.forwardRef<HTMLDivElement, GameSideLeftProps>(
               )}
 
               {selectedGameNode && (
-                <motion.div
-                  key={selectedGameNode.id}
-                  initial={{ opacity: 0, x: -128 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 128 }}
-                  transition={{ type: 'keyframes', ease: 'easeInOut' }}
-                  className='bg-background-200 w-full space-y-2 rounded-xs border border-gray-400 p-4'
-                >
-                  <p className='text-heading-18 text-gray-1000'>
-                    {t('what-is')} {selectedGameNode.name}?
-                  </p>
-                  <p className='text-copy-14 text-gray-800'>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a diam lectus. Sed sit amet ipsum
-                    mauris.
-                  </p>
-                </motion.div>
+                <React.Fragment>
+                  <motion.div
+                    key={selectedGameNode.id}
+                    initial={{ opacity: 0, x: -128 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 128 }}
+                    transition={{ type: 'keyframes', ease: 'easeInOut' }}
+                    className='bg-background-200 w-full space-y-2 rounded-xs border border-gray-400 p-4'
+                  >
+                    <p className='text-heading-18 text-gray-1000'>
+                      {t('what-is')} {selectedGameNode.name}?
+                    </p>
+                    <p className='text-copy-14 text-gray-800'>{selectedGameNode.education}</p>
+                  </motion.div>
+                  {selectedGameTopologyNode?.defenses.map((defense, index) => {
+                    if (role === 'attacker' && !defense.revealed) return null;
+
+                    const gameDefense = getGameDefenseById(defense.id);
+                    if (!gameDefense) return null;
+
+                    const GameDefenseIcon = gameDefense.icon;
+
+                    return (
+                      <motion.div
+                        key={gameDefense.id + selectedGameTopologyNode.id + index}
+                        initial={{ opacity: 0, x: -128 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: 128 }}
+                        transition={{ type: 'keyframes', ease: 'easeInOut', delay: (index + 1) * 0.2 }}
+                        className='bg-background-200 w-full space-y-2 rounded-xs border border-gray-400 p-4'
+                      >
+                        <p className='text-heading-18 flex items-center gap-2'>
+                          <GameDefenseIcon /> {gameDefense.alias}
+                        </p>
+                        <p className='text-copy-14 mt-2 text-gray-900'>{gameDefense.desc}</p>
+                        <p className='text-copy-14 text-gray-800'>{gameDefense.education}</p>
+                      </motion.div>
+                    );
+                  })}
+                </React.Fragment>
               )}
             </AnimatePresence>
           </div>

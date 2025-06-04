@@ -84,5 +84,32 @@
     "firewall-upgrade": "Menambahkan firewall di Database Server atau Web Server. \nBlok 1 serangan pada node target.",
     "mfa-implementation": "Menerapkan Multi-Factor Authentication. \nBlokir serangan ke Workstation atau Email Server untuk 1 serangan.",
     "network-segmentation": "Melakukan segregasi jaringan. \nNode target tidak dapat diserang pada putaran ini."
+  },
+  "game-node": {
+    "internal-network-hub": "Menghubungkan perangkat dalam satu jaringan internal. Jika disusupi, penyerang bisa menyadap komunikasi atau menyebarkan malware.",
+    "database-server": "Server yang menyimpan dan mengelola data penting seperti akun pengguna dan catatan bisnis. Jika diretas, data bisa dicuri atau diubah.",
+    "web-server": "Menjalankan website dan aplikasi web. Sering menjadi target utama serangan seperti DDoS atau injeksi kode.",
+    "cloud-storage": "Layanan penyimpanan file di internet. Jika tidak diamankan, data bisa bocor atau diakses pihak tidak sah.",
+    "iot-device": "Perangkat pintar seperti kamera atau sensor yang terhubung ke jaringan. Sering kali kurang aman dan mudah diretas.",
+    "email-server": "Mengelola pengiriman dan penerimaan email. Sering menjadi jalur serangan phishing atau penyebaran malware.",
+    "workstation": "Perangkat yang digunakan pengguna seperti komputer atau laptop. Sering menjadi titik masuk malware atau rekayasa sosial."
+  },
+  "game-defense": {
+    "firewall-desc": "Memblokir akses tidak sah.",
+    "firewall-edu": "Bertindak seperti penjaga gerbang—mengizinkan koneksi yang aman dan menolak yang berbahaya.",
+    "ids-desc": "Mendeteksi aktivitas mencurigakan.",
+    "ids-edu": "Memantau jaringan atau sistem untuk tanda-tanda serangan, lalu memberi peringatan saat ditemukan ancaman.",
+    "antivirus-desc": "Melawan malware yang dikenal.",
+    "antivirus-edu": "Mendeteksi dan menghapus software berbahaya seperti virus, trojan, dan worm di perangkat pengguna.",
+    "network-segmentation-desc": "Membatasi kerusakan.",
+    "network-segmentation-edu": "Membagi jaringan menjadi zona-zona kecil. Jika satu zona diretas, bagian lain tetap aman.",
+    "anomaly-detection-desc": "Mendeteksi hal yang tidak wajar.",
+    "anomaly-detection-edu": "Mengidentifikasi aktivitas yang tidak biasa, seperti akses di jam aneh atau transfer data mencurigakan.",
+    "spam-filter-desc": "Menghalau email sampah dan berbahaya.",
+    "spam-filter-edu": "Mendeteksi dan memblokir email tidak diinginkan atau berisiko sebelum masuk ke kotak masuk.",
+    "encryption-desc": "Mengacak data agar aman.",
+    "encryption-edu": "Mengubah data menjadi kode tak terbaca tanpa kunci. Melindungi data saat disimpan atau dikirim.",
+    "mfa-desc": "Menambahkan lapisan keamanan login.",
+    "mfa-edu": "Tidak hanya butuh kata sandi, tapi juga kode dari HP atau sidik jari. Sulit dibobol oleh penyerang."
   }
 }

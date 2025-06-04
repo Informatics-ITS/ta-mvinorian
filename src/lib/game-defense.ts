@@ -4,7 +4,10 @@ import { GAME_DEFENSES } from '@/constant/game-defense';
 
 export type GameDefenseType = {
   id: string;
+  alias: string;
   name: string;
+  desc: string;
+  education: string;
   icon: LucideIcon;
   color: {
     primary: string;

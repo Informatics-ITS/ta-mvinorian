@@ -85,5 +85,32 @@
     "firewall-upgrade": "Add firewall on Database Server or Web Server. Block 1 attack on target node.",
     "mfa-implementation": "Implement Multi-Factor Authentication. Block attack to Workstation or Email Server for 1 attack.",
     "network-segmentation": "Segregate the network. Target node cannot be attacked this round."
+  },
+  "game-node": {
+    "internal-network-hub": "Connects devices inside an organization. A compromised hub can let attackers intercept or reroute internal communications.",
+    "database-server": "A server that stores and manages critical data such as user credentials and business records. If compromised, attackers can steal or alter data.",
+    "web-server": "Hosts websites and applications. It’s often the first target in cyberattacks such as DDoS or code injection.",
+    "cloud-storage": "A service to store files online. Without protection, it can lead to data leaks or unauthorized access.",
+    "iot-device": "Smart devices connected to a network. Often unsecured, making them easy targets for hackers.",
+    "email-server": "Handles sending and receiving emails. It’s a common target for phishing and malware attacks.",
+    "workstation": "A user’s device like a PC or laptop. It’s a common entry point for malware and social engineering attacks."
+  },
+  "game-defense": {
+    "firewall-desc": "Blocks unauthorized access.",
+    "firewall-edu": "It acts like a gatekeeper—allowing safe traffic and blocking potentially harmful connections to or from a network or device.",
+    "ids-desc": "Detects suspicious activity.",
+    "ids-edu": "Monitors network or system behavior for signs of attack. It alerts defenders when something unusual is detected.",
+    "antivirus-desc": "Fights known malware.",
+    "antivirus-edu": "Scans for, detects, and removes malicious software like viruses, trojans, or worms on devices like workstations.",
+    "network-segmentation-desc": "Limits the damage.",
+    "network-segmentation-edu": "Divides a network into smaller zones, so if one part is compromised, the rest stays secure—like isolating fires in separate rooms.",
+    "anomaly-detection-desc": "Spots the unusual.",
+    "anomaly-detection-edu": "Uses behavior models to find things that don't belong, such as unexpected data transfers or login times.",
+    "spam-filter-desc": "Stops junk and threats.",
+    "spam-filter-edu": "Automatically detects and blocks unwanted or dangerous emails—like phishing attempts—before they reach your inbox.",
+    "encryption-desc": "Scrambles data for safety.",
+    "encryption-edu": "Converts data into unreadable code unless you have the key. Protects sensitive information in storage or transit.",
+    "mfa-desc": "Adds layers of login protection.",
+    "mfa-edu": "Requires more than just a password—like a code from your phone or fingerprint—making it harder for attackers to break in."
   }
 }

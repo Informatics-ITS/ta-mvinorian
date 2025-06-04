@@ -10,11 +10,17 @@ import {
 } from 'lucide-react';
 
 import { GameDefenseType } from '@/lib/game-defense';
+import { getClientTranslations } from '@/lib/locale-client';
+
+const t = await getClientTranslations();
 
 export const GAME_DEFENSES: GameDefenseType[] = [
   {
     id: 'd-firewall',
+    alias: 'Firewall',
     name: 'Firewall',
+    desc: t('game-defense.firewall-desc'),
+    education: t('game-defense.firewall-edu'),
     icon: FlameIcon,
     color: {
       primary: 'bg-red-700',
@@ -25,7 +31,10 @@ export const GAME_DEFENSES: GameDefenseType[] = [
   },
   {
     id: 'd-ids',
+    alias: 'Intrusion Detection System',
     name: 'IDS',
+    desc: t('game-defense.ids-desc'),
+    education: t('game-defense.ids-edu'),
     icon: RadarIcon,
     color: {
       primary: 'bg-blue-700',
@@ -36,7 +45,10 @@ export const GAME_DEFENSES: GameDefenseType[] = [
   },
   {
     id: 'd-antivirus',
+    alias: 'Antivirus',
     name: 'Antivirus',
+    desc: t('game-defense.antivirus-desc'),
+    education: t('game-defense.antivirus-edu'),
     icon: UmbrellaIcon,
     color: {
       primary: 'bg-red-700',
@@ -47,7 +59,10 @@ export const GAME_DEFENSES: GameDefenseType[] = [
   },
   {
     id: 'd-network-segmentation',
+    alias: 'Network Segmentation',
     name: 'Network Segmentation',
+    desc: t('game-defense.network-segmentation-desc'),
+    education: t('game-defense.network-segmentation-edu'),
     icon: LayoutGridIcon,
     color: {
       primary: 'bg-teal-700',
@@ -58,7 +73,10 @@ export const GAME_DEFENSES: GameDefenseType[] = [
   },
   {
     id: 'd-anomaly-detection',
+    alias: 'Anomaly Detection',
     name: 'Anomaly Detection',
+    desc: t('game-defense.anomaly-detection-desc'),
+    education: t('game-defense.anomaly-detection-edu'),
     icon: ScanSearchIcon,
     color: {
       primary: 'bg-blue-700',
@@ -69,7 +87,10 @@ export const GAME_DEFENSES: GameDefenseType[] = [
   },
   {
     id: 'd-spam-filter',
+    alias: 'Spam Filter',
     name: 'Spam Filter',
+    desc: t('game-defense.spam-filter-desc'),
+    education: t('game-defense.spam-filter-edu'),
     icon: ListFilterIcon,
     color: {
       primary: 'bg-blue-700',
@@ -80,7 +101,10 @@ export const GAME_DEFENSES: GameDefenseType[] = [
   },
   {
     id: 'd-encryption',
+    alias: 'Encryption',
     name: 'Encryption',
+    desc: t('game-defense.encryption-desc'),
+    education: t('game-defense.encryption-edu'),
     icon: FolderLockIcon,
     color: {
       primary: 'bg-teal-700',
@@ -91,7 +115,10 @@ export const GAME_DEFENSES: GameDefenseType[] = [
   },
   {
     id: 'd-mfa',
+    alias: 'Multi-Factor Authentication',
     name: 'MFA',
+    desc: t('game-defense.mfa-desc'),
+    education: t('game-defense.mfa-edu'),
     icon: KeyRoundIcon,
     color: {
       primary: 'bg-red-700',

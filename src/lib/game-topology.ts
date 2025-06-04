@@ -7,6 +7,7 @@ export type GameNodeType = {
   name: string;
   token: number;
   security: 'low' | 'medium' | 'high';
+  education: string;
   icon: LucideIcon;
   x: number;
   y: number;

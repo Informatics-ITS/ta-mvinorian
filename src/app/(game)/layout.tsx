@@ -2,6 +2,7 @@
 
 import { LogOutIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import React from 'react';
 
 import { withAuth } from '@/component/hoc/with-auth';
 import { Avatar, AvatarFallback } from '@/component/ui/avatar';
@@ -15,6 +16,7 @@ import {
 } from '@/component/ui/dropdown-menu';
 import { LocaleSwitcher } from '@/component/ui/locale-switcher';
 import { useAuthStore } from '@/hook/use-auth-store';
+import { UserTourTrigger, useUserTourContext } from '@/provider/user-tour-provider';
 
 export default withAuth(GameLayout);
 
@@ -25,16 +27,19 @@ function GameLayout({
 }>) {
   const t = useTranslations('game');
   const { user, logout } = useAuthStore();
+  const { isReady: isUserTourReady } = useUserTourContext();
 
   return (
-    <div className='relative flex h-svh w-full items-center justify-center overflow-hidden'>
+    <React.Fragment>
       {user && (
         <div className='bg-background-100 absolute top-0 left-0 z-50 flex w-full items-center justify-between border-b border-gray-400 px-4 py-2 text-gray-900'>
           <div className='flex items-center gap-2'>
             <p>{t('node-clash')}</p>
           </div>
 
-          <div className='flex items-center gap-3'>
+          <div className='flex items-center gap-2.5'>
+            {isUserTourReady && <UserTourTrigger />}
+
             <LocaleSwitcher />
 
             <DropdownMenu>
@@ -62,6 +67,6 @@ function GameLayout({
         </div>
       )}
       {children}
-    </div>
+    </React.Fragment>
   );
 }

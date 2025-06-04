@@ -1,6 +1,9 @@
 import { CloudIcon, CpuIcon, DatabaseIcon, GlobeIcon, MailIcon, MonitorIcon, NetworkIcon } from 'lucide-react';
 
 import { GameTopologyDefenseType, TopologyType } from '@/lib/game-topology';
+import { getClientTranslations } from '@/lib/locale-client';
+
+const t = await getClientTranslations();
 
 export const GAME_TOPOLOGY: TopologyType = {
   nodes: [
@@ -9,6 +12,7 @@ export const GAME_TOPOLOGY: TopologyType = {
       name: 'Internal Network Hub',
       token: 0,
       security: 'high',
+      education: t('game-node.internal-network-hub'),
       icon: NetworkIcon,
       x: 290,
       y: 370,
@@ -18,6 +22,7 @@ export const GAME_TOPOLOGY: TopologyType = {
       name: 'Database Server',
       token: 2,
       security: 'high',
+      education: t('game-node.database-server'),
       icon: DatabaseIcon,
       x: 0,
       y: 370,
@@ -27,6 +32,7 @@ export const GAME_TOPOLOGY: TopologyType = {
       name: 'Web Server',
       token: 1,
       security: 'medium',
+      education: t('game-node.web-server'),
       icon: GlobeIcon,
       x: 0,
       y: 0,
@@ -36,6 +42,7 @@ export const GAME_TOPOLOGY: TopologyType = {
       name: 'Cloud Storage',
       token: 2,
       security: 'medium',
+      education: t('game-node.cloud-storage'),
       icon: CloudIcon,
       x: 290,
       y: 0,
@@ -45,6 +52,7 @@ export const GAME_TOPOLOGY: TopologyType = {
       name: 'IoT Device',
       token: 0,
       security: 'low',
+      education: t('game-node.iot-device'),
       icon: CpuIcon,
       x: 580,
       y: 370,
@@ -54,6 +62,7 @@ export const GAME_TOPOLOGY: TopologyType = {
       name: 'Email Server',
       token: 1,
       security: 'medium',
+      education: t('game-node.email-server'),
       icon: MailIcon,
       x: 290,
       y: 740,
@@ -63,6 +72,7 @@ export const GAME_TOPOLOGY: TopologyType = {
       name: 'Workstation',
       token: 1,
       security: 'low',
+      education: t('game-node.workstation'),
       icon: MonitorIcon,
       x: 580,
       y: 740,

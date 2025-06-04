@@ -35,7 +35,7 @@ export const GameDeck = React.forwardRef<HTMLDivElement, GameDeckProps>(({ class
       <AnimatePresence initial={false} mode='popLayout'>
         {gamePlayerCards &&
           gamePlayerCards.length > 0 &&
-          gamePlayerCards.map((card) => (
+          gamePlayerCards.map((card, index) => (
             <motion.div
               key={card.id}
               initial={{ opacity: 0, y: 300 }}
@@ -45,13 +45,19 @@ export const GameDeck = React.forwardRef<HTMLDivElement, GameDeckProps>(({ class
               className='mx-2 flex shrink-0 justify-center'
             >
               <motion.div
+                data-tour={index === 0 ? 'game-card-container' : undefined}
                 variants={cardAnimation}
                 initial='initial'
                 animate={card.selected ? 'animate' : 'initial'}
                 whileHover='animate'
                 className='flex shrink-0 justify-center focus-visible:outline-none'
               >
-                <GameCard card={getGameCardById(card.id)!} onClick={() => clickCard(card.id)} className='relative' />
+                <GameCard
+                  data-tour={index === 0 ? 'game-card' : undefined}
+                  card={getGameCardById(card.id)!}
+                  onClick={() => clickCard(card.id)}
+                  className='relative'
+                />
                 <AnimatePresence>
                   {card.selected && playerPhase === GamePlayerPhase.SelectCard && (
                     <motion.div

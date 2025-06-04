@@ -16,19 +16,6 @@ export type GameCardEffectType = {
   //? Defender's effect
   addDefense?: string;
   ignoreAttack?: boolean;
-  // revealCard?: {
-  //   role: GameRoleType;
-  //   count: number;
-  // };
-  // revealNode?: string[];
-  // revealNodeDefense?: {
-  //   nodeId: string;
-  //   count: number;
-  // };
-  // addDefense?: {
-  //   nodeId: string;
-  //   defenseId: string;
-  // };
 };
 
 interface GameCardEffectContext {

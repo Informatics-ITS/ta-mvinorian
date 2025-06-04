@@ -25,7 +25,9 @@ export default async function RootLayout({
 
   return (
     <html lang={locale}>
-      <body className={`${outfit.variable} bg-background-200 antialiased`}>
+      <body
+        className={`${outfit.variable} bg-background-200 relative flex h-svh w-full items-center justify-center overflow-hidden antialiased`}
+      >
         <Provider>{children}</Provider>
       </body>
     </html>
