@@ -16,7 +16,7 @@ import { GameNode } from './node';
 export interface GameSideLeftProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export const GameSideLeft = React.forwardRef<HTMLDivElement, GameSideLeftProps>(({ className, ...props }, ref) => {
-  const t = useTranslations('game');
+  const t = useTranslations();
 
   const sideRef = React.useRef<HTMLDivElement>(null);
   const { height } = useElementDimensions(sideRef);
@@ -40,7 +40,7 @@ export const GameSideLeft = React.forwardRef<HTMLDivElement, GameSideLeftProps>(
       )}
       {...props}
     >
-      <p className='border-b border-gray-400 px-4 pb-4 text-gray-900'>{t('what-am-i-clicking')}</p>
+      <p className='border-b border-gray-400 px-4 pb-4 text-gray-900'>{t('game.what-am-i-clicking')}</p>
       <div ref={sideRef} className='relative flex-1 overflow-clip'>
         <DragScrollArea className='absolute w-full px-4' style={{ height: `${height}px` }}>
           <div className='space-y-4'>
@@ -71,7 +71,7 @@ export const GameSideLeft = React.forwardRef<HTMLDivElement, GameSideLeftProps>(
                     exit={{ opacity: 0 }}
                     className='text-center font-normal whitespace-pre-line text-gray-900'
                   >
-                    {t('select-card-or-node-to-see-the-description')}
+                    {t('game.select-card-or-node-to-see-the-description')}
                   </motion.p>
                 )}
               </AnimatePresence>
@@ -88,7 +88,7 @@ export const GameSideLeft = React.forwardRef<HTMLDivElement, GameSideLeftProps>(
                   className='bg-background-200 w-full space-y-2 rounded-xs border border-gray-400 p-4'
                 >
                   <p className='text-heading-18 text-gray-1000'>
-                    {t('what-is')} {selectedGameCard.name}?
+                    {t('game.what-is')} {selectedGameCard.name}?
                   </p>
                   <p className='text-copy-14 text-gray-800'>
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a diam lectus. Sed sit amet ipsum
@@ -108,9 +108,9 @@ export const GameSideLeft = React.forwardRef<HTMLDivElement, GameSideLeftProps>(
                     className='bg-background-200 w-full space-y-2 rounded-xs border border-gray-400 p-4'
                   >
                     <p className='text-heading-18 text-gray-1000'>
-                      {t('what-is')} {selectedGameNode.name}?
+                      {t('game.what-is')} {selectedGameNode.name}?
                     </p>
-                    <p className='text-copy-14 text-gray-800'>{selectedGameNode.education}</p>
+                    <p className='text-copy-14 text-gray-800'>{t(selectedGameNode.education as any)}</p>
                   </motion.div>
                   {selectedGameTopologyNode?.defenses.map((defense, index) => {
                     if (role === 'attacker' && !defense.revealed) return null;
@@ -132,8 +132,8 @@ export const GameSideLeft = React.forwardRef<HTMLDivElement, GameSideLeftProps>(
                         <p className='text-heading-18 flex items-center gap-2'>
                           <GameDefenseIcon /> {gameDefense.alias}
                         </p>
-                        <p className='text-copy-14 mt-2 text-gray-900'>{gameDefense.desc}</p>
-                        <p className='text-copy-14 text-gray-800'>{gameDefense.education}</p>
+                        <p className='text-copy-14 mt-2 text-gray-900'>{t(gameDefense.desc as any)}</p>
+                        <p className='text-copy-14 text-gray-800'>{t(gameDefense.education as any)}</p>
                       </motion.div>
                     );
                   })}

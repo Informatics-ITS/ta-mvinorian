@@ -7,6 +7,7 @@ import {
   ShieldIcon,
   SwordIcon,
 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import React from 'react';
 
 import { GameCardType } from '@/lib/game-card';
@@ -70,6 +71,8 @@ export interface GameCardProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export const GameCard = React.forwardRef<HTMLDivElement, GameCardProps>(({ card, className, ...props }, ref) => {
+  const t = useTranslations();
+
   const GameCardTypeIcon = cardAttribute[card.type].icon;
   const GameCardIcon = card.icon;
 
@@ -135,7 +138,7 @@ export const GameCard = React.forwardRef<HTMLDivElement, GameCardProps>(({ card,
         </div>
         <div className='space-y-2 px-1 text-left'>
           <p className={cn('!text-label-16 font-semibold', cardAttribute[card.type].text)}>{card.name}</p>
-          <p className={cn('!text-label-12', cardAttribute[card.type].accent)}>{card.desc}</p>
+          <p className={cn('!text-label-12', cardAttribute[card.type].accent)}>{t(card.desc as any)}</p>
         </div>
       </div>
     </div>
