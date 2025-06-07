@@ -2,6 +2,7 @@
 
 import React from 'react';
 
+import { Loading } from '@/component/ui/loading';
 import { useWsPlayers, useWsState } from '@/hook/use-ws-state';
 import {
   GameCardPlayerType,
@@ -443,14 +444,12 @@ export const GameStateProvider = ({ children }: GameStateProviderProps) => {
 
   //? Timer to initialize game state after connection
   React.useEffect(() => {
-    if (!isConnected) return;
-
     const timer = setTimeout(() => {
       setInitialized(true);
-    }, 1000);
+    }, 2000);
 
     return () => clearTimeout(timer);
-  }, [isConnected]);
+  }, []);
 
   //? Set user tour ready when game state is initialized
   React.useEffect(() => {
@@ -503,5 +502,7 @@ export const GameStateProvider = ({ children }: GameStateProviderProps) => {
     getGameStolenTokens,
   };
 
-  return <GameStateContext.Provider value={gameState}>{children}</GameStateContext.Provider>;
+  return (
+    <GameStateContext.Provider value={gameState}>{initialized ? children : <Loading />}</GameStateContext.Provider>
+  );
 };

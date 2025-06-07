@@ -2,6 +2,8 @@ import { IncomingMessage } from 'http';
 import queryString from 'query-string';
 import { WebSocket } from 'ws';
 
+import { getGameByCodeService, saveGameService } from '@/service/game-service';
+
 export type WsMessageType = {
   state: string;
   data: string;
@@ -12,16 +14,32 @@ export type WsPlayersType = {
   defender: string | null;
 };
 
+export type WsGameType = {
+  players: WsPlayersType;
+  states: { [k: string]: string | null };
+};
+
 const games: {
-  [k: string]: {
-    players: WsPlayersType;
-    state: { [k: string]: string | null };
-  };
+  [k: string]: WsGameType;
 } = {};
 
 const clients: {
   [k: string]: WebSocket;
 } = {};
+
+const pendingSaves = new Map<string, NodeJS.Timeout>();
+const debouncedSave = (code: string, delay: number = 1000) => {
+  if (pendingSaves.has(code)) {
+    clearTimeout(pendingSaves.get(code));
+  }
+
+  const timeout = setTimeout(async () => {
+    if (games[code]) await saveGameService(code, games[code]);
+    pendingSaves.delete(code);
+  }, delay);
+
+  pendingSaves.set(code, timeout);
+};
 
 const broadcast = (code: string, state: string) => {
   if (!games[code]) return;
@@ -32,33 +50,46 @@ const broadcast = (code: string, state: string) => {
 
   const message: WsMessageType = {
     state,
-    data: state === 'players' ? JSON.stringify(game.players) : (game.state[state] ?? ''),
+    data: state === 'players' ? JSON.stringify(game.players) : (game.states[state] ?? ''),
   };
 
   const messageJson = JSON.stringify(message);
 
-  if (attacker) clients[attacker].send(messageJson);
-  if (defender) clients[defender].send(messageJson);
+  if (attacker && clients[attacker]) clients[attacker].send(messageJson);
+  if (defender && clients[defender]) clients[defender].send(messageJson);
+
+  debouncedSave(code);
 };
 
-const handleConnect = (client: WebSocket, code: string, userId: string, role: string) => {
+const loadingGames = new Set<string>();
+const handleConnect = async (client: WebSocket, code: string, userId: string, role: string) => {
   clients[userId] = client;
 
-  if (!games[code]) {
-    games[code] = {
-      players: {
-        attacker: null,
-        defender: null,
-      },
-      state: {},
-    };
+  if (!games[code] && !loadingGames.has(code)) {
+    loadingGames.add(code);
+
+    const game = await getGameByCodeService(code);
+    if (game.success && game.data)
+      games[code] = { players: { attacker: null, defender: null }, states: game.data.states };
+    else {
+      games[code] = {
+        players: { attacker: null, defender: null },
+        states: {},
+      };
+    }
+
+    loadingGames.delete(code);
+  }
+
+  while (loadingGames.has(code)) {
+    await new Promise((resolve) => setTimeout(resolve, 10));
   }
 
   if (role === 'attacker') games[code].players.attacker = userId;
   else if (role === 'defender') games[code].players.defender = userId;
 
   broadcast(code, 'players');
-  Object.keys(games[code].state).forEach((state) => {
+  Object.keys(games[code].states).forEach((state) => {
     broadcast(code, state);
   });
 };
@@ -70,30 +101,28 @@ const handleMessage = (bytes: WebSocket.RawData, code: string) => {
 
   if (message.state === 'refresh') {
     broadcast(code, 'players');
-    Object.keys(games[code].state).forEach((state) => {
+    Object.keys(games[code].states).forEach((state) => {
       broadcast(code, state);
     });
     return;
   }
 
-  games[code].state[message.state] = message.data;
+  games[code].states[message.state] = message.data;
   broadcast(code, message.state);
 };
 
 const handleClose = (client: WebSocket, code: string) => {
   if (!games[code]) return;
 
-  const attacker = games[code].players.attacker;
-  const defender = games[code].players.defender;
+  for (const userId in clients) {
+    if (clients[userId] !== client) continue;
 
-  if (attacker && clients[attacker] === client) {
-    delete clients[attacker];
-    games[code].players.attacker = null;
-  }
+    delete clients[userId];
 
-  if (defender && clients[defender] === client) {
-    delete clients[defender];
-    games[code].players.defender = null;
+    if (games[code].players.attacker === userId) games[code].players.attacker = null;
+    else if (games[code].players.defender === userId) games[code].players.defender = null;
+
+    break;
   }
 
   if (!games[code].players.attacker && !games[code].players.defender) {

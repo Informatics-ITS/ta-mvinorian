@@ -1,4 +1,4 @@
-import { eq, or } from 'drizzle-orm';
+import { and, eq, or } from 'drizzle-orm';
 
 import { db } from '@/db';
 import { GameInsertType, gameTable, GameType } from '@/db/schema';
@@ -45,4 +45,14 @@ export const getAllGameUserIds = async () => {
     .map((game) => [game.attacker, game.defender])
     .flat()
     .filter((userId) => userId !== null);
+};
+
+export const getGameByUserIdAndCode = async (userId: string, code: string) => {
+  const game = await db
+    .select()
+    .from(gameTable)
+    .where(and(or(eq(gameTable.attacker, userId), eq(gameTable.defender, userId)), eq(gameTable.code, code)))
+    .limit(1);
+  if (!game[0]) return null;
+  return game[0];
 };

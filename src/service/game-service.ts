@@ -1,3 +1,4 @@
+import { WsGameType } from '@/app/(_api)/api/ws/route';
 import { GameInsertType } from '@/db/schema';
 import { createResponse } from '@/lib/response';
 import { createService } from '@/lib/service';
@@ -27,6 +28,7 @@ export const createGameService = createService(async (t, userId: string) => {
       code: code,
       attacker: role === 'attacker' ? userId : null,
       defender: role === 'defender' ? userId : null,
+      states: '{}',
     };
 
     const newGame = await createGame(game);
@@ -96,3 +98,39 @@ export const getGameByUserIdService = createService(async (t, userId: string) =>
     return createResponse({ success: false, message: t('response.failed-to-get-game'), data: undefined });
   }
 });
+
+export const saveGameService = async (code: string, game: WsGameType) => {
+  try {
+    const states = JSON.stringify(game.states);
+
+    const existingGame = await getGameByCode(code);
+    if (!existingGame) return createResponse({ success: false, message: 'game not found', data: undefined });
+
+    const updatedGame = await updateGame({
+      ...existingGame,
+      states,
+      updatedAt: new Date().toISOString(),
+    });
+
+    if (!updatedGame) return createResponse({ success: false, message: 'failed to update game', data: undefined });
+    return createResponse({ success: true, message: 'game saved successfully', data: updatedGame });
+  } catch (_) {
+    return createResponse({ success: false, message: 'failed to save game', data: undefined });
+  }
+};
+
+export const getGameByCodeService = async (code: string) => {
+  try {
+    const game = await getGameByCode(code);
+    if (!game) return createResponse({ success: false, message: 'game not found', data: undefined });
+
+    const gameData = {
+      ...game,
+      states: JSON.parse(game.states) as { [k: string]: string | null },
+    };
+
+    return createResponse({ success: true, message: 'game found', data: gameData });
+  } catch (_) {
+    return createResponse({ success: false, message: 'failed to get game', data: undefined });
+  }
+};
