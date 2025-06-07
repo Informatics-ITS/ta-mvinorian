@@ -42,10 +42,15 @@ export type GamePlayerStateType = {
   targetNodeId?: string;
 };
 
+export type GameMessageType = {
+  key: string;
+  params?: Record<string, any>;
+};
+
 export type GamePlayerHistoryType = {
   usedCardId?: string;
   targetNodeId?: string;
-  messages?: string[];
+  messages?: GameMessageType[];
 }[];
 
 export type GameHistoryType = {

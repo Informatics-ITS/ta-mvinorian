@@ -1,4 +1,4 @@
-import { GamePlayerStateType } from '@/provider/game-state-provider';
+import { GameMessageType, GamePlayerStateType } from '@/provider/game-state-provider';
 
 import { getGameCardEffect } from './game-card';
 import { getGameDefenseById } from './game-defense';
@@ -25,8 +25,8 @@ interface GameCardEffectContext {
 }
 
 interface GameCardEffectResult {
-  attackerMessages: string[];
-  defenderMessages: string[];
+  attackerMessages: GameMessageType[];
+  defenderMessages: GameMessageType[];
   stolenTokens: number;
   topology: GameTopologyType;
 }
@@ -35,6 +35,11 @@ interface GameCardEffectHandler {
   canHandle: (effect: GameCardEffectType) => boolean;
   apply: (context: GameCardEffectContext, result: GameCardEffectResult) => GameCardEffectResult;
 }
+
+//* ===== Utility Functions =====
+const t = (key: string, params?: Record<string, any>): GameMessageType => {
+  return { key, params };
+};
 
 //* ===== Effect Handler: stealTokens =====
 const stealTokensHandler: GameCardEffectHandler = {
@@ -57,8 +62,8 @@ const stealTokensHandler: GameCardEffectHandler = {
     if (ignoreAttack && attackerNodeId === defenderNodeId) {
       return {
         ...result,
-        attackerMessages: [...result.attackerMessages, 'attack ignored by defender effect'],
-        defenderMessages: [...result.defenderMessages, 'successfully ignored attack'],
+        attackerMessages: [...result.attackerMessages, t('game-effect.attack-ignored-by-defender-effect')],
+        defenderMessages: [...result.defenderMessages, t('game-effect.successfully-ignored-attack')],
       };
     }
 
@@ -81,25 +86,32 @@ const stealTokensHandler: GameCardEffectHandler = {
       }),
     };
 
-    const attackerMessages: string[] = [];
-    const defenderMessages: string[] = [];
+    const attackerMessages: GameMessageType[] = [];
+    const defenderMessages: GameMessageType[] = [];
 
     if (ignoredDefenses > 0) {
-      const ignoredMessage = `ignored ${ignoredDefenses} defense(s)`;
       attackerMessages.push(
-        isBlocked ? `${ignoredMessage}, but attack blocked by remaining defenses` : `successfully ${ignoredMessage}`,
+        isBlocked
+          ? t('game-effect.ignored-ignoreddefenses-defense-s-but-attack-blocked-by-remaining-defenses', {
+              ignoredDefenses,
+            })
+          : t('game-effect.successfully-ignored-ignoreddefenses-defense-s', { ignoredDefenses }),
       );
-      defenderMessages.push(`attacker ${ignoredMessage}`);
+      defenderMessages.push(t('game-effect.attacker-ignored-ignoreddefenses-defense-s', { ignoredDefenses }));
     }
 
     if (isBlocked) {
-      if (ignoredDefenses === 0) attackerMessages.push('attack blocked by defense, no data token stolen');
-      defenderMessages.push(`${gameNode.name} defense blocked the attempted attack, no data token stolen`);
+      if (ignoredDefenses === 0) attackerMessages.push(t('game-effect.attack-blocked-by-defense-no-data-token-stolen'));
+      defenderMessages.push(
+        t('game-effect.gamenode-name-defense-blocked-the-attempted-attack-no-data-token-stolen', {
+          gameNode: gameNode.name,
+        }),
+      );
     } else if (currentTokens === 0) {
-      attackerMessages.push('no data token in target node');
+      attackerMessages.push(t('game-effect.no-data-token-in-target-node'));
     } else if (tokensToSteal > 0) {
-      attackerMessages.push(`successfully stole ${tokensToSteal} data token(s)`);
-      defenderMessages.push(`attacker has stolen ${tokensToSteal} data token(s)`);
+      attackerMessages.push(t('game-effect.successfully-stole-tokenstosteal-data-token-s', { tokensToSteal }));
+      defenderMessages.push(t('game-effect.attacker-has-stolen-tokenstosteal-data-token-s', { tokensToSteal }));
     }
 
     return {
@@ -141,8 +153,11 @@ const addDefenseHandler: GameCardEffectHandler = {
     };
 
     const message = isDefenseMaxed
-      ? `${gameNode.name} defense is already maxed, no new defense added`
-      : `added ${gameDefense.name} defense to ${gameNode.name}`;
+      ? t('game-effect.gamenode-name-defense-is-already-maxed-no-new-defense-added', { gameNode: gameNode.name })
+      : t('game-effect.added-gamedefense-name-defense-to-gamenode-name', {
+          gameDefense: gameDefense.name,
+          gameNode: gameNode.name,
+        });
 
     return {
       ...result,
@@ -165,7 +180,7 @@ const ignoreAttackHandler: GameCardEffectHandler = {
 
     if (defenderEffect?.ignoreAttack === undefined) return result;
     if (defenderEffect.ignoreAttack && attackerNodeId !== defenderNodeId) {
-      const message = 'no attempted attack to ignore in target node';
+      const message = t('game-effect.no-attempted-attack-to-ignore-in-target-node');
 
       return {
         ...result,

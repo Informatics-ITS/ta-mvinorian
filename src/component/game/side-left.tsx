@@ -90,10 +90,7 @@ export const GameSideLeft = React.forwardRef<HTMLDivElement, GameSideLeftProps>(
                   <p className='text-heading-18 text-gray-1000'>
                     {t('game.what-is')} {selectedGameCard.name}?
                   </p>
-                  <p className='text-copy-14 text-gray-800'>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a diam lectus. Sed sit amet ipsum
-                    mauris.
-                  </p>
+                  <p className='text-copy-14 text-gray-800'>{t(selectedGameCard.education as any)}</p>
                 </motion.div>
               )}
 

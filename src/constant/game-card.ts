@@ -32,11 +32,15 @@ import {
 
 import { GameCardType } from '@/lib/game-card';
 
+//? placeholder translation function
+const t = (key: string) => key;
+
 export const GAME_CARDS: GameCardType[] = [
   {
     id: 'cas-network-scanning',
     name: 'Network Scanning',
-    desc: 'game-card.network-scanning-desc',
+    desc: t('game-card.network-scanning-desc'),
+    education: t('game-card.network-scanning-edu'),
     role: 'attacker',
     type: 'stealth',
     icon: NetworkIcon,
@@ -45,7 +49,8 @@ export const GAME_CARDS: GameCardType[] = [
   {
     id: 'cas-social-engineering',
     name: 'Social Engineering',
-    desc: 'game-card.social-engineering-desc',
+    desc: t('game-card.social-engineering-desc'),
+    education: t('game-card.social-engineering-edu'),
     role: 'attacker',
     type: 'stealth',
     icon: BrainIcon,
@@ -54,7 +59,8 @@ export const GAME_CARDS: GameCardType[] = [
   {
     id: 'cas-port-scanning',
     name: 'Port Scanning',
-    desc: 'game-card.port-scanning-desc',
+    desc: t('game-card.port-scanning-desc'),
+    education: t('game-card.port-scanning-edu'),
     role: 'attacker',
     type: 'stealth',
     icon: EthernetPortIcon,
@@ -63,7 +69,8 @@ export const GAME_CARDS: GameCardType[] = [
   {
     id: 'cas-vpn-tunneling',
     name: 'VPN Tunneling',
-    desc: 'game-card.vpn-tunneling-desc',
+    desc: t('game-card.vpn-tunneling-desc'),
+    education: t('game-card.vpn-tunneling-edu'),
     role: 'attacker',
     type: 'stealth',
     icon: GlobeLockIcon,
@@ -72,7 +79,8 @@ export const GAME_CARDS: GameCardType[] = [
   {
     id: 'cas-lateral-movement',
     name: 'Lateral Movement',
-    desc: 'game-card.lateral-movement-desc',
+    desc: t('game-card.lateral-movement-desc'),
+    education: t('game-card.lateral-movement-edu'),
     role: 'attacker',
     type: 'stealth',
     icon: WorkflowIcon,
@@ -81,7 +89,8 @@ export const GAME_CARDS: GameCardType[] = [
   {
     id: 'caa-sql-injection',
     name: 'SQL Injection',
-    desc: 'game-card.sql-injection-desc',
+    desc: t('game-card.sql-injection-desc'),
+    education: t('game-card.sql-injection-edu'),
     role: 'attacker',
     type: 'attack',
     icon: SquareChartGanttIcon,
@@ -93,7 +102,8 @@ export const GAME_CARDS: GameCardType[] = [
   {
     id: 'caa-phishing-attack',
     name: 'Phising Attack',
-    desc: 'game-card.phishing-attack-desc',
+    desc: t('game-card.phishing-attack-desc'),
+    education: t('game-card.phishing-attack-edu'),
     role: 'attacker',
     type: 'attack',
     icon: FishIcon,
@@ -105,7 +115,8 @@ export const GAME_CARDS: GameCardType[] = [
   {
     id: 'caa-zero-day-exploit',
     name: 'Zero-Day Exploit',
-    desc: 'game-card.zero-day-exploit-desc',
+    desc: t('game-card.zero-day-exploit-desc'),
+    education: t('game-card.zero-day-exploit-edu'),
     role: 'attacker',
     type: 'attack',
     icon: CircleIcon,
@@ -118,7 +129,8 @@ export const GAME_CARDS: GameCardType[] = [
   {
     id: 'caa-ransomware-attack',
     name: 'Ransomware Attack',
-    desc: 'game-card.ransomware-attack-desc',
+    desc: t('game-card.ransomware-attack-desc'),
+    education: t('game-card.ransomware-attack-edu'),
     role: 'attacker',
     type: 'attack',
     icon: BugIcon,
@@ -127,7 +139,8 @@ export const GAME_CARDS: GameCardType[] = [
   {
     id: 'caa-man-in-the-middle',
     name: 'Man-in-the-Middle',
-    desc: 'game-card.man-in-the-middle-desc',
+    desc: t('game-card.man-in-the-middle-desc'),
+    education: t('game-card.man-in-the-middle-edu'),
     role: 'attacker',
     type: 'attack',
     icon: VenetianMaskIcon,
@@ -136,7 +149,8 @@ export const GAME_CARDS: GameCardType[] = [
   {
     id: 'cad-ddos-attack',
     name: 'DDoS Attack',
-    desc: 'game-card.ddos-attack-desc',
+    desc: t('game-card.ddos-attack-desc'),
+    education: t('game-card.ddos-attack-edu'),
     role: 'attacker',
     type: 'disrupt',
     icon: RocketIcon,
@@ -145,7 +159,8 @@ export const GAME_CARDS: GameCardType[] = [
   {
     id: 'cad-log-tampering',
     name: 'Log Tampering',
-    desc: 'game-card.log-tampering-desc',
+    desc: t('game-card.log-tampering-desc'),
+    education: t('game-card.log-tampering-edu'),
     role: 'attacker',
     type: 'disrupt',
     icon: EraserIcon,
@@ -154,7 +169,8 @@ export const GAME_CARDS: GameCardType[] = [
   {
     id: 'cad-backdoor-installation',
     name: 'Backdoor Installation',
-    desc: 'game-card.backdoor-installation-desc',
+    desc: t('game-card.backdoor-installation-desc'),
+    education: t('game-card.backdoor-installation-edu'),
     role: 'attacker',
     type: 'disrupt',
     icon: DoorOpenIcon,
@@ -163,7 +179,8 @@ export const GAME_CARDS: GameCardType[] = [
   {
     id: 'cad-privilege-escalation',
     name: 'Privilege Escalation',
-    desc: 'game-card.privilege-escalation-desc',
+    desc: t('game-card.privilege-escalation-desc'),
+    education: t('game-card.privilege-escalation-edu'),
     role: 'attacker',
     type: 'disrupt',
     icon: ShieldUserIcon,
@@ -172,7 +189,8 @@ export const GAME_CARDS: GameCardType[] = [
   {
     id: 'cad-session-hijacking',
     name: 'Session Hijacking',
-    desc: 'game-card.session-hijacking-desc',
+    desc: t('game-card.session-hijacking-desc'),
+    education: t('game-card.session-hijacking-edu'),
     role: 'attacker',
     type: 'disrupt',
     icon: CookieIcon,
@@ -181,7 +199,8 @@ export const GAME_CARDS: GameCardType[] = [
   {
     id: 'cdb-firewall-upgrade',
     name: 'Firewall Upgrade',
-    desc: 'game-card.firewall-upgrade-desc',
+    desc: t('game-card.firewall-upgrade-desc'),
+    education: t('game-card.firewall-upgrade-edu'),
     role: 'defender',
     type: 'block',
     icon: FlameIcon,
@@ -193,7 +212,8 @@ export const GAME_CARDS: GameCardType[] = [
   {
     id: 'cdb-access-control-policy',
     name: 'Access Control Policy',
-    desc: 'game-card.access-control-policy-desc',
+    desc: t('game-card.access-control-policy-desc'),
+    education: t('game-card.access-control-policy-edu'),
     role: 'defender',
     type: 'block',
     icon: LockIcon,
@@ -202,7 +222,8 @@ export const GAME_CARDS: GameCardType[] = [
   {
     id: 'cdb-mfa-implementation',
     name: 'MFA Implementation',
-    desc: 'game-card.mfa-implementation-desc',
+    desc: t('game-card.mfa-implementation-desc'),
+    education: t('game-card.mfa-implementation-edu'),
     role: 'defender',
     type: 'block',
     icon: KeyRoundIcon,
@@ -214,7 +235,8 @@ export const GAME_CARDS: GameCardType[] = [
   {
     id: 'cdb-endpoint-protection',
     name: 'Endpoint Protection',
-    desc: 'game-card.endpoint-protection-desc',
+    desc: t('game-card.endpoint-protection-desc'),
+    education: t('game-card.endpoint-protection-edu'),
     role: 'defender',
     type: 'block',
     icon: BracesIcon,
@@ -223,7 +245,8 @@ export const GAME_CARDS: GameCardType[] = [
   {
     id: 'cdb-network-segmentation',
     name: 'Network Segmentation',
-    desc: 'game-card.network-segmentation-desc',
+    desc: t('game-card.network-segmentation-desc'),
+    education: t('game-card.network-segmentation-edu'),
     role: 'defender',
     type: 'block',
     icon: LayoutGridIcon,
@@ -235,7 +258,8 @@ export const GAME_CARDS: GameCardType[] = [
   {
     id: 'cdd-obfuscation-shield',
     name: 'Obfuscation Shield',
-    desc: 'game-card.obfuscation-shield-desc',
+    desc: t('game-card.obfuscation-shield-desc'),
+    education: t('game-card.obfuscation-shield-edu'),
     role: 'defender',
     type: 'detect',
     icon: ShieldEllipsisIcon,
@@ -244,7 +268,8 @@ export const GAME_CARDS: GameCardType[] = [
   {
     id: 'cdd-security-awareness',
     name: 'Security Awareness',
-    desc: 'game-card.security-awareness-desc',
+    desc: t('game-card.security-awareness-desc'),
+    education: t('game-card.security-awareness-edu'),
     role: 'defender',
     type: 'detect',
     icon: BookLockIcon,
@@ -253,7 +278,8 @@ export const GAME_CARDS: GameCardType[] = [
   {
     id: 'cdd-honeypot',
     name: 'Honeypot',
-    desc: 'game-card.honeypot-desc',
+    desc: t('game-card.honeypot-desc'),
+    education: t('game-card.honeypot-edu'),
     role: 'defender',
     type: 'detect',
     icon: AmphoraIcon,
@@ -262,7 +288,8 @@ export const GAME_CARDS: GameCardType[] = [
   {
     id: 'cdd-network-monitoring',
     name: 'Network Monitoring',
-    desc: 'game-card.network-monitoring-desc',
+    desc: t('game-card.network-monitoring-desc'),
+    education: t('game-card.network-monitoring-edu'),
     role: 'defender',
     type: 'detect',
     icon: NetworkIcon,
@@ -271,7 +298,8 @@ export const GAME_CARDS: GameCardType[] = [
   {
     id: 'cdd-log-analysis',
     name: 'Log Analysis',
-    desc: 'game-card.log-analysis-desc',
+    desc: t('game-card.log-analysis-desc'),
+    education: t('game-card.log-analysis-edu'),
     role: 'defender',
     type: 'detect',
     icon: LogsIcon,
@@ -280,7 +308,8 @@ export const GAME_CARDS: GameCardType[] = [
   {
     id: 'cdr-data-recovery-protocol',
     name: 'Data Recovery Protocol',
-    desc: 'game-card.data-recovery-protocol-desc',
+    desc: t('game-card.data-recovery-protocol-desc'),
+    education: t('game-card.data-recovery-protocol-edu'),
     role: 'defender',
     type: 'recover',
     icon: DatabaseBackupIcon,
@@ -289,7 +318,8 @@ export const GAME_CARDS: GameCardType[] = [
   {
     id: 'cdr-vulnerability-patching',
     name: 'Vulnerability Patching',
-    desc: 'game-card.vulnerability-patching-desc',
+    desc: t('game-card.vulnerability-patching-desc'),
+    education: t('game-card.vulnerability-patching-edu'),
     role: 'defender',
     type: 'recover',
     icon: BandageIcon,
@@ -298,7 +328,8 @@ export const GAME_CARDS: GameCardType[] = [
   {
     id: 'cdr-forensic-investigation',
     name: 'Forensic Investigation',
-    desc: 'game-card.forensic-investigation-desc',
+    desc: t('game-card.forensic-investigation-desc'),
+    education: t('game-card.forensic-investigation-edu'),
     role: 'defender',
     type: 'recover',
     icon: FileSearchIcon,
@@ -307,7 +338,8 @@ export const GAME_CARDS: GameCardType[] = [
   {
     id: 'cdr-incident-response',
     name: 'Incident Response',
-    desc: 'game-card.incident-response-desc',
+    desc: t('game-card.incident-response-desc'),
+    education: t('game-card.incident-response-edu'),
     role: 'defender',
     type: 'recover',
     icon: ScrollTextIcon,
@@ -316,7 +348,8 @@ export const GAME_CARDS: GameCardType[] = [
   {
     id: 'cdr-threat-intelligence',
     name: 'Threat Intelligence',
-    desc: 'game-card.threat-intelligence-desc',
+    desc: t('game-card.threat-intelligence-desc'),
+    education: t('game-card.threat-intelligence-edu'),
     role: 'defender',
     type: 'recover',
     icon: BookKeyIcon,

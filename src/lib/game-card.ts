@@ -9,6 +9,7 @@ export type GameCardType = {
   id: string;
   name: string;
   desc: string;
+  education: string;
   role: GameRoleType;
   type: 'stealth' | 'attack' | 'disrupt' | 'block' | 'detect' | 'recover';
   icon: LucideIcon;
