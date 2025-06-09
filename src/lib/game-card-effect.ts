@@ -9,19 +9,27 @@ export type GameCardEffectType = {
   //? Node IDs effected by the card
   nodes?: string[];
 
+  //? Shared effects
+  revealCards?: number;
+  revealOpponentCards?: number;
+
   //? Attacker's effect
   stealTokens?: number;
-  ignoredDefenses?: number;
+  ignoreDefenses?: number;
+  revealDefense?: number;
+  revealNode?: boolean;
 
   //? Defender's effect
   addDefense?: string;
   ignoreAttack?: boolean;
+  healNode?: number;
 };
 
 interface GameCardEffectContext {
   attackerState: GamePlayerStateType;
   defenderState: GamePlayerStateType;
   topology: GameTopologyType;
+  stolenTokens: number;
 }
 
 interface GameCardEffectResult {
@@ -29,6 +37,8 @@ interface GameCardEffectResult {
   defenderMessages: GameMessageType[];
   stolenTokens: number;
   topology: GameTopologyType;
+  attackerRevealedCards: string[];
+  defenderRevealedCards: string[];
 }
 
 interface GameCardEffectHandler {
@@ -39,6 +49,126 @@ interface GameCardEffectHandler {
 //* ===== Utility Functions =====
 const t = (key: string, params?: Record<string, any>): GameMessageType => {
   return { key, params };
+};
+
+//* ===== Effect Handler: revealCards =====
+const revealCardsHandler: GameCardEffectHandler = {
+  canHandle: (effect) => !!effect.revealCards,
+  apply: (context, result) => {
+    const { attackerState, defenderState } = context;
+
+    const attackerEffect = getGameCardEffect(attackerState.usedCardId);
+    const defenderEffect = getGameCardEffect(defenderState.usedCardId);
+
+    const attackerCards = attackerState.cards;
+    const defenderCards = defenderState.cards;
+
+    const attackerMessages: GameMessageType[] = [];
+    const defenderMessages: GameMessageType[] = [];
+
+    let attackerRevealedCards: string[] = [];
+    let defenderRevealedCards: string[] = [];
+
+    if (!!attackerEffect?.revealCards) {
+      const revealCards = attackerEffect.revealCards;
+
+      attackerRevealedCards = attackerCards
+        .sort(() => Math.random() - 0.5)
+        .slice(0, revealCards)
+        .map((card) => card.id);
+
+      attackerMessages.push(
+        t('game-effect.revealcards-cards-revealed-from-your-hand-to-the-to', { revealCards, to: 'defender' }),
+      );
+      defenderMessages.push(
+        t('game-effect.from-has-revealed-revealcards-cards-from-their-hand-to-you', { revealCards, from: 'attacker' }),
+      );
+    }
+
+    if (!!defenderEffect?.revealCards) {
+      const revealCards = defenderEffect.revealCards;
+
+      defenderRevealedCards = defenderCards
+        .sort(() => Math.random() - 0.5)
+        .slice(0, revealCards)
+        .map((card) => card.id);
+
+      defenderMessages.push(
+        t('game-effect.revealcards-cards-revealed-from-your-hand-to-the-to', { revealCards, to: 'attacker' }),
+      );
+      attackerMessages.push(
+        t('game-effect.from-has-revealed-revealcards-cards-from-their-hand-to-you', { revealCards, from: 'defender' }),
+      );
+    }
+
+    return {
+      ...result,
+      attackerMessages: [...result.attackerMessages, ...attackerMessages],
+      defenderMessages: [...result.defenderMessages, ...defenderMessages],
+      attackerRevealedCards: [...result.attackerRevealedCards, ...attackerRevealedCards],
+      defenderRevealedCards: [...result.defenderRevealedCards, ...defenderRevealedCards],
+    };
+  },
+};
+
+//* ===== Effect Handler: revealOpponentCards =====
+const revealOpponentCardsHandler: GameCardEffectHandler = {
+  canHandle: (effect) => !!effect.revealOpponentCards,
+  apply: (context, result) => {
+    const { attackerState, defenderState } = context;
+
+    const attackerEffect = getGameCardEffect(attackerState.usedCardId);
+    const defenderEffect = getGameCardEffect(defenderState.usedCardId);
+
+    const attackerCards = attackerState.cards;
+    const defenderCards = defenderState.cards;
+
+    const attackerMessages: GameMessageType[] = [];
+    const defenderMessages: GameMessageType[] = [];
+
+    let attackerRevealedCards: string[] = [];
+    let defenderRevealedCards: string[] = [];
+
+    if (!!attackerEffect?.revealOpponentCards) {
+      const revealCards = attackerEffect.revealOpponentCards;
+
+      defenderRevealedCards = defenderCards
+        .sort(() => Math.random() - 0.5)
+        .slice(0, revealCards)
+        .map((card) => card.id);
+
+      attackerMessages.push(
+        t('game-effect.successfully-revealed-revealcards-from-card-s', { revealCards, from: 'defender' }),
+      );
+      defenderMessages.push(
+        t('game-effect.revealcards-card-s-revealed-from-your-hand-by-the-by', { revealCards, by: 'attacker' }),
+      );
+    }
+
+    if (!!defenderEffect?.revealOpponentCards) {
+      const revealCards = defenderEffect.revealOpponentCards;
+
+      attackerRevealedCards = attackerCards
+        .sort(() => Math.random() - 0.5)
+        .slice(0, revealCards)
+        .map((card) => card.id);
+
+      defenderMessages.push(
+        t('game-effect.successfully-revealed-revealcards-from-card-s', { revealCards, from: 'attacker' }),
+      );
+      attackerMessages.push(
+        t('game-effect.revealcards-card-s-revealed-from-your-hand-by-the-by', { revealCards, by: 'defender' }),
+      );
+    }
+
+    return {
+      ...result,
+      attackerMessages: [...result.attackerMessages, ...attackerMessages],
+      defenderMessages: [...result.defenderMessages, ...defenderMessages],
+      attackerRevealedCards: [...result.attackerRevealedCards, ...attackerRevealedCards],
+      defenderRevealedCards: [...result.defenderRevealedCards, ...defenderRevealedCards],
+    };
+  },
 };
 
 //* ===== Effect Handler: stealTokens =====
@@ -56,7 +186,7 @@ const stealTokensHandler: GameCardEffectHandler = {
     if (attackerEffect?.stealTokens === undefined) return result;
 
     const stealTokens = attackerEffect.stealTokens;
-    const ignoredDefenses = attackerEffect.ignoredDefenses ?? 0;
+    const ignoreDefenses = attackerEffect.ignoreDefenses ?? 0;
     const ignoreAttack = defenderEffect?.ignoreAttack ?? false;
 
     if (ignoreAttack && attackerNodeId === defenderNodeId) {
@@ -74,7 +204,7 @@ const stealTokensHandler: GameCardEffectHandler = {
 
     const currentTokens = gameNode.token - targetNode.stolenToken;
     const tokensToSteal = Math.min(currentTokens, stealTokens);
-    const remainingDefenses = Math.max(0, targetNode.defenses.length - ignoredDefenses);
+    const remainingDefenses = Math.max(0, targetNode.defenses.length - ignoreDefenses);
     const isBlocked = remainingDefenses > 0;
 
     const updatedTopology = {
@@ -89,19 +219,19 @@ const stealTokensHandler: GameCardEffectHandler = {
     const attackerMessages: GameMessageType[] = [];
     const defenderMessages: GameMessageType[] = [];
 
-    if (ignoredDefenses > 0) {
+    if (ignoreDefenses > 0) {
       attackerMessages.push(
         isBlocked
           ? t('game-effect.ignored-ignoreddefenses-defense-s-but-attack-blocked-by-remaining-defenses', {
-              ignoredDefenses,
+              ignoreDefenses,
             })
-          : t('game-effect.successfully-ignored-ignoreddefenses-defense-s', { ignoredDefenses }),
+          : t('game-effect.successfully-ignored-ignoreddefenses-defense-s', { ignoreDefenses }),
       );
-      defenderMessages.push(t('game-effect.attacker-ignored-ignoreddefenses-defense-s', { ignoredDefenses }));
+      defenderMessages.push(t('game-effect.attacker-ignored-ignoreddefenses-defense-s', { ignoreDefenses }));
     }
 
     if (isBlocked) {
-      if (ignoredDefenses === 0) attackerMessages.push(t('game-effect.attack-blocked-by-defense-no-data-token-stolen'));
+      if (ignoreDefenses === 0) attackerMessages.push(t('game-effect.attack-blocked-by-defense-no-data-token-stolen'));
       defenderMessages.push(
         t('game-effect.gamenode-name-defense-blocked-the-attempted-attack-no-data-token-stolen', {
           gameNode: gameNode.name,
@@ -121,6 +251,145 @@ const stealTokensHandler: GameCardEffectHandler = {
       stolenTokens: result.stolenTokens + (isBlocked ? 0 : tokensToSteal),
       topology: updatedTopology,
     };
+  },
+};
+
+//* ===== Effect Handler: revealDefense =====
+const revealDefenseHandler: GameCardEffectHandler = {
+  canHandle: (effect) => !!effect.revealDefense,
+  apply: (context, result) => {
+    const { attackerState, defenderState } = context;
+
+    const attackerEffect = getGameCardEffect(attackerState.usedCardId);
+    const defenderEffect = getGameCardEffect(defenderState.usedCardId);
+
+    const attackerNodeId = attackerState.targetNodeId;
+    const defenderNodeId = defenderState.targetNodeId;
+
+    if (attackerEffect?.revealDefense === undefined) return result;
+
+    const revealDefense = attackerEffect.revealDefense;
+    const ignoreAttack = defenderEffect?.ignoreAttack ?? false;
+
+    if (ignoreAttack && attackerNodeId === defenderNodeId) {
+      return {
+        ...result,
+        attackerMessages: [...result.attackerMessages, t('game-effect.attack-ignored-by-defender-effect')],
+        defenderMessages: [...result.defenderMessages, t('game-effect.successfully-ignored-attack')],
+      };
+    }
+
+    const targetNode = getGameTopologyNodeById(result.topology, attackerNodeId);
+    const gameNode = getGameNodeById(attackerNodeId);
+
+    if (!targetNode || !gameNode) return result;
+
+    const updatedTopology = {
+      ...result.topology,
+      nodes: result.topology.nodes.map((node) => {
+        if (node.id !== attackerNodeId) return node;
+        return {
+          ...node,
+          defenses: node.defenses.map((defense, index) => {
+            if (index + 1 > revealDefense || defense.revealed) return defense;
+            return { ...defense, revealed: true };
+          }),
+        };
+      }),
+    };
+
+    const revealedDefenses = targetNode.defenses.filter(
+      (defense, index) => index + 1 <= revealDefense && !defense.revealed,
+    ).length;
+
+    if (revealedDefenses === 0) {
+      return {
+        ...result,
+        attackerMessages: [...result.attackerMessages, t('game-effect.no-defenses-in-target-node-to-reveal')],
+      };
+    } else {
+      return {
+        ...result,
+        attackerMessages: [
+          ...result.attackerMessages,
+          t('game-effect.successfully-revealed-revealeddefenses-defenses-from-gamenode-name', {
+            revealedDefenses,
+            gameNode: gameNode.name,
+          }),
+        ],
+        defenderMessages: [
+          ...result.defenderMessages,
+          t('game-effect.attacker-has-revealed-revealeddefenses-defenses-from-gamenode-name', {
+            revealedDefenses,
+            gameNode: gameNode.name,
+          }),
+        ],
+        topology: updatedTopology,
+      };
+    }
+  },
+};
+
+//* ===== Effect Handler: revealNode =====
+const revealNodeHandler: GameCardEffectHandler = {
+  canHandle: (effect) => !!effect.revealNode,
+  apply: (context, result) => {
+    const { attackerState, defenderState } = context;
+
+    const attackerEffect = getGameCardEffect(attackerState.usedCardId);
+    const defenderEffect = getGameCardEffect(defenderState.usedCardId);
+
+    const attackerNodeId = attackerState.targetNodeId;
+    const defenderNodeId = defenderState.targetNodeId;
+
+    if (attackerEffect?.revealNode === undefined) return result;
+
+    const revealNode = attackerEffect.revealNode;
+    const ignoreAttack = defenderEffect?.ignoreAttack ?? false;
+
+    if (ignoreAttack && attackerNodeId === defenderNodeId) {
+      return {
+        ...result,
+        attackerMessages: [...result.attackerMessages, t('game-effect.attack-ignored-by-defender-effect')],
+        defenderMessages: [...result.defenderMessages, t('game-effect.successfully-ignored-attack')],
+      };
+    }
+
+    const targetNode = getGameTopologyNodeById(result.topology, attackerNodeId);
+    const gameNode = getGameNodeById(attackerNodeId);
+
+    if (!targetNode || !gameNode) return result;
+
+    const updatedTopology = {
+      ...result.topology,
+      nodes: result.topology.nodes.map((node) => {
+        if (node.id !== attackerNodeId) return node;
+        return { ...node, revealed: true };
+      }),
+    };
+
+    if (revealNode && !targetNode.revealed) {
+      return {
+        ...result,
+        attackerMessages: [
+          ...result.attackerMessages,
+          t('game-effect.successfully-revealed-gamenode-name', { gameNode: gameNode.name }),
+        ],
+        defenderMessages: [
+          ...result.defenderMessages,
+          t('game-effect.attacker-has-revealed-gamenode-name', { gameNode: gameNode.name }),
+        ],
+        topology: updatedTopology,
+      };
+    } else {
+      return {
+        ...result,
+        attackerMessages: [
+          ...result.attackerMessages,
+          t('game-effect.gamenode-name-is-already-revealed', { gameNode: gameNode.name }),
+        ],
+      };
+    }
   },
 };
 
@@ -192,8 +461,75 @@ const ignoreAttackHandler: GameCardEffectHandler = {
   },
 };
 
+//* ===== Effect Handler: healNode =====
+const healNodeHandler: GameCardEffectHandler = {
+  canHandle: (effect) => !!effect.healNode,
+  apply: (context, result) => {
+    const { defenderState, stolenTokens } = context;
+
+    const defenderEffect = getGameCardEffect(defenderState.usedCardId);
+    const defenderNodeId = defenderState.targetNodeId;
+
+    if (defenderEffect?.healNode === undefined) return result;
+
+    const targetNode = getGameTopologyNodeById(result.topology, defenderNodeId);
+    const gameNode = getGameNodeById(defenderNodeId);
+
+    if (!targetNode || !gameNode) return result;
+
+    const tokenToHeal = Math.min(defenderEffect.healNode, stolenTokens, targetNode.stolenToken);
+
+    const updatedTopology = {
+      ...result.topology,
+      nodes: result.topology.nodes.map((node) => {
+        if (node.id !== defenderNodeId) return node;
+        return { ...node, stolenToken: node.stolenToken - tokenToHeal };
+      }),
+    };
+
+    const attackerMessages: GameMessageType[] = [];
+    const defenderMessages: GameMessageType[] = [];
+
+    if (tokenToHeal > 0) {
+      defenderMessages.push(
+        t('game-effect.successfully-healed-tokentoheal-data-token-s-to-gamenode-name', {
+          tokenToHeal,
+          gameNode: gameNode.name,
+        }),
+      );
+      attackerMessages.push(
+        t(
+          'game-effect.defender-has-healed-tokentoheal-data-token-s-from-gamenode-name-stolentokens-is-now-stolentokens',
+          { tokenToHeal, gameNode: gameNode.name, stolenTokens: stolenTokens - tokenToHeal },
+        ),
+      );
+    } else if (targetNode.stolenToken === 0) {
+      defenderMessages.push(t('game-effect.no-data-tokens-to-heal-in-gamenode-name', { gameNode: gameNode.name }));
+    } else if (stolenTokens === 0) {
+      defenderMessages.push(t('game-effect.stolen-tokens-is-0-cannot-heal-gamenode-name', { gameNode: gameNode.name }));
+    }
+
+    return {
+      ...result,
+      attackerMessages: [...result.attackerMessages, ...attackerMessages],
+      defenderMessages: [...result.defenderMessages, ...defenderMessages],
+      topology: updatedTopology,
+      stolenTokens: stolenTokens - tokenToHeal,
+    };
+  },
+};
+
 //* ===== Effect Processor =====
-const effectHandlers: GameCardEffectHandler[] = [stealTokensHandler, addDefenseHandler, ignoreAttackHandler];
+const effectHandlers: GameCardEffectHandler[] = [
+  revealCardsHandler,
+  revealOpponentCardsHandler,
+  stealTokensHandler,
+  revealDefenseHandler,
+  revealNodeHandler,
+  addDefenseHandler,
+  ignoreAttackHandler,
+  healNodeHandler,
+];
 
 export const processGameCardEffect = (context: GameCardEffectContext): GameCardEffectResult => {
   const { attackerState, defenderState } = context;
@@ -205,6 +541,8 @@ export const processGameCardEffect = (context: GameCardEffectContext): GameCardE
     defenderMessages: [],
     stolenTokens: 0,
     topology: context.topology,
+    attackerRevealedCards: [],
+    defenderRevealedCards: [],
   };
 
   if (attackerEffect)

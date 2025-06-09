@@ -8,6 +8,7 @@ import { getGameTopologyNodeById } from '@/lib/game-topology';
 import { cn } from '@/lib/utils';
 import { useGameStateContext } from '@/provider/game-state-provider';
 
+import { Carousel, CarouselContent, CarouselItem } from '../ui/carousel';
 import { DragScrollArea } from '../ui/drag-scroll-area';
 import { GameCard } from './card';
 import { GameNode } from './node';
@@ -41,6 +42,7 @@ export const GameSideRight = React.forwardRef<HTMLDivElement, GameSideRightProps
               const usedCardId = playerHistory[h.round].usedCardId;
               const targetNodeId = playerHistory[h.round].targetNodeId;
               const messages = playerHistory[h.round].messages;
+              const opponentCards = [...new Set(playerHistory[h.round].opponentCards)];
 
               const usedGameCard = usedCardId ? getGameCardById(usedCardId) : null;
               const usedGameTopologyNode = getGameTopologyNodeById(h.topology, targetNodeId);
@@ -54,20 +56,87 @@ export const GameSideRight = React.forwardRef<HTMLDivElement, GameSideRightProps
                     {h.round}
                   </p>
                   <div className='space-y-4 p-4'>
-                    {messages && messages.length > 0 && (
-                      <div className='bg-background-200 w-full space-y-2 rounded-xs border border-gray-400 p-4'>
-                        <p className='text-heading-18 text-gray-1000'>{t('game.game-message')}</p>
-                        {messages.map((msg, i) => {
-                          const tmsg = t(msg.key as any, msg.params);
+                    <AnimatePresence mode='wait'>
+                      {messages && messages.length > 0 && (
+                        <motion.div
+                          initial={{ opacity: 0, x: -128 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          exit={{ opacity: 0, x: 128 }}
+                          className='bg-background-200 w-full space-y-2 rounded-xs border border-gray-400 p-4'
+                        >
+                          <p className='text-heading-18 text-gray-1000'>{t('game.game-message')}</p>
+                          {messages.map((msg, i) => {
+                            const tmsg = t(msg.key as any, msg.params);
+
+                            return (
+                              <p key={i} className='text-copy-14 text-gray-800'>
+                                {tmsg[0].toUpperCase() + tmsg.slice(1) + '.'}
+                              </p>
+                            );
+                          })}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+
+                    <AnimatePresence mode='wait'>
+                      {opponentCards &&
+                        opponentCards.length > 0 &&
+                        (() => {
+                          const card = getGameCardById(opponentCards[0]);
+                          if (!card) return null;
+
+                          if (opponentCards.length === 1)
+                            return (
+                              <div className='bg-background-200 flex h-96 w-full flex-col items-center justify-center gap-4 rounded-xs border border-gray-400 px-4'>
+                                <motion.p
+                                  initial={{ opacity: 0 }}
+                                  animate={{ opacity: 1 }}
+                                  exit={{ opacity: 0 }}
+                                  className='text-copy-16 text-gray-1000 -translate-y-3'
+                                >
+                                  {t('game.opponent-card')}
+                                </motion.p>
+                                <motion.div
+                                  initial={{ opacity: 0, scale: 0.75 }}
+                                  animate={{ opacity: 1, scale: 1 }}
+                                  exit={{ opacity: 0, scale: 0.75 }}
+                                >
+                                  <GameCard card={card} className='scale-110' />
+                                </motion.div>
+                              </div>
+                            );
 
                           return (
-                            <p key={i} className='text-copy-14 text-gray-800'>
-                              {tmsg[0].toUpperCase() + tmsg.slice(1) + '.'}
-                            </p>
+                            <div className='bg-background-200 flex h-96 w-full flex-col items-center justify-center gap-4 rounded-xs border border-gray-400'>
+                              <Carousel
+                                opts={{ dragFree: true, containScroll: 'trimSnaps' }}
+                                className='w-full max-w-64'
+                              >
+                                <motion.p
+                                  initial={{ opacity: 0 }}
+                                  animate={{ opacity: 1 }}
+                                  exit={{ opacity: 0 }}
+                                  className='text-copy-16 text-gray-1000 -translate-y-5 text-center'
+                                >
+                                  {t('game.opponent-cards')}
+                                </motion.p>
+                                <CarouselContent>
+                                  {opponentCards.map((cardId, index) => {
+                                    const opponentGameCard = getGameCardById(cardId);
+                                    if (!opponentGameCard) return null;
+
+                                    return (
+                                      <CarouselItem key={index} className='basis-10/12'>
+                                        <GameCard card={opponentGameCard} className='scale-95' />
+                                      </CarouselItem>
+                                    );
+                                  })}
+                                </CarouselContent>
+                              </Carousel>
+                            </div>
                           );
-                        })}
-                      </div>
-                    )}
+                        })()}
+                    </AnimatePresence>
 
                     <AnimatePresence mode='wait'>
                       {usedGameTopologyNode && (

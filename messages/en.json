@@ -43,7 +43,9 @@
     "waiting-for-other-player-to-end-round": "Waiting for other player to end round",
     "round": "Round",
     "stolen": "Stolen",
-    "use-card": "Use Card"
+    "use-card": "Use Card",
+    "opponent-cards": "Opponent Cards",
+    "opponent-card": "Opponent Card"
   },
   "response": {
     "service-error": "service error",
@@ -106,9 +108,9 @@
     "mfa-edu": "Requires more than just a password—like a code from your phone or fingerprint—making it harder for attackers to break in."
   },
   "game-card": {
-    "network-scanning-desc": "placeholder",
-    "social-engineering-desc": "placeholder",
-    "port-scanning-desc": "placeholder",
+    "network-scanning-desc": "Scan the network. Reveal the data token of target node.",
+    "social-engineering-desc": "Manipulate defender action. Reveal 2 random defender cards in hand.",
+    "port-scanning-desc": "Scan for active port in target node. Reveal 1 active defense of target node.",
     "vpn-tunneling-desc": "placeholder",
     "lateral-movement-desc": "placeholder",
     "sql-injection-desc": "Inject an SQL payload. Steal 1 data token from Database Server or Web Server.",
@@ -127,7 +129,7 @@
     "endpoint-protection-desc": "placeholder",
     "network-segmentation-desc": "Segregate the network. Target node cannot be attacked this round.",
     "obfuscation-shield-desc": "placeholder",
-    "security-awareness-desc": "placeholder",
+    "security-awareness-desc": "Train opeartor security awareness. Reveal 2 attacker card in hand.",
     "honeypot-desc": "placeholder",
     "network-monitoring-desc": "placeholder",
     "log-analysis-desc": "placeholder",
@@ -170,16 +172,30 @@
   "game-effect": {
     "attack-ignored-by-defender-effect": "attack ignored by defender effect",
     "successfully-ignored-attack": "successfully ignored attack",
-    "ignored-ignoreddefenses-defense-s-but-attack-blocked-by-remaining-defenses": "ignored {ignoredDefenses} defense(s), but attack blocked by remaining defenses",
-    "successfully-ignored-ignoreddefenses-defense-s": "successfully ignored {ignoredDefenses} defense(s)",
+    "ignored-ignoreddefenses-defense-s-but-attack-blocked-by-remaining-defenses": "ignored {ignoreDefenses} defense(s), but attack blocked by remaining defenses",
+    "successfully-ignored-ignoreddefenses-defense-s": "successfully ignored {ignoreDefenses} defense(s)",
     "attack-blocked-by-defense-no-data-token-stolen": "attack blocked by defense, no data token stolen",
     "gamenode-name-defense-blocked-the-attempted-attack-no-data-token-stolen": "{gameNode} defense blocked the attempted attack, no data token stolen",
     "no-data-token-in-target-node": "no data token in target node",
     "successfully-stole-tokenstosteal-data-token-s": "successfully stole {tokensToSteal} data token(s)",
-    "attacker-ignored-ignoreddefenses-defense-s": "attacker ignored {ignoredDefenses} defense(s)",
+    "attacker-ignored-ignoreddefenses-defense-s": "attacker ignored {ignoreDefenses} defense(s)",
     "attacker-has-stolen-tokenstosteal-data-token-s": "attacker has stolen {tokensToSteal} data token(s)",
     "gamenode-name-defense-is-already-maxed-no-new-defense-added": "{gameNode} defense is already maxed, no new defense added",
     "added-gamedefense-name-defense-to-gamenode-name": "added {gameDefense} defense to {gameNode}",
-    "no-attempted-attack-to-ignore-in-target-node": "no attempted attack to ignore in target node"
+    "no-attempted-attack-to-ignore-in-target-node": "no attempted attack to ignore in target node",
+    "no-defenses-in-target-node-to-reveal": "no defenses in target node to reveal",
+    "successfully-revealed-revealeddefenses-defenses-from-gamenode-name": "successfully revealed {revealedDefenses} defenses from {gameNode}",
+    "attacker-has-revealed-revealeddefenses-defenses-from-gamenode-name": "attacker has revealed {revealedDefenses} defenses from {gameNode}",
+    "successfully-revealed-gamenode-name": "succesfully revealed {gameNode} data token",
+    "attacker-has-revealed-gamenode-name": "attacker has revealed {gameNode} data token",
+    "gamenode-name-is-already-revealed": "{gameNode} data token is already revealed",
+    "successfully-revealed-revealcards-from-card-s": "successfully revealed {revealCards} {from} card(s)",
+    "revealcards-card-s-revealed-from-your-hand-by-the-by": "{revealCards} card(s) revealed from your hand by the {by}",
+    "revealcards-cards-revealed-from-your-hand-to-the-to": "{revealCards} card(s) revealed from your hand to the {to}",
+    "from-has-revealed-revealcards-cards-from-their-hand-to-you": "{from} has revealed {revealCards} card(s) from their hand to you",
+    "successfully-healed-tokentoheal-data-token-s-to-gamenode-name": "successfully healed {tokenToHeal} data token(s) to {gameNode}",
+    "defender-has-healed-tokentoheal-data-token-s-from-gamenode-name-stolentokens-is-now-stolentokens": "defender has healed {tokenToHeal} data token(s) from {gameNode}, stolenTokens is now {stolenTokens}",
+    "no-data-tokens-to-heal-in-gamenode-name": "no data tokens to heal in {gameNode}",
+    "stolen-tokens-is-0-cannot-heal-gamenode-name": "stolen tokens is 0, cannot heal {gameNode}"
   }
 }

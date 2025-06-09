@@ -50,6 +50,7 @@ export type GameMessageType = {
 export type GamePlayerHistoryType = {
   usedCardId?: string;
   targetNodeId?: string;
+  opponentCards?: string[];
   messages?: GameMessageType[];
 }[];
 
@@ -359,6 +360,7 @@ export const GameStateProvider = ({ children }: GameStateProviderProps) => {
       attackerState,
       defenderState,
       topology: getGameTopology(),
+      stolenTokens: getGameStolenTokens(),
     });
 
     React.startTransition(() => {
@@ -370,6 +372,7 @@ export const GameStateProvider = ({ children }: GameStateProviderProps) => {
         {
           ...prevHistory[prevHistory.length - 1],
           messages: effect.attackerMessages,
+          opponentCards: effect.defenderRevealedCards,
         },
       ]);
       setDefenderHistory((prevHistory) => [
@@ -377,6 +380,7 @@ export const GameStateProvider = ({ children }: GameStateProviderProps) => {
         {
           ...prevHistory[prevHistory.length - 1],
           messages: effect.defenderMessages,
+          opponentCards: effect.attackerRevealedCards,
         },
       ]);
 

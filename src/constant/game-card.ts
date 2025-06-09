@@ -44,7 +44,10 @@ export const GAME_CARDS: GameCardType[] = [
     role: 'attacker',
     type: 'stealth',
     icon: NetworkIcon,
-    effect: {},
+    effect: {
+      nodes: ['all'],
+      revealNode: true,
+    },
   },
   {
     id: 'cas-social-engineering',
@@ -54,7 +57,9 @@ export const GAME_CARDS: GameCardType[] = [
     role: 'attacker',
     type: 'stealth',
     icon: BrainIcon,
-    effect: {},
+    effect: {
+      revealOpponentCards: 2,
+    },
   },
   {
     id: 'cas-port-scanning',
@@ -64,7 +69,10 @@ export const GAME_CARDS: GameCardType[] = [
     role: 'attacker',
     type: 'stealth',
     icon: EthernetPortIcon,
-    effect: {},
+    effect: {
+      nodes: ['all'],
+      revealDefense: 1,
+    },
   },
   {
     id: 'cas-vpn-tunneling',
@@ -123,7 +131,8 @@ export const GAME_CARDS: GameCardType[] = [
     effect: {
       nodes: ['all'],
       stealTokens: 1,
-      ignoredDefenses: 3,
+      ignoreDefenses: 3,
+      revealCards: 1,
     },
   },
   {
@@ -273,7 +282,9 @@ export const GAME_CARDS: GameCardType[] = [
     role: 'defender',
     type: 'detect',
     icon: BookLockIcon,
-    effect: {},
+    effect: {
+      revealOpponentCards: 2,
+    },
   },
   {
     id: 'cdd-honeypot',

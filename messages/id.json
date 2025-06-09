@@ -42,7 +42,9 @@
     "waiting-for-other-player-to-end-round": "Menunggu pemain lain mengakhiri putaran",
     "round": "Putaran",
     "stolen": "Dicuri",
-    "use-card": "Pakai Kartu"
+    "use-card": "Pakai Kartu",
+    "opponent-cards": "Kartu Musuh",
+    "opponent-card": "Kartu Musuh"
   },
   "response": {
     "invalid-request": "request tidak valid",
@@ -105,9 +107,9 @@
     "mfa-edu": "Tidak hanya butuh kata sandi, tapi juga kode dari HP atau sidik jari. Sulit dibobol oleh penyerang."
   },
   "game-card": {
-    "network-scanning-desc": "placeholder",
-    "social-engineering-desc": "placeholder",
-    "port-scanning-desc": "placeholder",
+    "network-scanning-desc": "Pindai jaringan. \nMengungkapkan token data dari node target.",
+    "social-engineering-desc": "Memanipulasi tindakan defender. \nMengungkapkan 2 kartu di tangan defender.",
+    "port-scanning-desc": "Pindai port aktif di node target. \nMengungkapkan 1 pertahanan aktif node target.",
     "vpn-tunneling-desc": "placeholder",
     "lateral-movement-desc": "placeholder",
     "sql-injection-desc": "Menyuntikkan muatan SQL. \nMencuri 1 token data dari Database Server atau Web Server.",
@@ -126,7 +128,7 @@
     "endpoint-protection-desc": "placeholder",
     "network-segmentation-desc": "Melakukan segregasi jaringan. \nNode target tidak dapat diserang pada putaran ini.",
     "obfuscation-shield-desc": "placeholder",
-    "security-awareness-desc": "placeholder",
+    "security-awareness-desc": "Latih Kesadaran Keamanan Opeartor. \nMengungkapkan 2 kartu di tangan attacker.",
     "honeypot-desc": "placeholder",
     "network-monitoring-desc": "placeholder",
     "log-analysis-desc": "placeholder",
@@ -169,16 +171,30 @@
   "game-effect": {
     "attack-ignored-by-defender-effect": "serangan diabaikan oleh efek defender",
     "successfully-ignored-attack": "serangan berhasil diabaikan",
-    "ignored-ignoreddefenses-defense-s-but-attack-blocked-by-remaining-defenses": "mengabaikan {ignoredDefenses} defense, tetapi serangan diblok oleh sisa defense",
-    "successfully-ignored-ignoreddefenses-defense-s": "berhasil mengabaikan {ignoredDefenses} defense",
-    "attack-blocked-by-defense-no-data-token-stolen": "serangan diblok oleh defense, tidak berhasil mencuri data token",
-    "gamenode-name-defense-blocked-the-attempted-attack-no-data-token-stolen": "salah satu defense dari {gameNode} berhasil melakukan blok pada serangan, tidak ada data token yang tercuri",
-    "no-data-token-in-target-node": "tidak ada data token di target node",
-    "successfully-stole-tokenstosteal-data-token-s": "berhasil mencuri {tokensToSteal} data token",
-    "attacker-ignored-ignoreddefenses-defense-s": "attacker mengabaikan {ignoredDefenses} defense",
-    "attacker-has-stolen-tokenstosteal-data-token-s": "attacker berhasil mencuri {tokensToSteal} data token",
+    "ignored-ignoreddefenses-defense-s-but-attack-blocked-by-remaining-defenses": "mengabaikan {ignoreDefenses} defense, tetapi serangan diblok oleh sisa defense",
+    "successfully-ignored-ignoreddefenses-defense-s": "berhasil mengabaikan {ignoreDefenses} defense",
+    "attack-blocked-by-defense-no-data-token-stolen": "serangan diblok oleh defense, tidak berhasil mencuri token data",
+    "gamenode-name-defense-blocked-the-attempted-attack-no-data-token-stolen": "salah satu defense dari {gameNode} berhasil melakukan blok pada serangan, tidak ada token data yang tercuri",
+    "no-data-token-in-target-node": "tidak ada token data di target node",
+    "successfully-stole-tokenstosteal-data-token-s": "berhasil mencuri {tokensToSteal} token data",
+    "attacker-ignored-ignoreddefenses-defense-s": "attacker mengabaikan {ignoreDefenses} defense",
+    "attacker-has-stolen-tokenstosteal-data-token-s": "attacker berhasil mencuri {tokensToSteal} token data",
     "gamenode-name-defense-is-already-maxed-no-new-defense-added": "defense dari {gameNode} sudah maksimal, tidak bisa menambahkan defense baru",
     "added-gamedefense-name-defense-to-gamenode-name": "berhasil menambahkan {gameDefense} ke {gameNode}",
-    "no-attempted-attack-to-ignore-in-target-node": "tidak ada serangan yang bisa diabaikan di target node"
+    "no-attempted-attack-to-ignore-in-target-node": "tidak ada serangan yang bisa diabaikan di target node",
+    "no-defenses-in-target-node-to-reveal": "tidak ada defense di target node untuk diungkap",
+    "successfully-revealed-revealeddefenses-defenses-from-gamenode-name": "berhasil mengungkap {revealedDefenses} defenses dari {gameNode}",
+    "attacker-has-revealed-revealeddefenses-defenses-from-gamenode-name": "attacker berhasil mengungkap {revealedDefenses} defenses dari {gameNode}",
+    "successfully-revealed-gamenode-name": "berhasil mengungkap token data dari {gameNode}",
+    "attacker-has-revealed-gamenode-name": "attacker berhasil mengungkap token data dari {gameNode}",
+    "gamenode-name-is-already-revealed": "token data dari {gameNode} sudah berhasil terungkap",
+    "successfully-revealed-revealcards-from-card-s": "berhasil melihat {revealCards} kartu dari tangan {from}",
+    "revealcards-card-s-revealed-from-your-hand-by-the-by": "{revealCards} kartu di tanganmu telah diketahui oleh {by}",
+    "revealcards-cards-revealed-from-your-hand-to-the-to": "{revealCards} kartu di tanganmu diperlihatkan ke {to}",
+    "from-has-revealed-revealcards-cards-from-their-hand-to-you": "{from} memperlihatkan {revealCards} kartu dari tangannya",
+    "successfully-healed-tokentoheal-data-token-s-to-gamenode-name": "berhasil menyembuhkan {tokenToHeal} token data ke {gameNode}",
+    "defender-has-healed-tokentoheal-data-token-s-from-gamenode-name-stolentokens-is-now-stolentokens": "defender berhasil menyembuhkan {tokenToHeal} token data ke {gameNode}, token data tercuri sekarang adalah {stolenTokens}",
+    "no-data-tokens-to-heal-in-gamenode-name": "tidak ada token data yang dapat disembuhkan di {gameNode}",
+    "stolen-tokens-is-0-cannot-heal-gamenode-name": "token data tercuri masih 0, tidak bisa menyembuhkan {gameNode}"
   }
 }

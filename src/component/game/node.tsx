@@ -132,7 +132,7 @@ export const GameNode = React.forwardRef<HTMLDivElement, GameNodeProps>(({ node,
         <div className='space-y-4 px-1 text-left'>
           <p className={cn('!text-label-16 font-semibold', nodeAttribute[gameNode.security].text)}>{gameNode.name}</p>
           <div className='grid grid-cols-3 gap-2'>
-            <AnimatePresence mode='wait'>
+            <AnimatePresence mode='popLayout'>
               {node.defenses.map((defense, index) =>
                 role === 'attacker' && !defense.revealed ? (
                   <motion.div
@@ -145,7 +145,7 @@ export const GameNode = React.forwardRef<HTMLDivElement, GameNodeProps>(({ node,
                   </motion.div>
                 ) : (
                   <motion.div
-                    key={'defense' + defense.id + index}
+                    key={'defense' + defense.id + index + defense.revealed}
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.8 }}
