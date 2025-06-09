@@ -1,3 +1,4 @@
+import { ArrowRightIcon, ReplaceAllIcon } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useTranslations } from 'next-intl';
 import React from 'react';
@@ -5,14 +6,28 @@ import React from 'react';
 import { cn } from '@/lib/utils';
 import { GameConstant, GamePlayerPhase, useGameStateContext } from '@/provider/game-state-provider';
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '../ui/alert-dialog';
 import { Button } from '../ui/button';
+import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 import { ActiveDataToken } from './node';
 
 export const GameFloating = () => {
   const t = useTranslations('game');
 
-  const { playerPhase, role, round, clickNextRound, getGameStolenTokens } = useGameStateContext();
+  const { playerPhase, role, round, clickNextRound, getGameStolenTokens, clickReshuffleCards, checkCanReshuffleCards } =
+    useGameStateContext();
   const stolenTokens = getGameStolenTokens();
+  const canReshuffleCards = checkCanReshuffleCards();
 
   return (
     <React.Fragment>
@@ -24,8 +39,13 @@ export const GameFloating = () => {
             exit={{ opacity: 0, y: -48 }}
             className='absolute top-28 left-1/2 z-10 -translate-x-1/2 select-none'
           >
-            <Button size='sm' variant='outline' className='w-48' onClick={clickNextRound}>
-              {t('go-to-next-round')}
+            <Button
+              size='sm'
+              variant='outline'
+              className='hover:text-amber-1000 w-52 border-amber-400 bg-amber-100 text-amber-900 hover:bg-amber-200'
+              onClick={clickNextRound}
+            >
+              {t('go-to-next-round')} <ArrowRightIcon />
             </Button>
           </motion.div>
         )}
@@ -96,6 +116,50 @@ export const GameFloating = () => {
           <span className='ml-0.5'>{t('stolen')}</span>
         </div>
       </div>
+
+      <AlertDialog>
+        <AlertDialogTrigger asChild>
+          <div className='absolute right-4 bottom-[232px] z-10 !font-normal select-none'>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  size='lg'
+                  variant='outline'
+                  disabled={playerPhase !== GamePlayerPhase.SelectCard || !canReshuffleCards}
+                  className='!pointer-events-auto'
+                >
+                  <ReplaceAllIcon />
+                  {t('reshuffle-cards')}
+                </Button>
+              </TooltipTrigger>
+              {(playerPhase !== GamePlayerPhase.SelectCard || !canReshuffleCards) && (
+                <TooltipContent align='end'>
+                  {!canReshuffleCards ? (
+                    <p>{t('you-can-only-reshuffle-cards-once-per-game')}</p>
+                  ) : playerPhase !== GamePlayerPhase.SelectCard ? (
+                    <p>{t('you-can-only-reshuffle-cards-during-the-select-card-phase')}</p>
+                  ) : null}
+                </TooltipContent>
+              )}
+            </Tooltip>
+          </div>
+        </AlertDialogTrigger>
+
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t('are-you-sure-you-want-to-reshuffle-your-cards')}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t(
+                'this-action-will-reshuffle-all-your-cards-in-the-deck-and-draw-a-new-hand-of-cards-you-can-only-do-this-once-per-game',
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
+            <AlertDialogAction onClick={clickReshuffleCards}>{t('reshuflle-cards')}</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </React.Fragment>
   );
 };

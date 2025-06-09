@@ -45,7 +45,14 @@
     "stolen": "Stolen",
     "use-card": "Use Card",
     "opponent-cards": "Opponent Cards",
-    "opponent-card": "Opponent Card"
+    "opponent-card": "Opponent Card",
+    "reshuffle-cards": "Reshuffle Cards",
+    "you-can-only-reshuffle-cards-once-per-game": "You can only reshuffle cards once per game.",
+    "you-can-only-reshuffle-cards-during-the-select-card-phase": "You can only reshuffle cards during the select card phase.",
+    "are-you-sure-you-want-to-reshuffle-your-cards": "Are you sure you want to reshuffle your cards?",
+    "this-action-will-reshuffle-all-your-cards-in-the-deck-and-draw-a-new-hand-of-cards-you-can-only-do-this-once-per-game": "This action will reshuffle all your cards in the deck and draw a new hand of cards. You can only do this once per game.",
+    "cancel": "Cancel",
+    "reshuflle-cards": "Reshuflle Cards"
   },
   "response": {
     "service-error": "service error",

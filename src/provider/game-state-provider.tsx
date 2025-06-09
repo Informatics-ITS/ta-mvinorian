@@ -23,6 +23,7 @@ export type GameRoleType = 'attacker' | 'defender';
 export enum GameConstant {
   MaxRounds = 10,
   TokensToWin = 3,
+  MaxReshuffle = 1,
 }
 
 export enum GamePlayerPhase {
@@ -40,6 +41,7 @@ export type GamePlayerStateType = {
   nodes: GameNodePlayerType[];
   usedCardId?: string;
   targetNodeId?: string;
+  reshuffleCount?: number;
 };
 
 export type GameMessageType = {
@@ -79,6 +81,8 @@ export type GameStateType = {
   clickUseCard: (cardId: string) => void;
   clickTargetNode: (nodeId: string) => void;
   clickNextRound: () => void;
+  clickReshuffleCards: () => void;
+  checkCanReshuffleCards: () => boolean;
   checkIsNodeTargetable: (nodeId: string) => boolean;
   getGameTopology: () => GameTopologyType;
   getGamePlayerCards: () => GameCardPlayerType[];
@@ -100,6 +104,8 @@ const GameStateContext = React.createContext<GameStateType>({
   clickUseCard: () => {},
   clickTargetNode: () => {},
   clickNextRound: () => {},
+  clickReshuffleCards: () => {},
+  checkCanReshuffleCards: () => false,
   checkIsNodeTargetable: () => false,
   getGameTopology: () => defaultGameTopology,
   getGamePlayerNodes: () => [],
@@ -294,6 +300,26 @@ export const GameStateProvider = ({ children }: GameStateProviderProps) => {
   const clickNextRound = React.useCallback(() => {
     setPlayerPhase(GamePlayerPhase.EndRound);
   }, [setPlayerPhase]);
+
+  const clickReshuffleCards = React.useCallback(() => {
+    setPlayerState((prevState) => {
+      if (!role) return prevState;
+      if (prevState.reshuffleCount && prevState.reshuffleCount >= GameConstant.MaxReshuffle) return prevState;
+
+      const newCards = generateGameDeckByRole(role, 5);
+      return {
+        ...prevState,
+        cards: newCards,
+        reshuffleCount: (prevState.reshuffleCount ?? 0) + 1,
+      };
+    });
+  }, [role, setPlayerState]);
+
+  const checkCanReshuffleCards = React.useCallback(() => {
+    if (!role) return false;
+    const reshuffleCount = playerState.reshuffleCount ?? 0;
+    return reshuffleCount < GameConstant.MaxReshuffle;
+  }, [playerState.reshuffleCount, role]);
 
   const checkIsNodeTargetable = React.useCallback(
     (nodeId: string) => {
@@ -504,6 +530,8 @@ export const GameStateProvider = ({ children }: GameStateProviderProps) => {
     clickUseCard,
     clickTargetNode,
     clickNextRound,
+    clickReshuffleCards,
+    checkCanReshuffleCards,
     checkIsNodeTargetable,
     getGameTopology,
     getGamePlayerCards,

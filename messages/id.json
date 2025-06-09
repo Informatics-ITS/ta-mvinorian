@@ -5,7 +5,7 @@
     "id": "Bahasa Indonesia"
   },
   "auth": {
-    "enter-your-email-and-password-to-login-to-your-account": "Masukkan email dan kata sandi untuk masuk ke akun Anda.",
+    "enter-your-email-and-password-to-login-to-your-account": "Masukkan email dan kata sandi untuk masuk ke akun kamu.",
     "login": "Masuk",
     "email": "Email",
     "password": "Kata Sandi",
@@ -44,7 +44,14 @@
     "stolen": "Dicuri",
     "use-card": "Pakai Kartu",
     "opponent-cards": "Kartu Musuh",
-    "opponent-card": "Kartu Musuh"
+    "opponent-card": "Kartu Musuh",
+    "reshuffle-cards": "Acak Kartu",
+    "you-can-only-reshuffle-cards-once-per-game": "Kamu hanya dapat mengacak kartu sekali dalam satu game.",
+    "you-can-only-reshuffle-cards-during-the-select-card-phase": "Kamu hanya dapat mengacak kartu sebelum memilih kartu.",
+    "are-you-sure-you-want-to-reshuffle-your-cards": "Apakah kamu yakin untuk mengacak kartu?",
+    "this-action-will-reshuffle-all-your-cards-in-the-deck-and-draw-a-new-hand-of-cards-you-can-only-do-this-once-per-game": "Aksi ini akan mengacak ulang kartu dan memberikan kartu secara acak di tangan kamu. Kamu hanya dapat melakukan ini sekali per game.",
+    "cancel": "Batal",
+    "reshuflle-cards": "Acak Kartu"
   },
   "response": {
     "invalid-request": "request tidak valid",
