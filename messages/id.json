@@ -16,7 +16,7 @@
     "already-have-an-account": "Sudah punya akun?"
   },
   "game": {
-    "node-clash": "Node Clash",
+    "node-clash": "node-clash.",
     "create-game": "Buat Game",
     "join-game": "Gabung Game",
     "get-the-game-code-from-other-player-and-copy-here": "Dapatkan kode permainan dari pemain lain dan salin di sini.",
@@ -202,6 +202,14 @@
     "successfully-healed-tokentoheal-data-token-s-to-gamenode-name": "berhasil menyembuhkan {tokenToHeal} token data ke {gameNode}",
     "defender-has-healed-tokentoheal-data-token-s-from-gamenode-name-stolentokens-is-now-stolentokens": "defender berhasil menyembuhkan {tokenToHeal} token data ke {gameNode}, token data tercuri sekarang adalah {stolenTokens}",
     "no-data-tokens-to-heal-in-gamenode-name": "tidak ada token data yang dapat disembuhkan di {gameNode}",
-    "stolen-tokens-is-0-cannot-heal-gamenode-name": "token data tercuri masih 0, tidak bisa menyembuhkan {gameNode}"
+    "stolen-tokens-is-0-cannot-heal-gamenode-name": "token data tercuri masih 0, tidak bisa menyembuhkan {gameNode}",
+    "no-attempted-defense-to-ignore-in-target-node": "tidak ada pertahanan yang bisa diabaikan di target node",
+    "successfully-ignored-defense": "pertahanan berhasil diabaikan",
+    "defense-ignored-by-attacker-effect": "pertahanan diabaikan oleh efek attacker",
+    "no-defenses-in-target-node-to-hide": "tidak ada defense di target node untuk disembunyikan",
+    "defender-hid-hiddendefenses-defenses-from-gamenode-name": "defender menyembunyikan {hiddenDefenses} defense dari {gameNode}",
+    "gamenode-name-data-token-is-still-hidden-to-attacker": "token data dari {gameNode} masih tersembunyi dari attacker",
+    "defender-hid-gamenode-name-data-token": "defender menyembunyikan token data dari {gameNode}",
+    "successfully-hid-gamenode-name-data-token": "berhasil menyembunyikan token data dari {gameNode}"
   }
 }

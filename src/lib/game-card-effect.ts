@@ -16,13 +16,16 @@ export type GameCardEffectType = {
   //? Attacker's effect
   stealTokens?: number;
   ignoreDefenses?: number;
-  revealDefense?: number;
+  ignoreDefense?: boolean;
+  revealDefenses?: number;
   revealNode?: boolean;
 
   //? Defender's effect
   addDefense?: string;
   ignoreAttack?: boolean;
   healNode?: number;
+  hideDefenses?: number;
+  hideNode?: boolean;
 };
 
 interface GameCardEffectContext {
@@ -254,9 +257,9 @@ const stealTokensHandler: GameCardEffectHandler = {
   },
 };
 
-//* ===== Effect Handler: revealDefense =====
-const revealDefenseHandler: GameCardEffectHandler = {
-  canHandle: (effect) => !!effect.revealDefense,
+//* ===== Effect Handler: ignoreDefense =====
+const ignoreDefenseHandler: GameCardEffectHandler = {
+  canHandle: (effect) => !!effect.ignoreDefense,
   apply: (context, result) => {
     const { attackerState, defenderState } = context;
 
@@ -266,9 +269,47 @@ const revealDefenseHandler: GameCardEffectHandler = {
     const attackerNodeId = attackerState.targetNodeId;
     const defenderNodeId = defenderState.targetNodeId;
 
-    if (attackerEffect?.revealDefense === undefined) return result;
+    if (attackerEffect?.ignoreDefense === undefined) return result;
 
-    const revealDefense = attackerEffect.revealDefense;
+    const ignoreDefense = attackerEffect.ignoreDefense;
+    const ignoreAttack = defenderEffect?.ignoreAttack ?? false;
+
+    if (ignoreAttack && attackerNodeId === defenderNodeId) {
+      return {
+        ...result,
+        attackerMessages: [...result.attackerMessages, t('game-effect.attack-ignored-by-defender-effect')],
+        defenderMessages: [...result.defenderMessages, t('game-effect.successfully-ignored-attack')],
+      };
+    }
+
+    if (ignoreDefense && attackerNodeId !== defenderNodeId) {
+      const message = t('game-effect.no-attempted-defense-to-ignore-in-target-node');
+
+      return {
+        ...result,
+        attackerMessages: [...result.attackerMessages, message],
+      };
+    }
+
+    return result;
+  },
+};
+
+//* ===== Effect Handler: revealDefenses =====
+const revealDefensesHandler: GameCardEffectHandler = {
+  canHandle: (effect) => !!effect.revealDefenses,
+  apply: (context, result) => {
+    const { attackerState, defenderState } = context;
+
+    const attackerEffect = getGameCardEffect(attackerState.usedCardId);
+    const defenderEffect = getGameCardEffect(defenderState.usedCardId);
+
+    const attackerNodeId = attackerState.targetNodeId;
+    const defenderNodeId = defenderState.targetNodeId;
+
+    if (attackerEffect?.revealDefenses === undefined) return result;
+
+    const revealDefenses = attackerEffect.revealDefenses;
     const ignoreAttack = defenderEffect?.ignoreAttack ?? false;
 
     if (ignoreAttack && attackerNodeId === defenderNodeId) {
@@ -291,7 +332,7 @@ const revealDefenseHandler: GameCardEffectHandler = {
         return {
           ...node,
           defenses: node.defenses.map((defense, index) => {
-            if (index + 1 > revealDefense || defense.revealed) return defense;
+            if (index + 1 > revealDefenses || defense.revealed) return defense;
             return { ...defense, revealed: true };
           }),
         };
@@ -299,7 +340,7 @@ const revealDefenseHandler: GameCardEffectHandler = {
     };
 
     const revealedDefenses = targetNode.defenses.filter(
-      (defense, index) => index + 1 <= revealDefense && !defense.revealed,
+      (defense, index) => index + 1 <= revealDefenses && !defense.revealed,
     ).length;
 
     if (revealedDefenses === 0) {
@@ -368,7 +409,15 @@ const revealNodeHandler: GameCardEffectHandler = {
       }),
     };
 
-    if (revealNode && !targetNode.revealed) {
+    if (!revealNode || targetNode.revealed) {
+      return {
+        ...result,
+        attackerMessages: [
+          ...result.attackerMessages,
+          t('game-effect.gamenode-name-is-already-revealed', { gameNode: gameNode.name }),
+        ],
+      };
+    } else {
       return {
         ...result,
         attackerMessages: [
@@ -381,14 +430,6 @@ const revealNodeHandler: GameCardEffectHandler = {
         ],
         topology: updatedTopology,
       };
-    } else {
-      return {
-        ...result,
-        attackerMessages: [
-          ...result.attackerMessages,
-          t('game-effect.gamenode-name-is-already-revealed', { gameNode: gameNode.name }),
-        ],
-      };
     }
   },
 };
@@ -397,14 +438,27 @@ const revealNodeHandler: GameCardEffectHandler = {
 const addDefenseHandler: GameCardEffectHandler = {
   canHandle: (effect) => !!effect.addDefense,
   apply: (context, result) => {
-    const { defenderState } = context;
+    const { attackerState, defenderState } = context;
 
+    const attackerEffect = getGameCardEffect(attackerState.usedCardId);
     const defenderEffect = getGameCardEffect(defenderState.usedCardId);
+
+    const attackerNodeId = attackerState.targetNodeId;
     const defenderNodeId = defenderState.targetNodeId;
 
     if (defenderEffect?.addDefense === undefined) return result;
 
     const defenseId = defenderEffect.addDefense;
+    const ignoreDefense = attackerEffect?.ignoreDefense ?? false;
+
+    if (ignoreDefense && attackerNodeId === defenderNodeId) {
+      return {
+        ...result,
+        attackerMessages: [...result.attackerMessages, t('game-effect.successfully-ignored-defense')],
+        defenderMessages: [...result.defenderMessages, t('game-effect.defense-ignored-by-attacker-effect')],
+      };
+    }
+
     const targetNode = getGameTopologyNodeById(result.topology, defenderNodeId);
     const gameNode = getGameNodeById(defenderNodeId);
     const gameDefense = getGameDefenseById(defenseId);
@@ -442,13 +496,26 @@ const ignoreAttackHandler: GameCardEffectHandler = {
   apply: (context, result) => {
     const { attackerState, defenderState } = context;
 
+    const attackerEffect = getGameCardEffect(attackerState.usedCardId);
     const defenderEffect = getGameCardEffect(defenderState.usedCardId);
 
     const attackerNodeId = attackerState.targetNodeId;
     const defenderNodeId = defenderState.targetNodeId;
 
     if (defenderEffect?.ignoreAttack === undefined) return result;
-    if (defenderEffect.ignoreAttack && attackerNodeId !== defenderNodeId) {
+
+    const ignoreAttack = defenderEffect.ignoreAttack;
+    const ignoreDefense = attackerEffect?.ignoreDefense ?? 0;
+
+    if (ignoreDefense && attackerNodeId === defenderNodeId) {
+      return {
+        ...result,
+        attackerMessages: [...result.attackerMessages, t('game-effect.successfully-ignored-defense')],
+        defenderMessages: [...result.defenderMessages, t('game-effect.defense-ignored-by-attacker-effect')],
+      };
+    }
+
+    if (ignoreAttack && attackerNodeId !== defenderNodeId) {
       const message = t('game-effect.no-attempted-attack-to-ignore-in-target-node');
 
       return {
@@ -465,19 +532,33 @@ const ignoreAttackHandler: GameCardEffectHandler = {
 const healNodeHandler: GameCardEffectHandler = {
   canHandle: (effect) => !!effect.healNode,
   apply: (context, result) => {
-    const { defenderState, stolenTokens } = context;
+    const { attackerState, defenderState, stolenTokens } = context;
 
+    const attackerEffect = getGameCardEffect(attackerState.usedCardId);
     const defenderEffect = getGameCardEffect(defenderState.usedCardId);
+
+    const attackerNodeId = attackerState.targetNodeId;
     const defenderNodeId = defenderState.targetNodeId;
 
     if (defenderEffect?.healNode === undefined) return result;
+
+    const healNode = defenderEffect.healNode;
+    const ignoreDefense = attackerEffect?.ignoreDefense ?? false;
+
+    if (ignoreDefense && attackerNodeId === defenderNodeId) {
+      return {
+        ...result,
+        attackerMessages: [...result.attackerMessages, t('game-effect.successfully-ignored-defense')],
+        defenderMessages: [...result.defenderMessages, t('game-effect.defense-ignored-by-attacker-effect')],
+      };
+    }
 
     const targetNode = getGameTopologyNodeById(result.topology, defenderNodeId);
     const gameNode = getGameNodeById(defenderNodeId);
 
     if (!targetNode || !gameNode) return result;
 
-    const tokenToHeal = Math.min(defenderEffect.healNode, stolenTokens, targetNode.stolenToken);
+    const tokenToHeal = Math.min(healNode, stolenTokens, targetNode.stolenToken);
 
     const updatedTopology = {
       ...result.topology,
@@ -519,16 +600,158 @@ const healNodeHandler: GameCardEffectHandler = {
   },
 };
 
+//* ===== Effect Handler: hideDefenses =====
+const hideDefensesHandler: GameCardEffectHandler = {
+  canHandle: (effect) => !!effect.hideDefenses,
+  apply: (context, result) => {
+    const { attackerState, defenderState } = context;
+
+    const attackerEffect = getGameCardEffect(attackerState.usedCardId);
+    const defenderEffect = getGameCardEffect(defenderState.usedCardId);
+
+    const attackerNodeId = attackerState.targetNodeId;
+    const defenderNodeId = defenderState.targetNodeId;
+
+    if (defenderEffect?.hideDefenses === undefined) return result;
+
+    const hideDefenses = defenderEffect.hideDefenses;
+    const ignoreDefense = attackerEffect?.ignoreDefense ?? false;
+
+    if (ignoreDefense && attackerNodeId === defenderNodeId) {
+      return {
+        ...result,
+        attackerMessages: [...result.attackerMessages, t('game-effect.successfully-ignored-defense')],
+        defenderMessages: [...result.defenderMessages, t('game-effect.defense-ignored-by-attacker-effect')],
+      };
+    }
+
+    const targetNode = getGameTopologyNodeById(result.topology, defenderNodeId);
+    const gameNode = getGameNodeById(defenderNodeId);
+
+    if (!targetNode || !gameNode) return result;
+
+    const updatedTopology = {
+      ...result.topology,
+      nodes: result.topology.nodes.map((node) => {
+        if (node.id !== attackerNodeId) return node;
+        return {
+          ...node,
+          defenses: node.defenses.map((defense, index) => {
+            if (index + 1 > hideDefenses || !defense.revealed) return defense;
+            return { ...defense, revealed: false };
+          }),
+        };
+      }),
+    };
+
+    const hiddenDefenses = targetNode.defenses.filter(
+      (defense, index) => index + 1 <= hideDefenses && defense.revealed,
+    ).length;
+
+    if (hiddenDefenses === 0) {
+      return {
+        ...result,
+        defenderMessages: [...result.defenderMessages, t('game-effect.no-defenses-in-target-node-to-hide')],
+      };
+    } else {
+      return {
+        ...result,
+        attackerMessages: [
+          ...result.attackerMessages,
+          t('game-effect.defender-hid-hiddendefenses-defenses-from-gamenode-name', {
+            hiddenDefenses,
+            gameNode: gameNode.name,
+          }),
+        ],
+        defenderMessages: [
+          ...result.defenderMessages,
+          t('game-effect.successfully-hid-hiddendefenses-defenses-from-gamenode-name', {
+            hiddenDefenses,
+            gameNode: gameNode.name,
+          }),
+        ],
+        topology: updatedTopology,
+      };
+    }
+  },
+};
+
+//* ===== Effect Handler: hideNode =====
+const hideNodeHandler: GameCardEffectHandler = {
+  canHandle: (effect) => !!effect.hideNode,
+  apply: (context, result) => {
+    const { attackerState, defenderState } = context;
+
+    const attackerEffect = getGameCardEffect(attackerState.usedCardId);
+    const defenderEffect = getGameCardEffect(defenderState.usedCardId);
+
+    const attackerNodeId = attackerState.targetNodeId;
+    const defenderNodeId = defenderState.targetNodeId;
+
+    if (defenderEffect?.hideNode === undefined) return result;
+
+    const hideNode = defenderEffect.hideNode;
+    const ignoreDefense = attackerEffect?.ignoreDefense ?? false;
+
+    if (ignoreDefense && attackerNodeId === defenderNodeId) {
+      return {
+        ...result,
+        attackerMessages: [...result.attackerMessages, t('game-effect.successfully-ignored-defense')],
+        defenderMessages: [...result.defenderMessages, t('game-effect.defense-ignored-by-attacker-effect')],
+      };
+    }
+
+    const targetNode = getGameTopologyNodeById(result.topology, defenderNodeId);
+    const gameNode = getGameNodeById(defenderNodeId);
+
+    if (!targetNode || !gameNode) return result;
+
+    const updatedTopology = {
+      ...result.topology,
+      nodes: result.topology.nodes.map((node) => {
+        if (node.id !== defenderNodeId) return node;
+        return { ...node, revealed: false };
+      }),
+    };
+
+    if (!hideNode || !targetNode.revealed) {
+      return {
+        ...result,
+        defenderMessages: [
+          ...result.defenderMessages,
+          t('game-effect.gamenode-name-data-token-is-still-hidden-to-attacker', { gameNode: gameNode.name }),
+        ],
+      };
+    } else {
+      return {
+        ...result,
+        attackerMessages: [
+          ...result.attackerMessages,
+          t('game-effect.defender-hid-gamenode-name-data-token', { gameNode: gameNode.name }),
+        ],
+        defenderMessages: [
+          ...result.defenderMessages,
+          t('game-effect.successfully-hid-gamenode-name-data-token', { gameNode: gameNode.name }),
+        ],
+        topology: updatedTopology,
+      };
+    }
+  },
+};
+
 //* ===== Effect Processor =====
 const effectHandlers: GameCardEffectHandler[] = [
   revealCardsHandler,
   revealOpponentCardsHandler,
   stealTokensHandler,
-  revealDefenseHandler,
+  ignoreDefenseHandler,
+  revealDefensesHandler,
   revealNodeHandler,
   addDefenseHandler,
   ignoreAttackHandler,
   healNodeHandler,
+  hideDefensesHandler,
+  hideNodeHandler,
 ];
 
 export const processGameCardEffect = (context: GameCardEffectContext): GameCardEffectResult => {

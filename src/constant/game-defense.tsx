@@ -1,5 +1,5 @@
 import {
-  FlameIcon,
+  BrickWallFireIcon,
   FolderLockIcon,
   KeyRoundIcon,
   LayoutGridIcon,
@@ -21,7 +21,7 @@ export const GAME_DEFENSES: GameDefenseType[] = [
     name: 'Firewall',
     desc: t('game-defense.firewall-desc'),
     education: t('game-defense.firewall-edu'),
-    icon: FlameIcon,
+    icon: BrickWallFireIcon,
     color: {
       primary: 'bg-red-700',
       secondary: 'bg-red-600',

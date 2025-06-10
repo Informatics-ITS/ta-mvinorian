@@ -71,7 +71,7 @@ export const GAME_CARDS: GameCardType[] = [
     icon: EthernetPortIcon,
     effect: {
       nodes: ['all'],
-      revealDefense: 1,
+      revealDefenses: 1,
     },
   },
   {

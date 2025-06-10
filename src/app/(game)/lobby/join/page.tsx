@@ -89,12 +89,12 @@ export default function GameJoinPage() {
                 />
 
                 <div className='flex flex-col gap-3'>
-                  <Button type='submit' size='lg' disabled={isPending} className='cursor-pointer'>
+                  <Button type='submit' size='lg' disabled={isPending}>
                     {t('join-game')}
                     {isPending && <LoaderCircleIcon className='ml-2 animate-spin' />}
                   </Button>
 
-                  <Button size='lg' variant='outline' asChild>
+                  <Button size='lg' variant='outline' className='cursor-default' asChild>
                     <Link href='/lobby'>{t('go-back')}</Link>
                   </Button>
                 </div>

@@ -12,7 +12,7 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: 'Node Clash',
+  title: 'node-clash.',
   description: 'Cyber Network Security Attack and Defense Educational Game',
 };
 

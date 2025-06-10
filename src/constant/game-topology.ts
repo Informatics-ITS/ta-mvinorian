@@ -10,7 +10,7 @@ export const GAME_TOPOLOGY: TopologyType = {
     {
       id: 'nh-internal-network-hub',
       name: 'Internal Network Hub',
-      token: 0,
+      token: 1,
       security: 'high',
       education: t('game-node.internal-network-hub'),
       icon: NetworkIcon,
@@ -50,7 +50,7 @@ export const GAME_TOPOLOGY: TopologyType = {
     {
       id: 'nl-iot-device',
       name: 'IoT Device',
-      token: 0,
+      token: 1,
       security: 'low',
       education: t('game-node.iot-device'),
       icon: CpuIcon,
@@ -118,10 +118,10 @@ export const GAME_TOPOLOGY_NODE_DEFENSES: Record<string, GameTopologyDefenseType
   'nm-web-server': [{ id: 'd-firewall', revealed: false }],
   'nm-email-server': [
     { id: 'd-encryption', revealed: false },
-    { id: 'd-mfa', revealed: false },
+    { id: 'd-spam-filter', revealed: false },
   ],
   'nm-cloud-storage': [
-    { id: 'd-spam-filter', revealed: false },
+    { id: 'd-mfa', revealed: false },
     { id: 'd-encryption', revealed: false },
   ],
   'nl-workstation': [{ id: 'd-antivirus', revealed: false }],

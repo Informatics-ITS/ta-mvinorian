@@ -1,6 +1,7 @@
 'use client';
 
 import { LogOutIcon } from 'lucide-react';
+import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import React from 'react';
 
@@ -32,9 +33,13 @@ function GameLayout({
   return (
     <React.Fragment>
       {user && (
-        <div className='bg-background-100 absolute top-0 left-0 z-50 flex w-full items-center justify-between border-b border-gray-400 px-4 py-2 text-gray-900'>
+        <div className='bg-background-100 absolute top-0 left-0 z-50 flex w-full items-center justify-between border-b border-gray-400 px-4 py-2'>
           <div className='flex items-center gap-2'>
-            <p>{t('node-clash')}</p>
+            <Image alt='icon' src='/node-clash.svg' width={24} height={24} />
+            <p className='text-label-18 mb-0.5 font-semibold'>
+              <span className='text-blue-900'>node-</span>
+              <span className='text-red-900'>clash.</span>
+            </p>
           </div>
 
           <div className='flex items-center gap-2.5'>

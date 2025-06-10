@@ -16,7 +16,7 @@
     "already-have-an-account": "Already have an account?"
   },
   "game": {
-    "node-clash": "Node Clash",
+    "node-clash": "node-clash.",
     "create-game": "Create Game",
     "join-game": "Join Game",
     "get-the-game-code-from-other-player-and-copy-here": "Get the game code from other player and copy here.",
@@ -98,21 +98,21 @@
   },
   "game-defense": {
     "firewall-desc": "Blocks unauthorized access.",
-    "firewall-edu": "It acts like a gatekeeper—allowing safe traffic and blocking potentially harmful connections to or from a network or device.",
+    "firewall-edu": "It acts like a gatekeeper, allowing safe traffic and blocking potentially harmful connections to or from a network or device.",
     "ids-desc": "Detects suspicious activity.",
     "ids-edu": "Monitors network or system behavior for signs of attack. It alerts defenders when something unusual is detected.",
     "antivirus-desc": "Fights known malware.",
     "antivirus-edu": "Scans for, detects, and removes malicious software like viruses, trojans, or worms on devices like workstations.",
     "network-segmentation-desc": "Limits the damage.",
-    "network-segmentation-edu": "Divides a network into smaller zones, so if one part is compromised, the rest stays secure—like isolating fires in separate rooms.",
+    "network-segmentation-edu": "Divides a network into smaller zones, so if one part is compromised, the rest stays secure, like isolating fires in separate rooms.",
     "anomaly-detection-desc": "Spots the unusual.",
     "anomaly-detection-edu": "Uses behavior models to find things that don't belong, such as unexpected data transfers or login times.",
     "spam-filter-desc": "Stops junk and threats.",
-    "spam-filter-edu": "Automatically detects and blocks unwanted or dangerous emails—like phishing attempts—before they reach your inbox.",
+    "spam-filter-edu": "Automatically detects and blocks unwanted or dangerous emails, like phishing attempts, before they reach your inbox.",
     "encryption-desc": "Scrambles data for safety.",
     "encryption-edu": "Converts data into unreadable code unless you have the key. Protects sensitive information in storage or transit.",
     "mfa-desc": "Adds layers of login protection.",
-    "mfa-edu": "Requires more than just a password—like a code from your phone or fingerprint—making it harder for attackers to break in."
+    "mfa-edu": "Requires more than just a password, like a code from your phone or fingerprint, making it harder for attackers to break in."
   },
   "game-card": {
     "network-scanning-desc": "Scan the network. Reveal the data token of target node.",
@@ -203,6 +203,15 @@
     "successfully-healed-tokentoheal-data-token-s-to-gamenode-name": "successfully healed {tokenToHeal} data token(s) to {gameNode}",
     "defender-has-healed-tokentoheal-data-token-s-from-gamenode-name-stolentokens-is-now-stolentokens": "defender has healed {tokenToHeal} data token(s) from {gameNode}, stolenTokens is now {stolenTokens}",
     "no-data-tokens-to-heal-in-gamenode-name": "no data tokens to heal in {gameNode}",
-    "stolen-tokens-is-0-cannot-heal-gamenode-name": "stolen tokens is 0, cannot heal {gameNode}"
+    "stolen-tokens-is-0-cannot-heal-gamenode-name": "stolen tokens is 0, cannot heal {gameNode}",
+    "no-attempted-defense-to-ignore-in-target-node": "no attempted defense to ignore in target node",
+    "successfully-ignored-defense": "successfully ignored defense",
+    "defense-ignored-by-attacker-effect": "defense ignored by attacker effect",
+    "no-defenses-in-target-node-to-hide": "no defenses in target node to hide",
+    "defender-hid-hiddendefenses-defenses-from-gamenode-name": "defender hid {hiddenDefenses} defenses from {gameNode}",
+    "successfully-hid-hiddendefenses-defenses-from-gamenode-name": "successfully hid {gameDefenses} defenses from {gameNode}",
+    "gamenode-name-data-token-is-still-hidden-to-attacker": "{gameNode} data token is still hidden to attacker",
+    "defender-hid-gamenode-name-data-token": "defender hid {gameNode} data token",
+    "successfully-hid-gamenode-name-data-token": "successfully hid {gameNode} data token"
   }
 }
