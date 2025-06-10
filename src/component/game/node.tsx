@@ -1,4 +1,6 @@
+import { ViewIcon } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
+import { useTranslations } from 'next-intl';
 import React from 'react';
 
 import { GameNodeType, GameTopologyNodeType, getGameNodeById } from '@/lib/game-topology';
@@ -12,6 +14,7 @@ export const nodeAttribute: {
     bg: string;
     icon: React.ReactNode;
     text: string;
+    desc: string;
     strong: string;
     accent: string;
     stroke: string;
@@ -21,6 +24,7 @@ export const nodeAttribute: {
     bg: 'bg-red-700',
     icon: <_SecurityLowIcon />,
     text: 'text-red-100',
+    desc: 'text-red-500',
     strong: 'text-red-700',
     accent: 'bg-red-600',
     stroke: 'border-red-500',
@@ -29,6 +33,7 @@ export const nodeAttribute: {
     bg: 'bg-amber-700',
     icon: <_SecurityMediumIcon />,
     text: 'text-amber-100',
+    desc: 'text-amber-400',
     strong: 'text-amber-700',
     accent: 'bg-amber-600',
     stroke: 'border-amber-500',
@@ -37,6 +42,7 @@ export const nodeAttribute: {
     bg: 'bg-purple-700',
     icon: <_SecurityHighIcon />,
     text: 'text-purple-100',
+    desc: 'text-purple-500',
     strong: 'text-purple-700',
     accent: 'bg-purple-600',
     stroke: 'border-purple-500',
@@ -49,6 +55,8 @@ export interface GameNodeProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export const GameNode = React.forwardRef<HTMLDivElement, GameNodeProps>(({ node, role, className, ...props }, ref) => {
+  const t = useTranslations('game');
+
   const gameNode = getGameNodeById(node.id);
   if (!gameNode) return null;
 
@@ -61,7 +69,7 @@ export const GameNode = React.forwardRef<HTMLDivElement, GameNodeProps>(({ node,
       {...props}
     >
       <div className={cn('h-full w-full space-y-3 rounded-lg p-2', nodeAttribute[gameNode.security].bg)}>
-        <div className='relative flex h-36 w-full items-center justify-center overflow-clip rounded-md'>
+        <div className='relative flex h-32 w-full items-center justify-center overflow-clip rounded-md'>
           <div
             className={cn(
               'absolute -top-1 -left-0.5 rounded-md p-2',
@@ -72,16 +80,19 @@ export const GameNode = React.forwardRef<HTMLDivElement, GameNodeProps>(({ node,
             {nodeAttribute[gameNode.security].icon}
           </div>
 
-          <NodeIcon className={cn('z-10 h-24 w-24', nodeAttribute[gameNode.security].strong)} strokeWidth={1.25} />
+          <NodeIcon className={cn('z-10 h-20 w-20', nodeAttribute[gameNode.security].strong)} strokeWidth={1.25} />
 
           {(role === 'attacker' && node.revealed === true) || role === 'defender' ? (
-            <div className='absolute top-1.5 right-1.5 z-10 space-y-1.5'>
-              {Array.from({ length: gameNode.token - node.stolenToken }, (_, i) => (
-                <_ActiveDataToken key={i} />
-              ))}
-              {Array.from({ length: node.stolenToken }, (_, i) => (
-                <_StolenDataToken key={i} />
-              ))}
+            <div className='absolute top-1.5 right-1.5 z-10 flex gap-1'>
+              {node.revealed && role === 'defender' && <ViewIcon className='!z-20 h-5 w-5 text-red-800' />}
+              <div className='space-y-1.5'>
+                {Array.from({ length: gameNode.token - node.stolenToken }, (_, i) => (
+                  <_ActiveDataToken key={i} />
+                ))}
+                {Array.from({ length: node.stolenToken }, (_, i) => (
+                  <_StolenDataToken key={i} />
+                ))}
+              </div>
             </div>
           ) : (
             <div className='absolute top-1.5 right-1.5 z-10 space-y-1.5'>
@@ -129,8 +140,10 @@ export const GameNode = React.forwardRef<HTMLDivElement, GameNodeProps>(({ node,
             </defs>
           </svg>
         </div>
-        <div className='space-y-4 px-1 text-left'>
+        <div className='space-y-2 px-1 text-left'>
           <p className={cn('!text-label-16 font-semibold', nodeAttribute[gameNode.security].text)}>{gameNode.name}</p>
+          <p className={cn('!text-label-12', nodeAttribute[gameNode.security].desc)}>{t('active-defenses')}</p>
+
           <div className='grid grid-cols-3 gap-2'>
             <AnimatePresence mode='popLayout'>
               {node.defenses.map((defense, index) =>
@@ -149,7 +162,11 @@ export const GameNode = React.forwardRef<HTMLDivElement, GameNodeProps>(({ node,
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.8 }}
+                    className='relative'
                   >
+                    {role === 'defender' && defense.revealed && (
+                      <div className='shadow-card absolute -top-1 -right-1 size-3 rounded-full bg-red-800'></div>
+                    )}
                     <GameDefense defense={defense} />
                   </motion.div>
                 ),

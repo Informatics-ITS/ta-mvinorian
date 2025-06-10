@@ -83,7 +83,7 @@ export const GameCard = React.forwardRef<HTMLDivElement, GameCardProps>(({ card,
       {...props}
     >
       <div className={cn('h-full w-full space-y-3 rounded-lg p-2', cardAttribute[card.type].bg)}>
-        <div className='relative flex h-36 w-full items-center justify-center overflow-clip rounded-md'>
+        <div className='relative flex h-32 w-full items-center justify-center overflow-clip rounded-md'>
           <div
             className={cn(
               'absolute -top-1 -left-1 rounded-md p-2',
@@ -94,7 +94,7 @@ export const GameCard = React.forwardRef<HTMLDivElement, GameCardProps>(({ card,
             <GameCardTypeIcon />
           </div>
 
-          <GameCardIcon className={cn('z-10 h-24 w-24', cardAttribute[card.type].strong)} strokeWidth={1.25} />
+          <GameCardIcon className={cn('z-10 h-20 w-20', cardAttribute[card.type].strong)} strokeWidth={1.25} />
 
           <svg
             className='absolute top-0 left-0 z-0 h-full w-full object-fill'

@@ -51,7 +51,11 @@
     "are-you-sure-you-want-to-reshuffle-your-cards": "Apakah kamu yakin untuk mengacak kartu?",
     "this-action-will-reshuffle-all-your-cards-in-the-deck-and-draw-a-new-hand-of-cards-you-can-only-do-this-once-per-game": "Aksi ini akan mengacak ulang kartu dan memberikan kartu secara acak di tangan kamu. Kamu hanya dapat melakukan ini sekali per game.",
     "cancel": "Batal",
-    "reshuflle-cards": "Acak Kartu"
+    "reshuflle-cards": "Acak Kartu",
+    "active-defenses": "Defense Aktif",
+    "beware": "Hati-hati!",
+    "attacker-can-see-items-that-are-marked-with": "Attacker dapat melihat item yang memiliki tanda",
+    "or": "atau"
   },
   "response": {
     "invalid-request": "request tidak valid",

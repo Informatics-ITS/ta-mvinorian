@@ -1,3 +1,4 @@
+import { ViewIcon } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useTranslations } from 'next-intl';
 import React from 'react';
@@ -96,12 +97,31 @@ export const GameSideLeft = React.forwardRef<HTMLDivElement, GameSideLeftProps>(
 
               {selectedGameNode && (
                 <React.Fragment>
+                  {role === 'defender' &&
+                    (selectedGameTopologyNode?.revealed ||
+                      selectedGameTopologyNode?.defenses.some((item) => item.revealed)) && (
+                      <motion.div
+                        key={selectedGameNode.id + '-warning'}
+                        initial={{ opacity: 0, x: -128 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: 128 }}
+                        transition={{ type: 'keyframes', ease: 'easeInOut' }}
+                        className='bg-background-200 w-full space-y-2 rounded-xs border border-gray-400 p-4'
+                      >
+                        <p className='text-heading-18 text-gray-1000'>{t('game.beware')}</p>
+                        <div className='text-copy-14 text-gray-800'>
+                          {t('game.attacker-can-see-items-that-are-marked-with')}{' '}
+                          <ViewIcon className='inline-block text-red-800' /> {t('game.or')}{' '}
+                          <div className='inline-block size-3 rounded-full bg-red-800'></div>.
+                        </div>
+                      </motion.div>
+                    )}
                   <motion.div
                     key={selectedGameNode.id}
                     initial={{ opacity: 0, x: -128 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: 128 }}
-                    transition={{ type: 'keyframes', ease: 'easeInOut' }}
+                    transition={{ type: 'keyframes', ease: 'easeInOut', delay: 0.2 }}
                     className='bg-background-200 w-full space-y-2 rounded-xs border border-gray-400 p-4'
                   >
                     <p className='text-heading-18 text-gray-1000'>
@@ -123,7 +143,7 @@ export const GameSideLeft = React.forwardRef<HTMLDivElement, GameSideLeftProps>(
                         initial={{ opacity: 0, x: -128 }}
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: 128 }}
-                        transition={{ type: 'keyframes', ease: 'easeInOut', delay: (index + 1) * 0.2 }}
+                        transition={{ type: 'keyframes', ease: 'easeInOut', delay: (index + 2) * 0.2 }}
                         className='bg-background-200 w-full space-y-2 rounded-xs border border-gray-400 p-4'
                       >
                         <p className='text-heading-18 flex items-center gap-2'>
