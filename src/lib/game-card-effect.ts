@@ -44,7 +44,14 @@ interface GameCardEffectResult {
   defenderRevealedCards: string[];
 }
 
+interface GameCardSharedEffectHandler {
+  name: string;
+  canHandle: (attackerEffect?: GameCardEffectType, defenderEffect?: GameCardEffectType) => boolean;
+  apply: (context: GameCardEffectContext, result: GameCardEffectResult) => GameCardEffectResult;
+}
+
 interface GameCardEffectHandler {
+  name: string;
   canHandle: (effect: GameCardEffectType) => boolean;
   apply: (context: GameCardEffectContext, result: GameCardEffectResult) => GameCardEffectResult;
 }
@@ -55,8 +62,9 @@ const t = (key: string, params?: Record<string, any>): GameMessageType => {
 };
 
 //* ===== Effect Handler: revealCards =====
-const revealCardsHandler: GameCardEffectHandler = {
-  canHandle: (effect) => !!effect.revealCards,
+const revealCardsHandler: GameCardSharedEffectHandler = {
+  name: 'revealCardsHandler',
+  canHandle: (attackerEffect, defenderEffect) => !!attackerEffect?.revealCards || !!defenderEffect?.revealCards,
   apply: (context, result) => {
     const { attackerState, defenderState } = context;
 
@@ -115,8 +123,10 @@ const revealCardsHandler: GameCardEffectHandler = {
 };
 
 //* ===== Effect Handler: revealOpponentCards =====
-const revealOpponentCardsHandler: GameCardEffectHandler = {
-  canHandle: (effect) => !!effect.revealOpponentCards,
+const revealOpponentCardsHandler: GameCardSharedEffectHandler = {
+  name: 'revealOpponentCardsHandler',
+  canHandle: (attackerEffect, defenderEffect) =>
+    !!attackerEffect?.revealOpponentCards || !!defenderEffect?.revealOpponentCards,
   apply: (context, result) => {
     const { attackerState, defenderState } = context;
 
@@ -176,6 +186,7 @@ const revealOpponentCardsHandler: GameCardEffectHandler = {
 
 //* ===== Effect Handler: stealTokens =====
 const stealTokensHandler: GameCardEffectHandler = {
+  name: 'stealTokensHandler',
   canHandle: (effect) => !!effect.stealTokens,
   apply: (context, result) => {
     const { attackerState, defenderState } = context;
@@ -259,6 +270,7 @@ const stealTokensHandler: GameCardEffectHandler = {
 
 //* ===== Effect Handler: ignoreDefense =====
 const ignoreDefenseHandler: GameCardEffectHandler = {
+  name: 'ignoreDefenseHandler',
   canHandle: (effect) => !!effect.ignoreDefense,
   apply: (context, result) => {
     const { attackerState, defenderState } = context;
@@ -297,6 +309,7 @@ const ignoreDefenseHandler: GameCardEffectHandler = {
 
 //* ===== Effect Handler: revealDefenses =====
 const revealDefensesHandler: GameCardEffectHandler = {
+  name: 'revealDefensesHandler',
   canHandle: (effect) => !!effect.revealDefenses,
   apply: (context, result) => {
     const { attackerState, defenderState } = context;
@@ -373,6 +386,7 @@ const revealDefensesHandler: GameCardEffectHandler = {
 
 //* ===== Effect Handler: revealNode =====
 const revealNodeHandler: GameCardEffectHandler = {
+  name: 'revealNodeHandler',
   canHandle: (effect) => !!effect.revealNode,
   apply: (context, result) => {
     const { attackerState, defenderState } = context;
@@ -436,6 +450,7 @@ const revealNodeHandler: GameCardEffectHandler = {
 
 //* ===== Effect Handler: addDefense =====
 const addDefenseHandler: GameCardEffectHandler = {
+  name: 'addDefenseHandler',
   canHandle: (effect) => !!effect.addDefense,
   apply: (context, result) => {
     const { attackerState, defenderState } = context;
@@ -492,6 +507,7 @@ const addDefenseHandler: GameCardEffectHandler = {
 
 //* ===== Effect Handler: ignoreAttack =====
 const ignoreAttackHandler: GameCardEffectHandler = {
+  name: 'ignoreAttackHandler',
   canHandle: (effect) => !!effect.ignoreAttack,
   apply: (context, result) => {
     const { attackerState, defenderState } = context;
@@ -505,7 +521,7 @@ const ignoreAttackHandler: GameCardEffectHandler = {
     if (defenderEffect?.ignoreAttack === undefined) return result;
 
     const ignoreAttack = defenderEffect.ignoreAttack;
-    const ignoreDefense = attackerEffect?.ignoreDefense ?? 0;
+    const ignoreDefense = attackerEffect?.ignoreDefense ?? false;
 
     if (ignoreDefense && attackerNodeId === defenderNodeId) {
       return {
@@ -530,9 +546,10 @@ const ignoreAttackHandler: GameCardEffectHandler = {
 
 //* ===== Effect Handler: healNode =====
 const healNodeHandler: GameCardEffectHandler = {
+  name: 'healNodeHandler',
   canHandle: (effect) => !!effect.healNode,
   apply: (context, result) => {
-    const { attackerState, defenderState, stolenTokens } = context;
+    const { attackerState, defenderState } = context;
 
     const attackerEffect = getGameCardEffect(attackerState.usedCardId);
     const defenderEffect = getGameCardEffect(defenderState.usedCardId);
@@ -558,6 +575,7 @@ const healNodeHandler: GameCardEffectHandler = {
 
     if (!targetNode || !gameNode) return result;
 
+    const stolenTokens = result.stolenTokens;
     const tokenToHeal = Math.min(healNode, stolenTokens, targetNode.stolenToken);
 
     const updatedTopology = {
@@ -602,6 +620,7 @@ const healNodeHandler: GameCardEffectHandler = {
 
 //* ===== Effect Handler: hideDefenses =====
 const hideDefensesHandler: GameCardEffectHandler = {
+  name: 'hideDefensesHandler',
   canHandle: (effect) => !!effect.hideDefenses,
   apply: (context, result) => {
     const { attackerState, defenderState } = context;
@@ -633,7 +652,7 @@ const hideDefensesHandler: GameCardEffectHandler = {
     const updatedTopology = {
       ...result.topology,
       nodes: result.topology.nodes.map((node) => {
-        if (node.id !== attackerNodeId) return node;
+        if (node.id !== defenderNodeId) return node;
         return {
           ...node,
           defenses: node.defenses.map((defense, index) => {
@@ -678,6 +697,7 @@ const hideDefensesHandler: GameCardEffectHandler = {
 
 //* ===== Effect Handler: hideNode =====
 const hideNodeHandler: GameCardEffectHandler = {
+  name: 'hideNodeHandler',
   canHandle: (effect) => !!effect.hideNode,
   apply: (context, result) => {
     const { attackerState, defenderState } = context;
@@ -740,9 +760,9 @@ const hideNodeHandler: GameCardEffectHandler = {
 };
 
 //* ===== Effect Processor =====
+const sharedEffectHandlers: GameCardSharedEffectHandler[] = [revealCardsHandler, revealOpponentCardsHandler];
+
 const effectHandlers: GameCardEffectHandler[] = [
-  revealCardsHandler,
-  revealOpponentCardsHandler,
   stealTokensHandler,
   ignoreDefenseHandler,
   revealDefensesHandler,
@@ -762,11 +782,17 @@ export const processGameCardEffect = (context: GameCardEffectContext): GameCardE
   let result: GameCardEffectResult = {
     attackerMessages: [],
     defenderMessages: [],
-    stolenTokens: 0,
+    stolenTokens: context.stolenTokens,
     topology: context.topology,
     attackerRevealedCards: [],
     defenderRevealedCards: [],
   };
+
+  sharedEffectHandlers.forEach((handler) => {
+    if (handler.canHandle(attackerEffect, defenderEffect)) {
+      result = handler.apply(context, result);
+    }
+  });
 
   if (attackerEffect)
     effectHandlers.forEach((handler) => {
