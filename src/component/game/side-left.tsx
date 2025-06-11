@@ -35,6 +35,7 @@ export const GameSideLeft = React.forwardRef<HTMLDivElement, GameSideLeftProps>(
 
   return (
     <div
+      data-tour='side-left'
       ref={ref}
       className={cn(
         'bg-background-100 divide-y-gray-400 flex h-full max-h-full w-80 flex-col gap-4 divide-y overflow-hidden border-r border-gray-400 pt-16 pb-4',

@@ -1,5 +1,6 @@
 'use client';
 
+import { useTour } from '@reactour/tour';
 import { useMutation } from '@tanstack/react-query';
 import React from 'react';
 
@@ -137,6 +138,7 @@ export const GameStateProvider = ({ code, children }: GameStateProviderProps) =>
   const { isConnected } = useWsContext();
   const { players, isHost, role } = useWsPlayers();
   const { setIsReady: setIsUserTourReady } = useUserTourContext();
+  const { setIsOpen: setIsUserTourOpen } = useTour();
 
   //* ===== Game State Definition =====
   const [round, setRound] = useWsState('round', 0);
@@ -537,8 +539,13 @@ export const GameStateProvider = ({ code, children }: GameStateProviderProps) =>
   //? Set user tour ready when game state is initialized
   React.useEffect(() => {
     if (playerPhase === GamePlayerPhase.WaitGame) return;
+    if (!initialized) return;
     setIsUserTourReady(true);
-  }, [playerPhase, setIsUserTourReady]);
+
+    if (round === 1 && playerPhase === GamePlayerPhase.SelectCard) {
+      setIsUserTourOpen(true);
+    }
+  }, [initialized, playerPhase, round, setIsUserTourOpen, setIsUserTourReady]);
 
   //? Main game loop
   React.useEffect(() => {

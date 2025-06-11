@@ -24,6 +24,7 @@ export const GameDeck = React.forwardRef<HTMLDivElement, GameDeckProps>(({ class
 
   return (
     <div
+      data-tour='game-cards'
       ref={ref}
       className={cn(
         'bg-background-100 absolute bottom-0 left-0 z-10 flex w-full translate-y-[108px] justify-center border-t border-gray-400 p-4',

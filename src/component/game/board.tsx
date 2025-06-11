@@ -176,7 +176,12 @@ export const GameBoard = React.forwardRef<HTMLDivElement, GameBoardProps>(({ cla
   };
 
   return (
-    <div ref={innerRef} className={cn('bg-background-200 relative h-full w-full overflow-clip', className)} {...props}>
+    <div
+      data-tour='game-board'
+      ref={innerRef}
+      className={cn('bg-background-200 relative h-full w-full overflow-clip', className)}
+      {...props}
+    >
       {topology && role && (
         <svg ref={svgRef} width={width} height={height} className='h-full w-full'>
           <g id='grid' className='grid'></g>

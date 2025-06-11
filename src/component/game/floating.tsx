@@ -155,6 +155,7 @@ export const GameFloating = () => {
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
+                  data-tour='reshuffle-cards'
                   size='lg'
                   variant='outline'
                   disabled={playerPhase !== GamePlayerPhase.SelectCard || !canReshuffleCards}

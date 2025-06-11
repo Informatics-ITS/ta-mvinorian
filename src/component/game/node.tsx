@@ -203,11 +203,23 @@ export const GameNode = React.forwardRef<HTMLDivElement, GameNodeProps>(({ node,
   );
 });
 
-export { _ActiveDataToken as ActiveDataToken };
+export {
+  _ActiveDataToken as ActiveDataToken,
+  _SecurityHighIcon as SecurityHighIcon,
+  _SecurityLowIcon as SecurityLowIcon,
+  _SecurityMediumIcon as SecurityMediumIcon,
+};
 
-function _SecurityHighIcon() {
+function _SecurityHighIcon({ className }: { className?: string }) {
   return (
-    <svg width='22' height='22' viewBox='0 0 22 22' fill='none' xmlns='http://www.w3.org/2000/svg'>
+    <svg
+      width='22'
+      height='22'
+      viewBox='0 0 22 22'
+      fill='none'
+      xmlns='http://www.w3.org/2000/svg'
+      className={className}
+    >
       <path
         d='M17 12.0004C17 17.0004 13.5 19.5005 9.34 20.9505C9.12216 21.0243 8.88554 21.0207 8.67 20.9405C4.5 19.5005 1 17.0004 1 12.0004V5.00045C1 4.73523 1.10536 4.48088 1.29289 4.29334C1.48043 4.10581 1.73478 4.00045 2 4.00045C4 4.00045 6.5 2.80045 8.24 1.28045C8.45185 1.09945 8.72135 1 9 1C9.27865 1 9.54815 1.09945 9.76 1.28045C11.51 2.81045 14 4.00045 16 4.00045C16.2652 4.00045 16.5196 4.10581 16.7071 4.29334C16.8946 4.48088 17 4.73523 17 5.00045V12.0004Z'
         stroke='#F9F0FF'
@@ -222,9 +234,16 @@ function _SecurityHighIcon() {
   );
 }
 
-function _SecurityMediumIcon() {
+function _SecurityMediumIcon({ className }: { className?: string }) {
   return (
-    <svg width='22' height='22' viewBox='0 0 22 22' fill='none' xmlns='http://www.w3.org/2000/svg'>
+    <svg
+      width='22'
+      height='22'
+      viewBox='0 0 22 22'
+      fill='none'
+      xmlns='http://www.w3.org/2000/svg'
+      className={className}
+    >
       <path
         d='M17 12.0004C17 17.0004 13.5 19.5005 9.34 20.9505C9.12216 21.0243 8.88554 21.0207 8.67 20.9405C4.5 19.5005 1 17.0004 1 12.0004V5.00045C1 4.73523 1.10536 4.48088 1.29289 4.29334C1.48043 4.10581 1.73478 4.00045 2 4.00045C4 4.00045 6.5 2.80045 8.24 1.28045C8.45185 1.09945 8.72135 1 9 1C9.27865 1 9.54815 1.09945 9.76 1.28045C11.51 2.81045 14 4.00045 16 4.00045C16.2652 4.00045 16.5196 4.10581 16.7071 4.29334C16.8946 4.48088 17 4.73523 17 5.00045V12.0004Z'
         stroke='#FFF6E6'
@@ -240,9 +259,16 @@ function _SecurityMediumIcon() {
   );
 }
 
-function _SecurityLowIcon() {
+function _SecurityLowIcon({ className }: { className?: string }) {
   return (
-    <svg width='22' height='22' viewBox='0 0 22 22' fill='none' xmlns='http://www.w3.org/2000/svg'>
+    <svg
+      width='22'
+      height='22'
+      viewBox='0 0 22 22'
+      fill='none'
+      xmlns='http://www.w3.org/2000/svg'
+      className={className}
+    >
       <path
         d='M17 12.0004C17 17.0004 13.5 19.5005 9.34 20.9505C9.12216 21.0243 8.88554 21.0207 8.67 20.9405C4.5 19.5005 1 17.0004 1 12.0004V5.00045C1 4.73523 1.10536 4.48088 1.29289 4.29334C1.48043 4.10581 1.73478 4.00045 2 4.00045C4 4.00045 6.5 2.80045 8.24 1.28045C8.45185 1.09945 8.72135 1 9 1C9.27865 1 9.54815 1.09945 9.76 1.28045C11.51 2.81045 14 4.00045 16 4.00045C16.2652 4.00045 16.5196 4.10581 16.7071 4.29334C16.8946 4.48088 17 4.73523 17 5.00045V12.0004Z'
         stroke='#FFF0F0'
