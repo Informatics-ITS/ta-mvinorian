@@ -16,15 +16,15 @@ export type WsPlayersType = {
 
 export type WsGameType = {
   players: WsPlayersType;
-  states: { [k: string]: string | null };
+  states: { [state: string]: string | null };
 };
 
 const games: {
-  [k: string]: WsGameType;
+  [code: string]: WsGameType;
 } = {};
 
 const clients: {
-  [k: string]: WebSocket;
+  [userId: string]: { socket: WebSocket; lastPing: number };
 } = {};
 
 const pendingSaves = new Map<string, NodeJS.Timeout>();
@@ -55,15 +55,15 @@ const broadcast = (code: string, state: string) => {
 
   const messageJson = JSON.stringify(message);
 
-  if (attacker && clients[attacker]) clients[attacker].send(messageJson);
-  if (defender && clients[defender]) clients[defender].send(messageJson);
+  if (attacker && clients[attacker]) clients[attacker].socket.send(messageJson);
+  if (defender && clients[defender]) clients[defender].socket.send(messageJson);
 
   debouncedSave(code);
 };
 
 const loadingGames = new Set<string>();
 const handleConnect = async (client: WebSocket, code: string, userId: string, role: string) => {
-  clients[userId] = client;
+  clients[userId] = { socket: client, lastPing: Date.now() };
 
   if (!games[code] && !loadingGames.has(code)) {
     loadingGames.add(code);
@@ -115,7 +115,7 @@ const handleClose = (client: WebSocket, code: string) => {
   if (!games[code]) return;
 
   for (const userId in clients) {
-    if (clients[userId] !== client) continue;
+    if (clients[userId].socket !== client) continue;
 
     delete clients[userId];
 
@@ -133,6 +133,34 @@ const handleClose = (client: WebSocket, code: string) => {
   broadcast(code, 'players');
 };
 
+const handlePong = (userId: string) => {
+  if (!clients[userId]) return;
+  clients[userId].lastPing = Date.now();
+};
+
+//? Garbage collector for inactive clients
+setInterval(() => {
+  const now = Date.now();
+  const inactiveThreshold = 60_000;
+
+  for (const userId in clients) {
+    const { socket, lastPing } = clients[userId];
+
+    if (now - lastPing <= inactiveThreshold) continue;
+
+    socket.terminate();
+    delete clients[userId];
+
+    for (const code in games) {
+      if (games[code].players.attacker === userId) games[code].players.attacker = null;
+      else if (games[code].players.defender === userId) games[code].players.defender = null;
+
+      if (!games[code].players.attacker && !games[code].players.defender) delete games[code];
+      else broadcast(code, 'players');
+    }
+  }
+}, 30_000);
+
 export function SOCKET(client: WebSocket, request: IncomingMessage) {
   const query = queryString.parseUrl(request.url ?? '').query;
   const code = query.code as string | null;
@@ -145,7 +173,15 @@ export function SOCKET(client: WebSocket, request: IncomingMessage) {
   if (!role) return client.close(4000, 'no role provided');
   if (role !== 'attacker' && role !== 'defender') return client.close(4000, 'invalid role provided');
 
+  const interval = setInterval(() => {
+    if (client.readyState === WebSocket.OPEN) client.ping();
+  }, 30_000);
+
   handleConnect(client, code, userId, role);
   client.on('message', (bytes) => handleMessage(bytes, code));
-  client.on('close', () => handleClose(client, code));
+  client.on('pong', () => handlePong(userId));
+  client.on('close', () => {
+    clearInterval(interval);
+    handleClose(client, code);
+  });
 }

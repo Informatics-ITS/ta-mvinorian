@@ -112,27 +112,32 @@ export const WsProvider = ({ wsUrl, children, maxMessages = 100 }: WsProviderPro
   );
 
   React.useEffect(() => {
-    const ws = new WebSocket(wsUrl);
+    let ws: WebSocket;
+    let reconnectTimer: NodeJS.Timeout;
 
-    ws.onopen = () => {
-      setIsConnected(true);
+    const connect = () => {
+      ws = new WebSocket(wsUrl);
+
+      ws.onopen = () => {
+        setSocket(ws);
+        setIsConnected(true);
+      };
+
+      ws.onmessage = (event) => {
+        const message = JSON.parse(event.data) as WsMessageType;
+        processMessage(message);
+      };
+
+      ws.onclose = () => {
+        setIsConnected(false);
+        reconnectTimer = setTimeout(connect, 5000);
+      };
     };
 
-    ws.onmessage = (event) => {
-      const message = JSON.parse(event.data) as WsMessageType;
-      processMessage(message);
-    };
-
-    ws.onclose = () => {
-      setIsConnected(false);
-    };
-
-    setSocket(ws);
-
-    const callbacks = messageCallbacksRef.current;
+    connect();
 
     return () => {
-      callbacks.clear();
+      clearTimeout(reconnectTimer);
       ws.close();
     };
   }, [wsUrl, processMessage]);
