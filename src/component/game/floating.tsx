@@ -1,4 +1,4 @@
-import { ArrowRightIcon, LogOutIcon, ReplaceAllIcon } from 'lucide-react';
+import { ArrowRightIcon, ReplaceAllIcon } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useTranslations } from 'next-intl';
 import React from 'react';
@@ -71,9 +71,8 @@ export const GameFloating = () => {
               size='sm'
               variant='outline'
               className='hover:text-amber-1000 w-52 border-amber-400 bg-amber-100 text-amber-900 hover:bg-amber-200'
-              onClick={clickNextRound}
             >
-              {t('leave-the-game')} <LogOutIcon className='-scale-x-100' />
+              {t('game-ended')}
             </Button>
           </motion.div>
         )}

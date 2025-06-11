@@ -1,8 +1,8 @@
-import { UserInsertType } from '@/db/schema';
+import { UserActionInsertType, UserInsertType } from '@/db/schema';
 import { generateAuthToken } from '@/lib/jwt';
 import { createResponse } from '@/lib/response';
 import { createService } from '@/lib/service';
-import { createUser, getUserByEmail, getUserById, loginUser } from '@/repository/user-repository';
+import { createUser, createUserAction, getUserByEmail, getUserById, loginUser } from '@/repository/user-repository';
 
 export const createUserService = createService(async (t, user: UserInsertType) => {
   try {
@@ -78,5 +78,21 @@ export const getMeService = createService(async (t, userId: string) => {
       message: t('response.failed-to-get-user'),
       data: undefined,
     });
+  }
+});
+
+export const saveUserActionService = createService(async (t, userAction: UserActionInsertType) => {
+  try {
+    const newUserAction = await createUserAction(userAction);
+    if (!newUserAction)
+      return createResponse({ success: false, message: t('response.failed-to-save-user-action'), data: undefined });
+
+    return createResponse({
+      success: true,
+      message: t('response.successfully-saved-user-action'),
+      data: newUserAction,
+    });
+  } catch (_) {
+    return createResponse({ success: false, message: t('response.failed-to-save-user-action'), data: undefined });
   }
 });

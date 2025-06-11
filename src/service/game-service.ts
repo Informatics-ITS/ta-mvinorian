@@ -1,9 +1,10 @@
 import { WsGameType } from '@/app/(_api)/api/ws/route';
-import { GameInsertType } from '@/db/schema';
+import { GameHistoryInsertType, GameInsertType } from '@/db/schema';
 import { createResponse } from '@/lib/response';
 import { createService } from '@/lib/service';
 import {
   createGame,
+  createGameHistory,
   deleteGame,
   getAllGameCodes,
   getGameByCode,
@@ -96,6 +97,23 @@ export const getGameByUserIdService = createService(async (t, userId: string) =>
     return createResponse({ success: true, message: t('response.game-found'), data: game });
   } catch (_) {
     return createResponse({ success: false, message: t('response.failed-to-get-game'), data: undefined });
+  }
+});
+
+export const saveGameHistoryService = createService(async (t, gameHistory: GameHistoryInsertType) => {
+  try {
+    const newGameHistory = await createGameHistory(gameHistory);
+    if (!newGameHistory) {
+      return createResponse({ success: false, message: t('response.failed-to-save-game-history'), data: undefined });
+    }
+
+    return createResponse({
+      success: true,
+      message: t('response.successfully-saved-game-history'),
+      data: newGameHistory,
+    });
+  } catch (_) {
+    return createResponse({ success: false, message: t('response.failed-to-save-game-history'), data: undefined });
   }
 });
 

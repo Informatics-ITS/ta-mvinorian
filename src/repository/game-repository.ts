@@ -1,7 +1,7 @@
 import { and, eq, or } from 'drizzle-orm';
 
 import { db } from '@/db';
-import { GameInsertType, gameTable, GameType } from '@/db/schema';
+import { GameHistoryInsertType, gameHistoryTable, GameInsertType, gameTable, GameType } from '@/db/schema';
 
 export const createGame = async (game: GameInsertType) => {
   const newGame = await db.insert(gameTable).values(game).returning();
@@ -55,4 +55,9 @@ export const getGameByUserIdAndCode = async (userId: string, code: string) => {
     .limit(1);
   if (!game[0]) return null;
   return game[0];
+};
+
+export const createGameHistory = async (gameHistory: GameHistoryInsertType) => {
+  const newGameHistory = await db.insert(gameHistoryTable).values(gameHistory).returning();
+  return newGameHistory[0];
 };

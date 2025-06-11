@@ -34,7 +34,7 @@ export default async function GamePage({ params }: { params: Promise<{ code: str
 
   return (
     <WsProvider wsUrl={wsUrl}>
-      <GameStateProvider>
+      <GameStateProvider code={code}>
         <GameClient code={code} />
       </GameStateProvider>
     </WsProvider>

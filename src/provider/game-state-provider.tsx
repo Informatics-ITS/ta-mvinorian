@@ -1,9 +1,11 @@
 'use client';
 
+import { useMutation } from '@tanstack/react-query';
 import React from 'react';
 
 import { Loading } from '@/component/ui/loading';
 import { useWsPlayers, useWsState } from '@/hook/use-ws-state';
+import { api } from '@/lib/api';
 import {
   GameCardPlayerType,
   GameCardType,
@@ -124,10 +126,11 @@ export const useGameStateContext = () => {
 };
 
 export interface GameStateProviderProps {
+  code: string;
   children: React.ReactNode;
 }
 
-export const GameStateProvider = ({ children }: GameStateProviderProps) => {
+export const GameStateProvider = ({ code, children }: GameStateProviderProps) => {
   const [initialized, setInitialized] = React.useState(false);
 
   //* ===== Contexts =====
@@ -226,6 +229,31 @@ export const GameStateProvider = ({ children }: GameStateProviderProps) => {
     [attackerHistory, defenderHistory, role, setAttackerHistory, setDefenderHistory],
   );
 
+  //* ===== Mutations =====
+  const { mutate: saveGameHistory } = useMutation({
+    mutationFn: () =>
+      api.post('/api/game/save-history', {
+        code,
+        round,
+        attacker: players.attacker,
+        defender: players.defender,
+        gameHistory: JSON.stringify(history[round]),
+        attackerHistory: JSON.stringify(attackerHistory[round]),
+        defenderHistory: JSON.stringify(defenderHistory[round]),
+      }),
+  });
+
+  const { mutate: savePlayerAction } = useMutation({
+    mutationFn: ({ action, target }: { action: string; target?: string }) =>
+      api.post('/api/user/save-action', {
+        userId: players[role!],
+        gameCode: code,
+        role: role!,
+        action,
+        target,
+      }),
+  });
+
   //* ===== Player Actions =====
   const clickCard = React.useCallback(
     (cardId: string) => {
@@ -257,6 +285,8 @@ export const GameStateProvider = ({ children }: GameStateProviderProps) => {
     (cardId: string) => {
       if (!role) return;
 
+      savePlayerAction({ action: 'click-use-card', target: cardId });
+
       let newCard: GameCardType;
       do {
         newCard = getRandomGameCards(role, 1)[0];
@@ -278,11 +308,13 @@ export const GameStateProvider = ({ children }: GameStateProviderProps) => {
         { ...prevHistory[prevHistory.length - 1], usedCardId: cardId },
       ]);
     },
-    [playerState.cards, role, setPlayerHistory, setPlayerPhase, setPlayerState],
+    [playerState.cards, role, savePlayerAction, setPlayerHistory, setPlayerPhase, setPlayerState],
   );
 
   const clickTargetNode = React.useCallback(
     (nodeId: string) => {
+      savePlayerAction({ action: 'click-target-node', target: nodeId });
+
       setPlayerState((prevState) => ({
         ...prevState,
         targetNodeId: nodeId,
@@ -296,14 +328,16 @@ export const GameStateProvider = ({ children }: GameStateProviderProps) => {
         { ...prevHistory[prevHistory.length - 1], targetNodeId: nodeId },
       ]);
     },
-    [setPlayerHistory, setPlayerPhase, setPlayerState],
+    [savePlayerAction, setPlayerHistory, setPlayerPhase, setPlayerState],
   );
 
   const clickNextRound = React.useCallback(() => {
+    savePlayerAction({ action: 'click-next-round' });
     setPlayerPhase(GamePlayerPhase.EndRound);
-  }, [setPlayerPhase]);
+  }, [savePlayerAction, setPlayerPhase]);
 
   const clickReshuffleCards = React.useCallback(() => {
+    savePlayerAction({ action: 'click-reshuffle-cards' });
     setPlayerState((prevState) => {
       if (!role) return prevState;
       if (prevState.reshuffleCount && prevState.reshuffleCount >= GameConstant.MaxReshuffle) return prevState;
@@ -315,7 +349,7 @@ export const GameStateProvider = ({ children }: GameStateProviderProps) => {
         reshuffleCount: (prevState.reshuffleCount ?? 0) + 1,
       };
     });
-  }, [role, setPlayerState]);
+  }, [role, savePlayerAction, setPlayerState]);
 
   const checkCanReshuffleCards = React.useCallback(() => {
     if (!role) return false;
@@ -434,6 +468,8 @@ export const GameStateProvider = ({ children }: GameStateProviderProps) => {
   };
 
   const endRound = () => {
+    saveGameHistory();
+
     if (history[round]?.stolenTokens >= GameConstant.TokensToWin) {
       setAttackerPhase(GamePlayerPhase.EndGame);
       setDefenderPhase(GamePlayerPhase.EndGame);

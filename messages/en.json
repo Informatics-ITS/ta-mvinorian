@@ -60,7 +60,8 @@
     "applicable-to-following-nodes": "Applicable to Following Nodes",
     "card-effect-does-not-use-node": "Card effect does not use node.",
     "wins-the-game": "wins the game",
-    "leave-the-game": "Leave game"
+    "leave-the-game": "Leave game",
+    "game-ended": "Game ended"
   },
   "response": {
     "service-error": "service error",
@@ -86,14 +87,30 @@
     "game-left": "game left",
     "game-found": "game found",
     "failed-to-get-game": "failed to get game",
-    "valid-request": "valid request"
+    "valid-request": "valid request",
+    "failed-to-save-game-history": "failed to save game history",
+    "successfully-saved-game-history": "successfully saved game history",
+    "failed-to-save-user-action": "failed to save user action",
+    "successfully-saved-user-action": "successfully saved user action"
   },
   "request": {
     "code-must-be-6-characters-long": "code must be 6 characters long",
     "name-is-required": "name is required",
     "email-is-required": "email is required",
     "invalid-email-address": "invalid email address",
-    "password-is-required": "password is required"
+    "password-is-required": "password is required",
+    "code-is-required": "code is required",
+    "round-is-required": "round is required",
+    "attacker-is-required": "attacker is required",
+    "defender-is-required": "defender is required",
+    "game-history-is-required": "game history is required",
+    "attacker-history-is-required": "attacker history is required",
+    "defender-history-is-required": "defender history is required",
+    "user-id-is-required": "user id is required",
+    "action-is-required": "action is required",
+    "target-is-required": "target is required",
+    "game-code-is-required": "game code is required",
+    "role-is-required": "role is required"
   },
   "game-node": {
     "internal-network-hub": "Connects devices inside an organization. A compromised hub can let attackers intercept or reroute internal communications.",

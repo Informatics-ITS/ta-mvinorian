@@ -59,7 +59,8 @@
     "applicable-to-following-nodes": "Dapat Digunakan di Node Ini",
     "card-effect-does-not-use-node": "Efek kartu tidak menggunakan node.",
     "wins-the-game": "memenangkan game",
-    "leave-the-game": "Tinggalkan game"
+    "leave-the-game": "Tinggalkan game",
+    "game-ended": "Game telah selesai"
   },
   "response": {
     "invalid-request": "request tidak valid",
@@ -85,14 +86,30 @@
     "game-left": "berhasil keluar dari game",
     "game-found": "berhasil mendapatkan game",
     "failed-to-get-game": "gagal untuk mendapatkan game",
-    "valid-request": "request valid"
+    "valid-request": "request valid",
+    "failed-to-save-game-history": "gagal untuk menyimpan game history",
+    "successfully-saved-game-history": "berhasil menyimpan game history",
+    "failed-to-save-user-action": "gagal menyimpan user action",
+    "successfully-saved-user-action": "berhasil menyimpan user action"
   },
   "request": {
     "code-must-be-6-characters-long": "panjang kode harus 6 karakter",
     "name-is-required": "nama tidak boleh kosong",
     "email-is-required": "email tidak boleh kosong",
     "invalid-email-address": "email tidak valid",
-    "password-is-required": "password tidak boleh kosong"
+    "password-is-required": "password tidak boleh kosong",
+    "code-is-required": "code wajib ada",
+    "round-is-required": "round wajib ada",
+    "attacker-is-required": "attacker wajib ada",
+    "defender-is-required": "defender wajib ada",
+    "game-history-is-required": "game history wajib ada",
+    "attacker-history-is-required": "attacker history harus ada",
+    "defender-history-is-required": "defender history harus ada",
+    "user-id-is-required": "user id wajib ada",
+    "action-is-required": "action wajib ada",
+    "target-is-required": "target wajib ada",
+    "game-code-is-required": "game code wajib ada",
+    "role-is-required": "role wajib diisi"
   },
   "game-node": {
     "internal-network-hub": "Menghubungkan perangkat dalam satu jaringan internal. Jika disusupi, penyerang bisa menyadap komunikasi atau menyebarkan malware.",

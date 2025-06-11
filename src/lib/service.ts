@@ -1,9 +1,12 @@
 import { ResponseType } from './response';
 
-export type ServiceType<T> = (t: (key: string) => string, ...args: any[]) => Promise<ResponseType<T>>;
+export type ServiceType<T, TArgs extends readonly unknown[] = []> = (
+  t: (key: string) => string,
+  ...args: TArgs
+) => Promise<ResponseType<T>>;
 
-export const createService = <T>(service: ServiceType<T>) => {
-  return async (t: (key: string) => string, ...args: any[]) => {
+export const createService = <T, TArgs extends readonly unknown[] = []>(service: ServiceType<T, TArgs>) => {
+  return async (t: (key: string) => string, ...args: TArgs) => {
     try {
       const res = await service(t, ...args);
       return res;
