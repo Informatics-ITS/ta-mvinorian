@@ -33,9 +33,9 @@ export const gameHistoryTable = pgTable('game_histories', {
   round: integer().notNull(),
   attacker: uuid(),
   defender: uuid(),
-  gameHistory: text().default('{}').notNull(),
-  attackerHistory: text().default('{}').notNull(),
-  defenderHistory: text().default('{}').notNull(),
+  gameHistory: text('game_history').default('{}').notNull(),
+  attackerHistory: text('attacker_history').default('{}').notNull(),
+  defenderHistory: text('defender_history').default('{}').notNull(),
   createdAt: timestamp('created_at', { mode: 'string' }).default(sql.raw('CURRENT_TIMESTAMP')).notNull(),
   updatedAt: timestamp('updated_at', { mode: 'string' }).default(sql.raw('CURRENT_TIMESTAMP')).notNull(),
 });
@@ -45,8 +45,8 @@ export type GameHistoryInsertType = typeof gameHistoryTable.$inferInsert;
 
 export const userActionTable = pgTable('user_actions', {
   id: uuid().primaryKey().defaultRandom(),
-  userId: uuid().notNull(),
-  gameCode: char({ length: 6 }).notNull(),
+  userId: uuid('user_id').notNull(),
+  gameCode: char('game_code', { length: 6 }).notNull(),
   role: varchar({ length: 50 }).notNull(),
   action: varchar({ length: 255 }).notNull(),
   target: varchar({ length: 255 }),
