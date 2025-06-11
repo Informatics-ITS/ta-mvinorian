@@ -88,6 +88,7 @@ export type GameStateType = {
   getGamePlayerCards: () => GameCardPlayerType[];
   getGamePlayerNodes: () => GameNodePlayerType[];
   getGameStolenTokens: () => number;
+  getGameWinner: () => 'attacker' | 'defender' | undefined;
 };
 
 const GameStateContext = React.createContext<GameStateType>({
@@ -111,6 +112,7 @@ const GameStateContext = React.createContext<GameStateType>({
   getGamePlayerNodes: () => [],
   getGamePlayerCards: () => [],
   getGameStolenTokens: () => 0,
+  getGameWinner: () => undefined,
 });
 
 export const useGameStateContext = () => {
@@ -345,6 +347,15 @@ export const GameStateProvider = ({ children }: GameStateProviderProps) => {
     return history[round]?.stolenTokens ?? 0;
   }, [history, round]);
 
+  const getGameWinner = React.useCallback(() => {
+    if (playerPhase !== GamePlayerPhase.EndGame) return undefined;
+
+    const stolenTokens = getGameStolenTokens();
+    if (stolenTokens >= GameConstant.TokensToWin) return 'attacker';
+
+    return 'defender';
+  }, [getGameStolenTokens, playerPhase]);
+
   //* ===== Game Engine =====
   const startGame = () => {
     React.startTransition(() => {
@@ -455,7 +466,7 @@ export const GameStateProvider = ({ children }: GameStateProviderProps) => {
         {
           usedCardId: '',
           targetNodeId: '',
-          result: [],
+          messages: [],
         },
       ]);
       setDefenderHistory((prevHistory) => [
@@ -463,7 +474,7 @@ export const GameStateProvider = ({ children }: GameStateProviderProps) => {
         {
           usedCardId: '',
           targetNodeId: '',
-          result: [],
+          messages: [],
         },
       ]);
 
@@ -472,6 +483,7 @@ export const GameStateProvider = ({ children }: GameStateProviderProps) => {
         {
           ...prevHistory[prevHistory.length - 1],
           round: prevHistory.length,
+          isCalculated: false,
         },
       ]);
     });
@@ -537,6 +549,7 @@ export const GameStateProvider = ({ children }: GameStateProviderProps) => {
     getGamePlayerCards,
     getGamePlayerNodes,
     getGameStolenTokens,
+    getGameWinner,
   };
 
   return (

@@ -14,6 +14,7 @@ export type GameCardEffectType = {
   revealOpponentCards?: number;
 
   //? Attacker's effect
+  removeDefenses?: number;
   stealTokens?: number;
   ignoreDefenses?: number;
   ignoreDefense?: boolean;
@@ -181,6 +182,76 @@ const revealOpponentCardsHandler: GameCardSharedEffectHandler = {
       attackerRevealedCards: [...result.attackerRevealedCards, ...attackerRevealedCards],
       defenderRevealedCards: [...result.defenderRevealedCards, ...defenderRevealedCards],
     };
+  },
+};
+
+//* ===== Effect Handler: removeDefenses =====
+const removeDefensesHandler: GameCardEffectHandler = {
+  name: 'removeDefensesHandler',
+  canHandle: (effect) => !!effect.removeDefenses,
+  apply: (context, result) => {
+    const { attackerState, defenderState } = context;
+
+    const attackerEffect = getGameCardEffect(attackerState.usedCardId);
+    const defenderEffect = getGameCardEffect(defenderState.usedCardId);
+
+    const attackerNodeId = attackerState.targetNodeId;
+    const defenderNodeId = defenderState.targetNodeId;
+
+    if (attackerEffect?.removeDefenses === undefined) return result;
+
+    const removeDefenses = attackerEffect.removeDefenses;
+    const ignoreAttack = defenderEffect?.ignoreAttack ?? false;
+
+    if (ignoreAttack && attackerNodeId === defenderNodeId) {
+      return {
+        ...result,
+        attackerMessages: [...result.attackerMessages, t('game-effect.attack-ignored-by-defender-effect')],
+        defenderMessages: [...result.defenderMessages, t('game-effect.successfully-ignored-attack')],
+      };
+    }
+
+    const targetNode = getGameTopologyNodeById(result.topology, attackerNodeId);
+    const gameNode = getGameNodeById(attackerNodeId);
+
+    if (!targetNode || !gameNode) return result;
+
+    const currentDefenses = targetNode.defenses.length;
+    const defensesToRemove = Math.min(currentDefenses, removeDefenses);
+
+    const updatedTopology = {
+      ...result.topology,
+      nodes: result.topology.nodes.map((node) => {
+        if (node.id !== attackerNodeId) return node;
+        return { ...node, defenses: node.defenses.slice(defensesToRemove) };
+      }),
+    };
+
+    if (defensesToRemove === 0) {
+      return {
+        ...result,
+        attackerMessages: [...result.attackerMessages, t('game-effect.no-defenses-in-target-node-to-remove')],
+      };
+    } else {
+      return {
+        ...result,
+        attackerMessages: [
+          ...result.attackerMessages,
+          t('game-effect.successfully-removed-defensestoremove-defenses-from-gamenode-name', {
+            defensesToRemove,
+            gameNode: gameNode.name,
+          }),
+        ],
+        defenderMessages: [
+          ...result.defenderMessages,
+          t('game-effect.attacker-has-removed-defensestoremove-defenses-from-gamenode-name', {
+            defensesToRemove,
+            gameNode: gameNode.name,
+          }),
+        ],
+        topology: updatedTopology,
+      };
+    }
   },
 };
 
@@ -763,6 +834,7 @@ const hideNodeHandler: GameCardEffectHandler = {
 const sharedEffectHandlers: GameCardSharedEffectHandler[] = [revealCardsHandler, revealOpponentCardsHandler];
 
 const effectHandlers: GameCardEffectHandler[] = [
+  removeDefensesHandler,
   stealTokensHandler,
   ignoreDefenseHandler,
   revealDefensesHandler,

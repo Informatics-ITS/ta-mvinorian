@@ -4,6 +4,7 @@ import { GAME_CARDS } from '@/constant/game-card';
 import { GameRoleType } from '@/provider/game-state-provider';
 
 import { GameCardEffectType } from './game-card-effect';
+import { defaultGameTopology } from './game-topology';
 
 export type GameCardType = {
   id: string;
@@ -69,4 +70,16 @@ export const isCardApplicableToNode = (cardId?: string, nodeId?: string): boolea
   if (effect.nodes.includes('all')) return true;
 
   return effect.nodes.includes(nodeId);
+};
+
+export const getCardApplicableNodes = (cardId?: string): string[] => {
+  if (!cardId) return [];
+
+  const effect = getGameCardEffect(cardId);
+  if (!effect) return [];
+
+  if (!effect.nodes) return [];
+  if (effect.nodes.includes('all')) return defaultGameTopology.nodes.map((node) => node.id);
+
+  return effect.nodes;
 };

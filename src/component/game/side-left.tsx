@@ -4,7 +4,7 @@ import { useTranslations } from 'next-intl';
 import React from 'react';
 
 import { useElementDimensions } from '@/hook/use-element-dimensions';
-import { getGameCardById } from '@/lib/game-card';
+import { getCardApplicableNodes, getGameCardById } from '@/lib/game-card';
 import { getGameDefenseById } from '@/lib/game-defense';
 import { getGameNodeById, getGameTopologyNodeById } from '@/lib/game-topology';
 import { cn } from '@/lib/utils';
@@ -31,6 +31,7 @@ export const GameSideLeft = React.forwardRef<HTMLDivElement, GameSideLeftProps>(
   const selectedGameCard = selectedCard ? getGameCardById(selectedCard.id) : null;
   const selectedGameNode = selectedNode ? getGameNodeById(selectedNode.id) : null;
   const selectedGameTopologyNode = selectedNode ? getGameTopologyNodeById(topology, selectedNode.id) : null;
+  const applicableNodes = getCardApplicableNodes(selectedGameCard?.id);
 
   return (
     <div
@@ -80,19 +81,48 @@ export const GameSideLeft = React.forwardRef<HTMLDivElement, GameSideLeftProps>(
 
             <AnimatePresence mode='wait'>
               {selectedGameCard && (
-                <motion.div
-                  key={selectedGameCard.id}
-                  initial={{ opacity: 0, x: -128 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 128 }}
-                  transition={{ type: 'keyframes', ease: 'easeInOut' }}
-                  className='bg-background-200 w-full space-y-2 rounded-xs border border-gray-400 p-4'
-                >
-                  <p className='text-heading-18 text-gray-1000'>
-                    {t('game.what-is')} {selectedGameCard.name}?
-                  </p>
-                  <p className='text-copy-14 text-gray-800'>{t(selectedGameCard.education as any)}</p>
-                </motion.div>
+                <React.Fragment>
+                  <motion.div
+                    key={selectedGameCard.id}
+                    initial={{ opacity: 0, x: -128 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 128 }}
+                    transition={{ type: 'keyframes', ease: 'easeInOut' }}
+                    className='bg-background-200 w-full space-y-2 rounded-xs border border-gray-400 p-4'
+                  >
+                    <p className='text-heading-18 text-gray-1000'>
+                      {t('game.what-is')} {selectedGameCard.name}?
+                    </p>
+                    <p className='text-copy-14 text-gray-800'>{t(selectedGameCard.education as any)}</p>
+                  </motion.div>
+
+                  <motion.div
+                    key={selectedGameCard.id + '-applicable-nodes'}
+                    initial={{ opacity: 0, x: -128 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 128 }}
+                    transition={{ type: 'keyframes', ease: 'easeInOut', delay: 0.2 }}
+                    className='bg-background-200 w-full space-y-2 rounded-xs border border-gray-400 p-4'
+                  >
+                    <p className='text-heading-18 text-gray-1000'>{t('game.applicable-to-following-nodes')}</p>
+                    <div className='text-copy-14 space-y-1.5 text-gray-800'>
+                      {applicableNodes.length > 0 ? (
+                        applicableNodes.map((nodeId, index) => {
+                          const gameNode = getGameNodeById(nodeId);
+                          if (!gameNode) return null;
+                          return (
+                            <span key={nodeId + index} className='flex items-center gap-2'>
+                              <gameNode.icon className='inline-block size-4' />
+                              {gameNode.name}
+                            </span>
+                          );
+                        })
+                      ) : (
+                        <span>{t('game.card-effect-does-not-use-node')}</span>
+                      )}
+                    </div>
+                  </motion.div>
+                </React.Fragment>
               )}
 
               {selectedGameNode && (

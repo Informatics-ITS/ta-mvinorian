@@ -1,4 +1,4 @@
-import { ArrowRightIcon, ReplaceAllIcon } from 'lucide-react';
+import { ArrowRightIcon, LogOutIcon, ReplaceAllIcon } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useTranslations } from 'next-intl';
 import React from 'react';
@@ -24,8 +24,18 @@ import { ActiveDataToken } from './node';
 export const GameFloating = () => {
   const t = useTranslations('game');
 
-  const { playerPhase, role, round, clickNextRound, getGameStolenTokens, clickReshuffleCards, checkCanReshuffleCards } =
-    useGameStateContext();
+  const {
+    playerPhase,
+    role,
+    round,
+    clickNextRound,
+    getGameStolenTokens,
+    clickReshuffleCards,
+    checkCanReshuffleCards,
+    getGameWinner,
+  } = useGameStateContext();
+
+  const winner = getGameWinner();
   const stolenTokens = getGameStolenTokens();
   const canReshuffleCards = checkCanReshuffleCards();
 
@@ -46,6 +56,24 @@ export const GameFloating = () => {
               onClick={clickNextRound}
             >
               {t('go-to-next-round')} <ArrowRightIcon />
+            </Button>
+          </motion.div>
+        )}
+
+        {playerPhase === GamePlayerPhase.EndGame && (
+          <motion.div
+            initial={{ opacity: 0, y: -48 }}
+            animate={{ opacity: 1, y: 6 }}
+            exit={{ opacity: 0, y: -48 }}
+            className='absolute top-28 left-1/2 z-10 -translate-x-1/2 select-none'
+          >
+            <Button
+              size='sm'
+              variant='outline'
+              className='hover:text-amber-1000 w-52 border-amber-400 bg-amber-100 text-amber-900 hover:bg-amber-200'
+              onClick={clickNextRound}
+            >
+              {t('leave-the-game')} <LogOutIcon className='-scale-x-100' />
             </Button>
           </motion.div>
         )}
@@ -91,6 +119,11 @@ export const GameFloating = () => {
             {playerPhase === GamePlayerPhase.EndRound && (
               <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                 {t('waiting-for-other-player-to-end-round')}
+              </motion.span>
+            )}
+            {playerPhase === GamePlayerPhase.EndGame && winner && (
+              <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                {winner[0].toUpperCase() + winner.slice(1)} {t('wins-the-game')}
               </motion.span>
             )}
           </AnimatePresence>

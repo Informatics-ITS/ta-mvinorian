@@ -10,7 +10,7 @@ export const GAME_TOPOLOGY: TopologyType = {
     {
       id: 'nh-internal-network-hub',
       name: 'Internal Network Hub',
-      token: 1,
+      token: 2,
       security: 'high',
       education: t('game-node.internal-network-hub'),
       icon: NetworkIcon,
@@ -20,7 +20,7 @@ export const GAME_TOPOLOGY: TopologyType = {
     {
       id: 'nh-database-server',
       name: 'Database Server',
-      token: 2,
+      token: 3,
       security: 'high',
       education: t('game-node.database-server'),
       icon: DatabaseIcon,
@@ -107,22 +107,10 @@ export const GAME_TOPOLOGY: TopologyType = {
 };
 
 export const GAME_TOPOLOGY_NODE_DEFENSES: Record<string, GameTopologyDefenseType[]> = {
-  'nh-database-server': [
-    { id: 'd-firewall', revealed: false },
-    { id: 'd-ids', revealed: false },
-  ],
-  'nh-internal-network-hub': [
-    { id: 'd-network-segmentation', revealed: false },
-    { id: 'd-anomaly-detection', revealed: false },
-  ],
+  'nh-database-server': [{ id: 'd-ids', revealed: false }],
+  'nh-internal-network-hub': [{ id: 'd-network-segmentation', revealed: false }],
   'nm-web-server': [{ id: 'd-firewall', revealed: false }],
-  'nm-email-server': [
-    { id: 'd-encryption', revealed: false },
-    { id: 'd-spam-filter', revealed: false },
-  ],
-  'nm-cloud-storage': [
-    { id: 'd-mfa', revealed: false },
-    { id: 'd-encryption', revealed: false },
-  ],
+  'nm-email-server': [{ id: 'd-spam-filter', revealed: false }],
+  'nm-cloud-storage': [{ id: 'd-encryption', revealed: false }],
   'nl-workstation': [{ id: 'd-antivirus', revealed: false }],
 };
