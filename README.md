@@ -1,36 +1,75 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🏁 Tugas Akhir (TA) - Final Project
 
-## Getting Started
+**Nama Mahasiswa**: [Nama Lengkap]  
+**NRP**: [Nomor Registrasi Pokok]  
+**Judul TA**: [Judul Tugas Akhir]  
+**Dosen Pembimbing**: [Nama Dosen]  
+**Dosen Ko-pembimbing**: [Nama Dosen]
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 📺 Demo Aplikasi  
+Embed video demo di bawah ini (ganti `VIDEO_ID` dengan ID video YouTube Anda):  
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+[![Demo Aplikasi](https://i.ytimg.com/vi/zIfRMTxRaIs/maxresdefault.jpg)](https://www.youtube.com/watch?v=VIDEO_ID)  
+*Klik gambar di atas untuk menonton demo*
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+*Konten selanjutnya hanya merupakan contoh awalan yang baik. Anda dapat berimprovisasi bila diperlukan.*
 
-## Learn More
+## 🛠 Panduan Instalasi & Menjalankan Software  
 
-To learn more about Next.js, take a look at the following resources:
+### Prasyarat  
+- Daftar dependensi (contoh):
+  - Python 3.10+
+  - Node.js v18+
+  - MySQL 8.0
+  - [Lainnya...]
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Langkah-langkah  
+1. **Clone Repository**  
+   ```bash
+   git clone https://github.com/Informatics-ITS/TA.git
+   ```
+2. **Instalasi Dependensi**
+   ```bash
+   cd [folder-proyek]
+   pip install -r requirements.txt  # Contoh untuk Python
+   npm install  # Contoh untuk Node.js
+   ```
+3. **Konfigurasi**
+- Salin/rename file .env.example menjadi .env
+- Isi variabel lingkungan sesuai kebutuhan (database, API key, dll.)
+4. **Jalankan Aplikasi**
+   ```bash
+   python main.py  # Contoh untuk Python
+   npm start      # Contoh untuk Node.js
+   ```
+5. Buka browser dan kunjungi: `http://localhost:3000` (sesuaikan dengan port proyek Anda)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 📚 Dokumentasi Tambahan
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- [![Dokumentasi API]](docs/api.md)
+- [![Diagram Arsitektur]](docs/architecture.png)
+- [![Struktur Basis Data]](docs/database_schema.sql)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## ✅ Validasi
+
+Pastikan proyek memenuhi kriteria berikut sebelum submit:
+- Source code dapat di-build/run tanpa error
+- Video demo jelas menampilkan fitur utama
+- README lengkap dan terupdate
+- Tidak ada data sensitif (password, API key) yang ter-expose
+
+---
+
+## ⁉️ Pertanyaan?
+
+Hubungi:
+- Penulis: [email@mahasiswa]
+- Pembimbing Utama: [email@pembimbing]
