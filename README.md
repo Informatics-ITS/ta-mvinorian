@@ -1,36 +1,88 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🏁 Tugas Akhir (TA) - Final Project
 
-## Getting Started
+**Nama Mahasiswa**: Muhammad Ersya Vinorian
 
-First, run the development server:
+**NRP**: 5025211045
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+**Judul TA**: Rancang Bangun Aplikasi Web “Node Clash”: Permainan Edukatif Penyerangan Dan Pertahanan Keamanan Siber
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+**Dosen Pembimbing**: Baskoro Adi Pratomo, S.Kom., M.Kom., Ph.D.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+**Dosen Ko-pembimbing**: Hadziq Fabroyir, S.Kom., Ph.D.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 📺 Demo Aplikasi  
 
-To learn more about Next.js, take a look at the following resources:
+[![Demo Aplikasi](https://i.ytimg.com/vi/I0pW_E2CAKA/maxresdefault.jpg)](https://www.youtube.com/watch?v=I0pW_E2CAKA)  
+*Klik gambar di atas untuk menonton demo*
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🛠 Panduan Instalasi & Menjalankan Software  
 
-## Deploy on Vercel
+### Prasyarat  
+- Memiliki Docker terinstal
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Langkah-langkah  
+1. **Clone Repository**  
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+   ```bash
+   git clone https://github.com/Informatics-ITS/ta-mvinorian
+   ```
+2. **Konfigurasi Aplikasi**
+
+   - Masuk ke direktori aplikasi.
+
+      ```bash
+      cd ta-mvinorian
+      ```
+
+   - Salin file `.env.example` menjadi `.env`.
+
+      ```bash
+      cp .env.example .env
+      ```
+   
+   - Sesuaikan variabel di file `.env` untuk database sesuai dengan keinginan Anda (tidak perlu membuat database secara manual, akan dibuat otomatis oleh Docker).
+
+      ```env
+      DB_NAME=nama_database
+      DB_USER=nama_user
+      DB_PASSWORD=password_user
+      DB_URL=postgresql://DB_NAME:DB_PASSWORD@db:5432/DB_NAME
+      ```
+
+   - Jalankan perintah berikut dan salin hasilnya ke dalam variabel `JWT_SECRET` di file `.env`.
+
+      ```bash
+      openssl rand -base64 64
+      ```
+
+   - Jalankan perintah berikut dan salin hasilnya ke dalam variabel `NEXT_PUBLIC_COOKIE_SECRET` di file `.env`.
+
+      ```bash
+      openssl rand -hex 32
+      ```
+
+3. **Menjalankan di Lokal**
+   
+   Aplikasi dapat dijalankan di lokal menggunakan Docker Compose. Pastikan Anda berada di direktori aplikasi, lalu jalankan perintah berikut.
+
+   ```bash
+   docker compose up --build
+   ```
+   
+4. **Akses Aplikasi**
+
+   Setelah proses build selesai, buka browser dan akses aplikasi di alamat berikut.
+
+   ```
+   http://localhost:3434
+   ```
+
+## ⁉️ Pertanyaan?
+
+Hubungi:
+- Penulis: [mvinorian@gmail.com](mailto:mvinorian@gmail.com)
+- Pembimbing Utama: [baskoro@its.ac.id](mailto:baskoro@its.ac.id)
