@@ -1,7 +1,6 @@
 'use client';
 
 import { LogOutIcon } from 'lucide-react';
-import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import React from 'react';
 
@@ -15,6 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/component/ui/dropdown-menu';
+import { Image } from '@/component/ui/image';
 import { LocaleSwitcher } from '@/component/ui/locale-switcher';
 import { useAuthStore } from '@/hook/use-auth-store';
 import { UserTourTrigger, useUserTourContext } from '@/provider/user-tour-provider';

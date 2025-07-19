@@ -1,6 +1,6 @@
-import Image from 'next/image';
 import React from 'react';
 
+import { Image } from '@/component/ui/image';
 import { LocaleSwitcher } from '@/component/ui/locale-switcher';
 
 export default function AuthLayout({

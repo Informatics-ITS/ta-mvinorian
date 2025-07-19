@@ -3,7 +3,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { LoaderCircleIcon } from 'lucide-react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
@@ -11,6 +10,7 @@ import React from 'react';
 
 import { Button } from '@/component/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/component/ui/card';
+import { Image } from '@/component/ui/image';
 import { GameType } from '@/db/schema';
 import { api } from '@/lib/api';
 import { ResponseType } from '@/lib/response';

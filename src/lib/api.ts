@@ -8,6 +8,7 @@ const isBrowser = typeof window !== 'undefined';
 let toastId: string | number;
 
 const api = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_BASE_PATH ?? '',
   headers: {
     'Content-Type': 'aplication/json',
   },

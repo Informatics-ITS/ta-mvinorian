@@ -30,7 +30,7 @@ export default async function GamePage({ params }: { params: Promise<{ code: str
   const role = game.attacker === user.id ? 'attacker' : game.defender === user.id ? 'defender' : null;
   if (!role) redirect('/lobby');
 
-  const wsUrl = process.env.NEXT_PUBLIC_WS_URL + `?user=${user.id}&code=${code}&role=${role}`;
+  const wsUrl = `${process.env.NEXT_PUBLIC_WS_URL}${process.env.NEXT_PUBLIC_BASE_PATH}/api/ws?user=${user.id}&code=${code}&role=${role}`;
 
   return (
     <WsProvider wsUrl={wsUrl}>

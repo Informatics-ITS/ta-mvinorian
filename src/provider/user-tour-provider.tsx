@@ -13,12 +13,12 @@ import {
   ShieldIcon,
   SwordIcon,
 } from 'lucide-react';
-import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import React from 'react';
 
 import { SecurityHighIcon, SecurityLowIcon, SecurityMediumIcon } from '@/component/game/node';
 import { Button } from '@/component/ui/button';
+import { Image } from '@/component/ui/image';
 
 type UserTourContextType = {
   isReady: boolean;
