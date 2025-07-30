@@ -31,7 +31,7 @@ function GameLayout({
   const { isReady: isUserTourReady } = useUserTourContext();
 
   return (
-    <React.Fragment>
+    <div className='relative flex h-svh w-full items-center justify-center overflow-hidden'>
       {user && (
         <div className='bg-background-100 absolute top-0 left-0 z-50 flex w-full items-center justify-between border-b border-gray-400 px-4 py-2'>
           <div className='flex items-center gap-2'>
@@ -72,6 +72,6 @@ function GameLayout({
         </div>
       )}
       {children}
-    </React.Fragment>
+    </div>
   );
 }

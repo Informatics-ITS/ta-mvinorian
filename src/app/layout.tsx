@@ -24,10 +24,8 @@ export default async function RootLayout({
   const locale = await getLocale();
 
   return (
-    <html lang={locale}>
-      <body
-        className={`${outfit.variable} bg-background-200 relative flex h-svh w-full items-center justify-center overflow-hidden antialiased`}
-      >
+    <html lang={locale} className='scroll-smooth'>
+      <body className={`${outfit.variable} bg-background-200 relative flex w-full flex-col items-center antialiased`}>
         <Provider>{children}</Provider>
       </body>
     </html>

@@ -14,9 +14,11 @@ import { Button } from '@/component/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/component/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel } from '@/component/ui/form';
 import { Input } from '@/component/ui/input';
+import { GameType } from '@/db/schema';
 import { useAuthStore } from '@/hook/use-auth-store';
 import { api } from '@/lib/api';
 import { setAuthToken } from '@/lib/cookies';
+import { ResponseType } from '@/lib/response';
 
 const authRegisterSchema = z.object({
   name: z.string(),
@@ -53,7 +55,14 @@ export default function AuthRegisterPage() {
       const user = await api.get('/api/user/me');
       login(user.data.data, token);
     },
-    onSuccess: async () => router.push('/'),
+    onSuccess: async () => {
+      try {
+        const game = await api.get<ResponseType<GameType>>('/api/game');
+        if (game.data.success && game.data.data) router.push(`/game/${game.data.data.code}`);
+      } catch {
+        router.push('/lobby');
+      }
+    },
   });
 
   const onSubmit = (data: AuthRegisterSchema) => {

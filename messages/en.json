@@ -289,5 +289,17 @@
     "no-defenses-in-target-node-to-remove": "no defenses in target node to remove",
     "successfully-removed-defensestoremove-defenses-from-gamenode-name": "successfully removed {defensesToRemove} defenses from {gameNode}",
     "attacker-has-removed-defensestoremove-defenses-from-gamenode-name": "attacker has removed {defensesToRemove} defenses from {gameNode}"
+  },
+  "landing": {
+    "defend-attack-outsmart": "Defend. Attack. Outsmart.",
+    "a-strategic-educational-game-that-turns-cybersecurity-into-an-engaging-interactive-experience": "A strategic educational game that turns cybersecurity into an engaging, interactive experience.",
+    "play-game": "Play Game",
+    "play-now": "Play Now",
+    "learn-more": "Learn More",
+    "what-is": "What is",
+    "node-clash-is-an-action-card-digital-game": "Node Clash is an action card digital game",
+    "where-you-step-into-the-role-of-an-attacker-or-defender-in-a-virtual-network-environment-designed-for-students-educators-and-cybersecurity-enthusiasts-the-game-simplifies-complex-cyber-concepts-into-visual-easy-to-understand-gameplay": "where you step into the role of an attacker or defender in a virtual network environment. Designed for students, educators, and cybersecurity enthusiasts, the game simplifies complex cyber concepts into visual, easy-to-understand gameplay.",
+    "built-for-learning-through-action": "Built for learning through action",
+    "node-clash-helps-you-develop-real-world-understanding-of-cyber-threats-and-defensive-strategies-without-needing-any-prior-technical-background": "Node Clash helps you develop real-world understanding of cyber threats and defensive strategies, without needing any prior technical background."
   }
 }

@@ -287,5 +287,17 @@
     "no-defenses-in-target-node-to-remove": "tidak ada defense di node target untuk dihapus",
     "successfully-removed-defensestoremove-defenses-from-gamenode-name": "berhasil menghapus {defensesToRemove} defense dari {gameNode}",
     "attacker-has-removed-defensestoremove-defenses-from-gamenode-name": "attacker menghapus {defensesToRemove} defense dari {gameNode}"
+  },
+  "landing": {
+    "defend-attack-outsmart": "Defend. Attack. Outsmart.",
+    "a-strategic-educational-game-that-turns-cybersecurity-into-an-engaging-interactive-experience": "Permainan pendidikan strategis yang mengubah cybersecurity menjadi pengalaman interaktif yang menarik.",
+    "play-game": "Main Game",
+    "play-now": "Main Sekarang",
+    "learn-more": "Pelajari Lebih Lanjut",
+    "what-is": "Apa itu",
+    "node-clash-is-an-action-card-digital-game": "Node Clash adalah permainan digital kartu aksi",
+    "where-you-step-into-the-role-of-an-attacker-or-defender-in-a-virtual-network-environment-designed-for-students-educators-and-cybersecurity-enthusiasts-the-game-simplifies-complex-cyber-concepts-into-visual-easy-to-understand-gameplay": "di mana kamu melangkah ke peran penyerang atau bertahan dalam lingkungan jaringan virtual. Dirancang untuk siswa, pendidik, dan penggemar keamanan siber, permainan ini menyederhanakan konsep cyber yang kompleks menjadi gameplay visual, mudah dipahami.",
+    "built-for-learning-through-action": "Dibangun untuk belajar melalui tindakan",
+    "node-clash-helps-you-develop-real-world-understanding-of-cyber-threats-and-defensive-strategies-without-needing-any-prior-technical-background": "Node Clash membantu kamu mengembangkan pemahaman dunia nyata tentang ancaman dunia maya dan strategi defensif, tanpa memerlukan latar belakang teknis sebelumnya."
   }
 }

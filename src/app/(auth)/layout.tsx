@@ -9,7 +9,7 @@ export default function AuthLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <React.Fragment>
+    <div className='relative flex h-svh w-full items-center justify-center overflow-hidden'>
       <div className='bg-background-100 absolute top-0 left-0 z-50 flex w-full items-center justify-between border-b border-gray-400 px-4 py-2'>
         <div className='flex h-8 items-center gap-2'>
           <Image alt='icon' src='/node-clash.svg' width={24} height={24} />
@@ -21,6 +21,6 @@ export default function AuthLayout({
         <LocaleSwitcher />
       </div>
       <div className='w-full max-w-md'>{children}</div>
-    </React.Fragment>
+    </div>
   );
 }
